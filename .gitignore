@@ -6,9 +6,10 @@ docs/
 .env.local
 .env.*.local
 
-# Node
+# Node / Bun
 node_modules/
 package-lock.json
+bun.lockb
 
 # Python
 __pycache__/
