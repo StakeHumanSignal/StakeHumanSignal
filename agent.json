@@ -1,0 +1,34 @@
+{
+  "name": "StakeHumanSignal Buyer Agent",
+  "version": "1.0.0",
+  "description": "Autonomous agent operating a staked human feedback marketplace. Queries reviews via x402, scores privately with Venice LLM, completes ERC-8183 jobs, distributes Lido wstETH yield, mints ERC-8004 receipts, stores outcomes on Filecoin FOC.",
+  "capabilities": [
+    "x402-payments",
+    "filecoin-foc-storage",
+    "erc-8004-receipts",
+    "erc-8183-jobs",
+    "lido-yield-distribution",
+    "venice-private-inference"
+  ],
+  "standards": ["ERC-8183", "ERC-8004"],
+  "harness": "claude-code",
+  "model": "claude-opus-4-6",
+  "identity": {
+    "erc8004": "FILL_AFTER_DEPLOY",
+    "registrationTxn": "https://basescan.org/tx/0xcd3eb6582b19a2fad433a24396c0f55e78bf1ccdaea082ee9738fec26eacc1d0"
+  },
+  "endpoints": {
+    "reviews_public": "FILL_AFTER_DEPLOY/reviews",
+    "reviews_ranked_x402": "FILL_AFTER_DEPLOY/reviews/top",
+    "outcomes": "FILL_AFTER_DEPLOY/outcomes"
+  },
+  "onchain": {
+    "network": "base-mainnet",
+    "chainId": 8453,
+    "contracts": {
+      "stakeHumanSignalJob": "FILL_AFTER_DEPLOY",
+      "lidoTreasury": "FILL_AFTER_DEPLOY",
+      "receiptRegistry": "FILL_AFTER_DEPLOY"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "stakehumansignal",
+  "version": "1.0.0",
+  "description": "Staked human feedback marketplace — ERC-8183 + ERC-8004 on Base",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy:base": "hardhat run scripts/deploy.js --network base",
+    "deploy:testnet": "hardhat run scripts/deploy.js --network baseSepolia",
+    "x402": "node x402-server/index.js"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.1.0",
+    "ethers": "^6.13.0",
+    "dotenv": "^16.4.5",
+    "@x402/core": "^2.7.0",
+    "@x402/evm": "^2.7.0",
+    "@x402/express": "^2.7.0",
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "hardhat": "^2.22.0",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.0"
+  }
+}
