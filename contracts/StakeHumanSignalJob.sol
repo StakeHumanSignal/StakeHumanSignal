@@ -40,24 +40,31 @@ contract StakeHumanSignalJob is IERC8183, Ownable, ReentrancyGuard {
         address _usdc,
         address _evaluator
     ) Ownable(msg.sender) {
+        require(_usdc != address(0), "USDC address cannot be zero");
+        require(_evaluator != address(0), "Evaluator address cannot be zero");
         usdc = IERC20(_usdc);
         evaluator = _evaluator;
     }
 
     function setLidoTreasury(address _treasury) external onlyOwner {
+        require(_treasury != address(0), "Treasury address cannot be zero");
         lidoTreasury = _treasury;
     }
 
     function setReceiptRegistry(address _registry) external onlyOwner {
+        require(_registry != address(0), "Registry address cannot be zero");
         receiptRegistry = _registry;
     }
 
     function setEvaluator(address _evaluator) external onlyOwner {
+        require(_evaluator != address(0), "Evaluator address cannot be zero");
         evaluator = _evaluator;
     }
 
     /// @notice Human reviewer creates a job by specifying the API to review
     function createJob(string calldata spec) external returns (uint256 jobId) {
+        require(bytes(spec).length > 0, "Spec cannot be empty");
+
         jobId = nextJobId++;
         jobs[jobId] = Job({
             client: msg.sender,
@@ -72,15 +79,19 @@ contract StakeHumanSignalJob is IERC8183, Ownable, ReentrancyGuard {
     }
 
     /// @notice Human reviewer stakes USDC to fund their job
+    /// @dev Checks-effects-interactions: state updated before external calls
     function fund(uint256 jobId, uint256 amount) external nonReentrant {
         Job storage job = jobs[jobId];
         require(job.client == msg.sender, "Not job client");
         require(job.status == JobStatus.Open, "Job not open");
-        require(amount > 0, "Zero amount");
+        require(amount > 0, "Amount must be greater than zero");
 
-        usdc.safeTransferFrom(msg.sender, address(this), amount);
+        // Effects first (checks-effects-interactions)
         job.budget += amount;
         job.status = JobStatus.Funded;
+
+        // Interactions last
+        usdc.safeTransferFrom(msg.sender, address(this), amount);
 
         // Forward stake to Lido Treasury for yield generation
         if (lidoTreasury != address(0)) {
@@ -92,6 +103,7 @@ contract StakeHumanSignalJob is IERC8183, Ownable, ReentrancyGuard {
 
     /// @notice Human reviewer submits their review deliverable
     function submit(uint256 jobId, bytes32 deliverableHash) external {
+        require(deliverableHash != bytes32(0), "Deliverable hash cannot be zero");
         Job storage job = jobs[jobId];
         require(job.client == msg.sender, "Not job client");
         require(job.status == JobStatus.Funded, "Job not funded");
@@ -113,7 +125,7 @@ contract StakeHumanSignalJob is IERC8183, Ownable, ReentrancyGuard {
     }
 
     /// @notice Buyer agent rejects the job — reviewer loses stake
-    function reject(uint256 jobId) external onlyEvaluator {
+    function reject(uint256 jobId) external onlyEvaluator nonReentrant {
         Job storage job = jobs[jobId];
         require(job.status == JobStatus.Submitted, "Job not submitted");
 
