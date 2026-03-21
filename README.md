@@ -1,6 +1,6 @@
 # StakeHumanSignal
 
-**Staked human feedback marketplace for autonomous AI agents.**
+**Staked human feedback & policy for autonomous AI agents.**
 
 Humans stake USDC on AI review quality. Autonomous agents pay via x402 to access ranked reviews. Winning reviewers earn Lido wstETH yield. Every outcome is recorded as an ERC-8004 receipt on-chain.
 
