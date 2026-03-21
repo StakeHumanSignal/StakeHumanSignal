@@ -6,6 +6,8 @@ Humans stake USDC on AI review quality. Autonomous agents pay via x402 to access
 
 Built for [Synthesis Hackathon](https://synthesis.md) — March 2026.
 
+**Live demo:** [stakehumansignal.vercel.app](https://stakehumansignal.vercel.app) | **API:** [stakesignal-api-production.up.railway.app](https://stakesignal-api-production.up.railway.app/reviews)
+
 ---
 
 ## What it does
