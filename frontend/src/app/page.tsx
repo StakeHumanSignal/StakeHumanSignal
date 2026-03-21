@@ -5,9 +5,22 @@ import { api } from "@/lib/api";
 
 export default function Home() {
   const [reviewCount, setReviewCount] = useState(0);
+  const [validatorCount, setValidatorCount] = useState(0);
+  const [totalStake, setTotalStake] = useState(0);
+  const [agentEvents, setAgentEvents] = useState(0);
 
   useEffect(() => {
-    api.getReviews().then((r) => setReviewCount(Array.isArray(r) ? r.length : 0));
+    api.getReviews().then((r) => {
+      const reviews = Array.isArray(r) ? r : [];
+      setReviewCount(reviews.length);
+      setTotalStake(reviews.reduce((sum: number, rev: { stake_amount?: number }) => sum + (rev.stake_amount ?? 0), 0));
+    });
+    api.getLeaderboard().then((d) => {
+      setValidatorCount(Array.isArray(d) ? d.length : 0);
+    });
+    api.getAgentLog().then((d) => {
+      setAgentEvents(Array.isArray(d) ? d.length : 0);
+    });
   }, []);
 
   return (
@@ -91,26 +104,26 @@ export default function Home() {
             <p className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase tracking-widest">Staked Verdicts</p>
             <div className="flex items-baseline gap-2">
               <span className="text-3xl font-[family-name:var(--font-headline)] font-bold">{reviewCount.toLocaleString()}</span>
-              <span className="text-xs text-tertiary neon-pulse px-1 font-[family-name:var(--font-mono)]">+12h</span>
+              <span className="text-xs text-tertiary neon-pulse px-1 font-[family-name:var(--font-mono)]">LIVE</span>
             </div>
           </div>
           <div className="space-y-2">
-            <p className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase tracking-widest">Protocol Yield (APR)</p>
+            <p className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase tracking-widest">Total Staked</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-[family-name:var(--font-headline)] font-bold text-tertiary">14.8%</span>
-              <span className="text-[10px] text-white/40 font-[family-name:var(--font-mono)]">LIDO+x402</span>
+              <span className="text-3xl font-[family-name:var(--font-headline)] font-bold text-tertiary">{totalStake.toFixed(1)}</span>
+              <span className="text-[10px] text-white/40 font-[family-name:var(--font-mono)]">USDC</span>
             </div>
           </div>
           <div className="space-y-2">
-            <p className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase tracking-widest">Agent Queries / 24h</p>
+            <p className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase tracking-widest">Agent Events</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-[family-name:var(--font-headline)] font-bold">842,019</span>
+              <span className="text-3xl font-[family-name:var(--font-headline)] font-bold">{agentEvents.toLocaleString()}</span>
             </div>
           </div>
           <div className="space-y-2">
-            <p className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase tracking-widest">Reputation Minted</p>
+            <p className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase tracking-widest">Active Validators</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-[family-name:var(--font-headline)] font-bold text-primary">8.2M</span>
+              <span className="text-3xl font-[family-name:var(--font-headline)] font-bold text-primary">{validatorCount}</span>
               <span className="text-[10px] text-white/40 font-[family-name:var(--font-mono)]">ERC-8004</span>
             </div>
           </div>

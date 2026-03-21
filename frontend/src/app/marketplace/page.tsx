@@ -11,6 +11,16 @@ interface Review {
   filecoin_cid?: string;
   task_type?: string;
   winner?: string;
+  reasoning?: string;
+  rubric_scores?: Record<string, number>;
+}
+
+interface LogEntry {
+  timestamp: number;
+  message: string;
+  action?: string;
+  tx?: string;
+  tx_hash?: string;
 }
 
 const truncate = (s: string) => (s && s.length > 10 ? `${s.slice(0, 6)}...${s.slice(-4)}` : s || "-");
@@ -19,9 +29,16 @@ export default function Marketplace() {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     api.getReviews().then(setReviews).finally(() => setLoading(false));
+    api.getAgentLog().then((data) => setLogs([...data].reverse().slice(0, 20)));
+    const interval = setInterval(() => {
+      api.getAgentLog().then((data) => setLogs([...data].reverse().slice(0, 20)));
+    }, 15000);
+    return () => clearInterval(interval);
   }, []);
 
   const filteredReviews = filter === "all" ? reviews : reviews.filter((r) => r.task_type === filter);
@@ -114,7 +131,7 @@ export default function Marketplace() {
               </thead>
               <tbody className="text-sm">
                 {filteredReviews.map((review) => (
-                  <VerdictRow key={review.id} review={review} />
+                  <VerdictRow key={review.id} review={review} expanded={expanded === review.id} onToggle={() => setExpanded(expanded === review.id ? null : review.id)} />
                 ))}
               </tbody>
             </table>
@@ -135,31 +152,32 @@ export default function Marketplace() {
         <div className="bg-surface-container-lowest border border-white/5 p-4 h-[600px] overflow-y-auto no-scrollbar font-[family-name:var(--font-mono)] text-[11px] leading-relaxed relative">
           <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_40px_rgba(0,0,0,0.8)]" />
           <div className="space-y-4 relative z-10">
-            <div className="text-tertiary">
-              <span className="text-white/40">[14:22:01]</span> [AGENT 0x88f...] Paid x402 for review #123 -&gt; Heuristic pass -&gt; +Reputation minted via ERC-8004
-              <span className="block text-primary/60 hover:text-primary transition-colors underline decoration-dotted cursor-pointer">tx/0x992...a2b1</span>
-            </div>
-            <div className="text-white/80">
-              <span className="text-white/40">[14:21:44]</span> <span className="text-secondary">#NEW_STAKE:</span> User 0x551... locked 1.5 wstETH on EVAL_ID_9042
-            </div>
-            <div className="text-tertiary">
-              <span className="text-white/40">[14:20:12]</span> [AGENT 0x410...] Paid x402 for review #098 -&gt; Latency validation -&gt; +Reputation minted via ERC-8004
-              <span className="block text-primary/60 hover:text-primary transition-colors underline decoration-dotted cursor-pointer">tx/0x44d...f92a</span>
-            </div>
-            <div className="text-error/80">
-              <span className="text-white/40">[14:19:55]</span> <span className="text-error">#SLASHED:</span> Agent 0x21c... failed truth-anchor check on CID_992.
-            </div>
-            <div className="text-tertiary">
-              <span className="text-white/40">[14:18:30]</span> [AGENT 0x1a2...] Paid x402 for review #125 -&gt; Logic verification -&gt; +Reputation minted via ERC-8004
-              <span className="block text-primary/60 hover:text-primary transition-colors underline decoration-dotted cursor-pointer">tx/0x11e...c88d</span>
-            </div>
-            <div className="text-white/80 opacity-60">
-              <span className="text-white/40">[14:17:11]</span> System: Re-indexing IPFS cluster for CID_8004_batch...
-            </div>
-            <div className="text-tertiary">
-              <span className="text-white/40">[14:15:01]</span> [AGENT 0xbb2...] Paid x402 for review #126 -&gt; Model B consensus -&gt; +Reputation minted via ERC-8004
-              <span className="block text-primary/60 hover:text-primary transition-colors underline decoration-dotted cursor-pointer">tx/0x33b...e010</span>
-            </div>
+            {logs.length === 0 ? (
+              <div className="text-white/40 animate-pulse">Connecting to agent network...</div>
+            ) : (
+              logs.map((entry, i) => {
+                const isError = entry.action === "rejected" || entry.action === "reject" || entry.action === "error";
+                const isSettled = entry.action === "complete" || entry.action === "validated";
+                const color = isError ? "text-error/80" : isSettled ? "text-tertiary" : "text-white/80";
+                const label = isError ? "SLASHED" : isSettled ? "SETTLED" : entry.action === "x402_payment" ? "LIVE" : "INFO";
+                const labelColor = isError ? "text-error" : isSettled ? "text-tertiary" : entry.action === "x402_payment" ? "text-primary" : "text-secondary";
+                const ts = new Date(entry.timestamp * 1000);
+                const time = ts.toLocaleTimeString("en-US", { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" });
+                return (
+                  <div key={i} className={color}>
+                    <span className="text-white/40">[{time}]</span>{" "}
+                    <span className={`${labelColor} font-bold`}>#{label}:</span>{" "}
+                    {entry.message}
+                    {(entry.tx || entry.tx_hash) && (
+                      <a href={`https://basescan.org/tx/${entry.tx || entry.tx_hash}`} target="_blank" rel="noreferrer"
+                        className="block text-primary/60 hover:text-primary transition-colors underline decoration-dotted">
+                        tx/{(entry.tx || entry.tx_hash || "").slice(0, 6)}...{(entry.tx || entry.tx_hash || "").slice(-4)}
+                      </a>
+                    )}
+                  </div>
+                );
+              })
+            )}
             <div className="text-white/40 animate-pulse">_</div>
           </div>
         </div>
@@ -167,12 +185,12 @@ export default function Marketplace() {
         {/* System Stats Cards */}
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-surface-container p-3 border-l-2 border-primary">
-            <span className="text-[9px] text-white/40 uppercase font-[family-name:var(--font-mono)] block mb-1">Total Mints</span>
-            <span className="text-xl font-[family-name:var(--font-headline)] font-bold text-on-surface">1,249</span>
+            <span className="text-[9px] text-white/40 uppercase font-[family-name:var(--font-mono)] block mb-1">Reviews</span>
+            <span className="text-xl font-[family-name:var(--font-headline)] font-bold text-on-surface">{reviews.length}</span>
           </div>
           <div className="bg-surface-container p-3 border-l-2 border-secondary">
-            <span className="text-[9px] text-white/40 uppercase font-[family-name:var(--font-mono)] block mb-1">Fees Generated</span>
-            <span className="text-xl font-[family-name:var(--font-headline)] font-bold text-on-surface">4.82 ETH</span>
+            <span className="text-[9px] text-white/40 uppercase font-[family-name:var(--font-mono)] block mb-1">Agent Events</span>
+            <span className="text-xl font-[family-name:var(--font-headline)] font-bold text-on-surface">{logs.length}</span>
           </div>
         </div>
       </aside>
@@ -180,15 +198,17 @@ export default function Marketplace() {
   );
 }
 
-function VerdictRow({ review }: { review: Review }) {
+function VerdictRow({ review, expanded, onToggle }: { review: Review; expanded: boolean; onToggle: () => void }) {
   const score = review.score ?? 75;
   const correctness = Math.min(score, 100);
-  const reasoning = Math.max(20, score - 15);
+  const reasoningBar = Math.max(20, score - 15);
   const coherence = Math.max(20, score - 30);
   const safety = Math.max(5, 100 - score);
+  const rubric = review.rubric_scores;
 
   return (
-    <tr className="bg-surface-container hover:bg-surface-bright/5 transition-colors group">
+    <>
+    <tr className="bg-surface-container hover:bg-surface-bright/5 transition-colors group cursor-pointer" onClick={onToggle}>
       <td className="py-6 pl-4 align-top">
         <div className="flex items-start gap-4">
           <div className="flex -space-x-2">
@@ -217,6 +237,9 @@ function VerdictRow({ review }: { review: Review }) {
               }`}>
                 Winner: {review.winner === "policy_a" ? "Model A" : review.winner === "policy_b" ? "Model B" : "Tie"}
               </span>
+              <svg className={`w-3 h-3 text-white/30 transition-transform ${expanded ? "rotate-180" : ""}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+              </svg>
             </div>
             <div className="flex items-center gap-3 text-[10px] font-[family-name:var(--font-mono)] text-white/40">
               <span className="flex items-center gap-1">
@@ -248,7 +271,7 @@ function VerdictRow({ review }: { review: Review }) {
           </div>
           <div className="flex gap-2">
             <div className="flex-1 h-1 bg-surface-container-highest overflow-hidden">
-              <div className="h-full bg-secondary" style={{ width: `${reasoning}%` }} />
+              <div className="h-full bg-secondary" style={{ width: `${reasoningBar}%` }} />
             </div>
             <div className="flex-1 h-1 bg-surface-container-highest overflow-hidden">
               <div className="h-full bg-tertiary" style={{ width: `${coherence}%` }} />
@@ -283,5 +306,52 @@ function VerdictRow({ review }: { review: Review }) {
         </div>
       </td>
     </tr>
+    {expanded && (
+      <tr className="bg-surface-container-low">
+        <td colSpan={3} className="px-6 py-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-[10px] font-[family-name:var(--font-mono)] text-white/40 uppercase tracking-widest mb-2">Task Intent</h4>
+                <p className="text-sm text-on-surface-variant">{review.task_intent || "Not specified"}</p>
+              </div>
+              <div>
+                <h4 className="text-[10px] font-[family-name:var(--font-mono)] text-white/40 uppercase tracking-widest mb-2">Reasoning</h4>
+                <p className="text-xs text-on-surface-variant leading-relaxed font-[family-name:var(--font-mono)]">{review.reasoning || "No reasoning provided"}</p>
+              </div>
+              <div className="flex items-center gap-4 text-[10px] font-[family-name:var(--font-mono)] text-white/40">
+                <span>Type: <span className="text-primary">{review.task_type || "—"}</span></span>
+                <span>Reviewer: <span className="text-on-surface">{truncate(review.reviewer_address)}</span></span>
+              </div>
+            </div>
+            {rubric && (
+              <div>
+                <h4 className="text-[10px] font-[family-name:var(--font-mono)] text-white/40 uppercase tracking-widest mb-3">Rubric Scores</h4>
+                <div className="space-y-3">
+                  {Object.entries(rubric).map(([key, val]) => (
+                    <div key={key}>
+                      <div className="flex justify-between text-[10px] font-[family-name:var(--font-mono)] mb-1">
+                        <span className="text-on-surface-variant capitalize">{key.replace(/_/g, " ")}</span>
+                        <span className="text-primary">{(val * 10).toFixed(1)}/10</span>
+                      </div>
+                      <div className="h-1 bg-surface-container-highest">
+                        <div className="h-full bg-primary/60" style={{ width: `${val * 100}%` }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            {review.filecoin_cid && (
+              <div className="md:col-span-2 bg-surface-container-lowest p-3 border border-white/5">
+                <span className="text-[10px] font-[family-name:var(--font-mono)] text-white/40">Filecoin CID: </span>
+                <span className="text-[10px] font-[family-name:var(--font-mono)] text-primary break-all">{review.filecoin_cid}</span>
+              </div>
+            )}
+          </div>
+        </td>
+      </tr>
+    )}
+    </>
   );
 }
