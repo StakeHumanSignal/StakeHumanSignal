@@ -32,3 +32,4 @@ Thumbs.db
 
 # Deployment
 deployments/localhost/
+.env

@@ -70,15 +70,39 @@
 - [ ] Make repo public before deadline
 - [ ] Olas Pearl marketplace registration
 
+## Phase 0 Audit (March 21, 2026 — Session 2)
+
+**Status: COMPLETED**
+
+### Blockers Found
+1. **CRITICAL: Secrets exposed in .env** — `BASE_SEPOLIA_PRIVATE_KEY` and `BASESCAN_API_KEY` committed to git. Must rotate immediately.
+2. **CRITICAL: No structured claim schema** — Current `ReviewSubmission` is flat free-text with single numeric score. Missing: task_type, policy_a/b, rubric_scores, confidence_level, downstream_outcome. Blocks Phases 1, 3, 4, 7, 13.
+3. **agent/files.md out of date** — 9 files/dirs exist but aren't listed (verifier_agent.py, bankr.py, self_verify.py, wire-sepolia.js, e2e-test-sepolia.js, MockERC20.sol, filecoin-bridge/, olas/, lido-mcp/).
+4. **3 untracked Python files** — verifier_agent.py, bankr.py, self_verify.py need `git add`.
+
+### Codebase Health
+- Solidity contracts: Excellent security (ReentrancyGuard, SafeERC20, Ownable, checks-effects-interactions). No issues.
+- Python API: All keys via os.getenv(). No stubs, no unused imports, no TODOs.
+- Tests: All passing, zero skipped. 3 contract test suites.
+- 42 skills available in skills/. No .claude/skills/ at project level.
+- 8 docs in docs/. design.md comprehensive for frontend. No claim schema doc.
+
+### Skills Inventory Summary
+- Planning: brainstorming, writing-plans, ethskills/concepts
+- Contracts: ethereum-wingman, ethskills/security, ethskills/audit, ethskills/standards
+- Execution: executing-plans, subagent-driven-development, dispatching-parallel-agents
+- Frontend: ui-ux-pro-max, vercel-react-best-practices, ethskills/frontend-ux, ethskills/frontend-playbook
+- QA: verification-before-completion, ethskills/qa, systematic-debugging, test-driven-development
+- Completion: finishing-a-development-branch, requesting-code-review
+
 ## Next Session Should Start At
 
-**Deploy contracts to Base Mainnet.** Steps:
-1. Set up .env with funded wallet private key
-2. `npx hardhat run scripts/deploy.js --network base`
-3. Update agent.json + AGENTS.md with real addresses
-4. Verify contracts on Basescan
-5. Build Filecoin Synapse bridge
-6. Run end-to-end test
+**Phase 1: Structured Claim Schema Design.** Steps:
+1. Create `docs/claim-schema.md` defining: task_type, context_description, policy_a, policy_b, rubric_scores (correctness, efficiency, safety, clarity), confidence_level, winner, downstream_outcome
+2. Upgrade `ReviewSubmission` Pydantic model in `api/routes/reviews.py`
+3. Upgrade `OutcomeSignal` Pydantic model in `api/routes/outcomes.py`
+4. Update Venice/Bankr scoring to return per-rubric scores
+5. Then proceed to mainnet deployment (Phase 16)
 
 ## Key Decisions Made
 
