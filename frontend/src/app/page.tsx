@@ -31,12 +31,13 @@ export default function Home() {
           <h1 className="font-[family-name:var(--font-headline)] text-5xl md:text-7xl font-bold leading-[1.1] tracking-tighter">
             HUMANS STAKE <span className="text-primary">SKIN</span>. <br />
             AGENTS BUY <span className="text-secondary">TRUTH</span>. <br />
-            YIELD FLOWS <span className="text-tertiary">FOREVER</span>.
+            WINNERS EARN <span className="text-tertiary">YIELD</span>.
           </h1>
           <p className="text-on-surface-variant text-lg md:text-xl max-w-xl leading-relaxed">
-            Agents waste thousands on subpar LLMs because reviews are free and fake. StakeHumanSignal fixes that: real
-            economic skin from humans, x402 micropayments from agents, permanent Filecoin + Base proof, and Lido wstETH
-            yield rewards for being right.
+            AI reviews are free, so they&apos;re worthless. StakeHumanSignal changes that: humans compare two AI outputs,
+            pick the better one, and stake real USDC on their verdict. Autonomous agents pay via x402 to access reviews
+            they can trust. Correct reviewers earn Lido wstETH yield. Every verdict is stored permanently on Filecoin
+            and recorded on Base as an ERC-8004 receipt.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
