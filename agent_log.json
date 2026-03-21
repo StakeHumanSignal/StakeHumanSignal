@@ -101,5 +101,53 @@
     "iso": "2026-03-21T16:32:21Z",
     "message": "Fetch error: Connection refused",
     "action": "error"
+  },
+  {
+    "timestamp": 1774082070.0255098,
+    "iso": "2026-03-21T16:34:30Z",
+    "message": "Fetched reviews via x402 gateway (dryRun)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0.001 USDC",
+    "network": "base-sepolia",
+    "mode": "dryRun"
+  },
+  {
+    "timestamp": 1774082070.027874,
+    "iso": "2026-03-21T16:34:30Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774083951.359057,
+    "iso": "2026-03-21T17:05:51Z",
+    "message": "Fetched reviews via x402 gateway (dryRun)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0.001 USDC",
+    "network": "base-sepolia",
+    "mode": "dryRun"
+  },
+  {
+    "timestamp": 1774083951.361784,
+    "iso": "2026-03-21T17:05:51Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774084169.5217779,
+    "iso": "2026-03-21T17:09:29Z",
+    "message": "Fetched reviews via x402 gateway (dryRun)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0.001 USDC",
+    "network": "base-sepolia",
+    "mode": "dryRun"
+  },
+  {
+    "timestamp": 1774084169.524868,
+    "iso": "2026-03-21T17:09:29Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
   }
 ]
