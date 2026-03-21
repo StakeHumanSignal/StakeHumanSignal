@@ -14,7 +14,7 @@
   "harness": "claude-code",
   "model": "claude-opus-4-6",
   "identity": {
-    "erc8004": "FILL_AFTER_DEPLOY",
+    "erc8004": "0xA471D2C45F03518E47c7Fc71C897d244dF01859D",
     "registrationTxn": "https://basescan.org/tx/0xcd3eb6582b19a2fad433a24396c0f55e78bf1ccdaea082ee9738fec26eacc1d0"
   },
   "endpoints": {
@@ -23,12 +23,12 @@
     "outcomes": "FILL_AFTER_DEPLOY/outcomes"
   },
   "onchain": {
-    "network": "base-mainnet",
-    "chainId": 8453,
+    "network": "base-sepolia",
+    "chainId": 84532,
     "contracts": {
-      "stakeHumanSignalJob": "FILL_AFTER_DEPLOY",
-      "lidoTreasury": "FILL_AFTER_DEPLOY",
-      "receiptRegistry": "FILL_AFTER_DEPLOY"
+      "stakeHumanSignalJob": "0x5298F4D8d8043C14e5F2683Ad642fEbC8B54638f",
+      "lidoTreasury": "0xE78f6c235FD1686547DBea41F742D649607316B1",
+      "receiptRegistry": "0xA471D2C45F03518E47c7Fc71C897d244dF01859D"
     }
   }
 }

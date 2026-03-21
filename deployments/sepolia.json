@@ -1,0 +1,15 @@
+{
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "deployer": "0x557E1E07652B75ABaA667223B11704165fC94d09",
+  "contracts": {
+    "stakeHumanSignalJob": "0x5298F4D8d8043C14e5F2683Ad642fEbC8B54638f",
+    "lidoTreasury": "0xE78f6c235FD1686547DBea41F742D649607316B1",
+    "receiptRegistry": "0xA471D2C45F03518E47c7Fc71C897d244dF01859D"
+  },
+  "tokens": {
+    "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "wstETH": "0x0000000000000000000000000000000000000001"
+  },
+  "deployedAt": "2026-03-21T03:18:14.029Z"
+}
