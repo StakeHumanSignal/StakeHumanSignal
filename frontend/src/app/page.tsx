@@ -63,7 +63,7 @@ export default function Home() {
             <div className="flex justify-between items-start mb-12">
               <div className="space-y-1">
                 <h3 className="font-[family-name:var(--font-mono)] text-xs text-white/40">NETWORK_STATUS</h3>
-                <p className="font-[family-name:var(--font-headline)] text-xl font-bold tracking-tight">BASE_SEPOLIA</p>
+                <p className="font-[family-name:var(--font-headline)] text-xl font-bold tracking-tight">BASE_MAINNET</p>
               </div>
               <svg className="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
@@ -89,7 +89,7 @@ export default function Home() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/40">CHAIN</span>
-                  <span className="text-white/80 truncate ml-4">Base Sepolia (84532)</span>
+                  <span className="text-white/80 truncate ml-4">Base Mainnet (8453)</span>
                 </div>
               </div>
             </div>
@@ -139,7 +139,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-secondary font-[family-name:var(--font-mono)] text-[10px]">CHAIN</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">BASE SEPOLIA &mdash; {reviewCount} STAKED VERDICTS &mdash; {validatorCount} ACTIVE VALIDATORS</span>
+            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">BASE MAINNET &mdash; {reviewCount} STAKED VERDICTS &mdash; {validatorCount} ACTIVE VALIDATORS</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-tertiary font-[family-name:var(--font-mono)] text-[10px]">FLOW</span>
@@ -151,7 +151,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-3">
             <span className="text-secondary font-[family-name:var(--font-mono)] text-[10px]">CHAIN</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">BASE SEPOLIA &mdash; {reviewCount} STAKED VERDICTS &mdash; {validatorCount} ACTIVE VALIDATORS</span>
+            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">BASE MAINNET &mdash; {reviewCount} STAKED VERDICTS &mdash; {validatorCount} ACTIVE VALIDATORS</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-tertiary font-[family-name:var(--font-mono)] text-[10px]">FLOW</span>

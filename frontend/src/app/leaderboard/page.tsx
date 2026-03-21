@@ -265,7 +265,7 @@ export default function Leaderboard() {
               <div className="pt-4 mt-4 border-t border-outline-variant/15">
                 <p className="text-[10px] text-on-surface-variant uppercase mb-3">Network</p>
                 <div className="text-[10px] font-[family-name:var(--font-mono)] text-tertiary space-y-1">
-                  <p>&gt; Chain: Base Sepolia (84532)</p>
+                  <p>&gt; Chain: Base Mainnet (8453)</p>
                   <p>&gt; Protocol: ERC-8183 + ERC-8004</p>
                   <p>&gt; Yield: Lido wstETH</p>
                 </div>
