@@ -25,6 +25,9 @@ export default function Submit() {
     api_url: "https://api.openai.com/v1/chat/completions",
     review_text: "",
     rubric_scores: { correctness: 0.8, efficiency: 0.72, relevance: 0.9, completeness: 0.65, reasoning_quality: 0.5 },
+    when_to_use: "",
+    when_not_to_use: "",
+    task_tags: "",
   });
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [result, setResult] = useState<{ id?: string; filecoin_cid?: string } | null>(null);
@@ -49,10 +52,20 @@ export default function Submit() {
     }
     setStatus("submitting");
     try {
+      const structured_reasoning = (form.when_to_use || form.when_not_to_use || form.task_tags) ? {
+        summary: "",
+        when_to_use: form.when_to_use ? form.when_to_use.split(",").map((s: string) => s.trim()).filter(Boolean) : [],
+        when_not_to_use: form.when_not_to_use ? form.when_not_to_use.split(",").map((s: string) => s.trim()).filter(Boolean) : [],
+        task_tags: form.task_tags ? form.task_tags.split(",").map((s: string) => s.trim()).filter(Boolean) : [],
+        quality_priority: "",
+        latency_sensitivity: "",
+        evidence_notes: "",
+      } : undefined;
       const res = await api.submitReview({
         ...form,
         review_text: form.reasoning,
         stake_amount: parseFloat(form.stake_amount),
+        structured_reasoning,
       });
       setResult(res);
       setStatus("success");
@@ -222,6 +235,42 @@ export default function Submit() {
             />
             <div className="absolute bottom-3 right-3 text-[10px] font-[family-name:var(--font-mono)] text-white/20">
               CHARS: {charCount}/1024
+            </div>
+          </div>
+        </section>
+
+        {/* Structured Reasoning (Optional) */}
+        <section className="bg-surface-container p-6 border border-white/5">
+          <h2 className="font-[family-name:var(--font-headline)] text-sm font-medium text-on-surface uppercase tracking-widest mb-4">
+            Structured Reasoning (Optional)
+          </h2>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs font-[family-name:var(--font-mono)] uppercase text-on-surface-variant mb-2">When to use (optional)</label>
+              <input
+                className="w-full bg-surface-container-lowest border border-outline-variant p-4 font-[family-name:var(--font-mono)] text-xs text-on-surface-variant focus:border-primary focus:ring-0 placeholder:text-white/10"
+                placeholder="e.g. async Python code, production error logging"
+                value={form.when_to_use}
+                onChange={(e) => set("when_to_use", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-[family-name:var(--font-mono)] uppercase text-on-surface-variant mb-2">When NOT to use (optional)</label>
+              <input
+                className="w-full bg-surface-container-lowest border border-outline-variant p-4 font-[family-name:var(--font-mono)] text-xs text-on-surface-variant focus:border-primary focus:ring-0 placeholder:text-white/10"
+                placeholder="e.g. simple scripts, latency-critical paths"
+                value={form.when_not_to_use}
+                onChange={(e) => set("when_not_to_use", e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-[family-name:var(--font-mono)] uppercase text-on-surface-variant mb-2">Task tags (optional, comma-separated)</label>
+              <input
+                className="w-full bg-surface-container-lowest border border-outline-variant p-4 font-[family-name:var(--font-mono)] text-xs text-on-surface-variant focus:border-primary focus:ring-0 placeholder:text-white/10"
+                placeholder="e.g. python, async, error-handling"
+                value={form.task_tags}
+                onChange={(e) => set("task_tags", e.target.value)}
+              />
             </div>
           </div>
         </section>

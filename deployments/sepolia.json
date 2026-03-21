@@ -5,7 +5,8 @@
   "contracts": {
     "stakeHumanSignalJob": "0xE99027DDdF153Ac6305950cD3D58C25D17E39902",
     "lidoTreasury": "0x8E29D161477D9BB00351eA2f69702451443d7bf5",
-    "receiptRegistry": "0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332"
+    "receiptRegistry": "0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332",
+    "sessionEscrow": "0xe817C338aD7612184CFB59AeA7962905b920e2e9"
   },
   "tokens": {
     "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",

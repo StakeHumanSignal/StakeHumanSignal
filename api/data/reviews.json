@@ -27,7 +27,16 @@
     "confidence_level": null,
     "reviewer_segment": null,
     "reasoning": "Policy A produced specific exception types with stack context. Policy B gave generic error messages.",
-    "downstream_outcome": null
+    "downstream_outcome": null,
+    "structured_reasoning": {
+      "summary": "Policy A handles async exceptions with full context",
+      "when_to_use": ["async Python code", "production error logging"],
+      "when_not_to_use": ["simple scripts", "latency-critical paths"],
+      "task_tags": ["python", "async", "error-handling"],
+      "quality_priority": "correctness",
+      "latency_sensitivity": "low",
+      "evidence_notes": "Tested on 3 real async codebases"
+    }
   },
   "c132408c": {
     "id": "c132408c",
@@ -57,7 +66,16 @@
     "confidence_level": null,
     "reviewer_segment": null,
     "reasoning": "Policy B incorporated implied volatility and volume-weighted signals. Policy A only used price action.",
-    "downstream_outcome": null
+    "downstream_outcome": null,
+    "structured_reasoning": {
+      "summary": "Policy B uses multi-signal volatility analysis for better accuracy",
+      "when_to_use": ["crypto trading strategies", "volatility modeling"],
+      "when_not_to_use": ["low-frequency rebalancing", "stablecoin pairs"],
+      "task_tags": ["trading", "BTC", "volatility", "quantitative"],
+      "quality_priority": "completeness",
+      "latency_sensitivity": "medium",
+      "evidence_notes": "Compared against 30-day BTC/USD price action data"
+    }
   },
   "6b0f72a9": {
     "id": "6b0f72a9",
@@ -87,7 +105,16 @@
     "confidence_level": null,
     "reviewer_segment": null,
     "reasoning": "Policy A maintained professional empathy while Policy B was too formal and missed the emotional context.",
-    "downstream_outcome": null
+    "downstream_outcome": null,
+    "structured_reasoning": {
+      "summary": "Policy A balances empathy with professionalism in support responses",
+      "when_to_use": ["fintech customer support", "complaint handling"],
+      "when_not_to_use": ["automated FAQ responses", "technical troubleshooting"],
+      "task_tags": ["customer-support", "fintech", "tone", "empathy"],
+      "quality_priority": "relevance",
+      "latency_sensitivity": "high",
+      "evidence_notes": "Evaluated with 5 real customer complaint scenarios"
+    }
   },
   "e0d20c71": {
     "id": "e0d20c71",

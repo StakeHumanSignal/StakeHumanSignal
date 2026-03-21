@@ -39,6 +39,16 @@ VALID_CONFIDENCE_LEVELS = {"low", "medium", "high"}
 RUBRIC_DIMENSIONS = {"correctness", "efficiency", "relevance", "completeness", "reasoning_quality"}
 
 
+class StructuredReasoning(BaseModel):
+    summary: str = ""
+    when_to_use: list[str] = []
+    when_not_to_use: list[str] = []
+    task_tags: list[str] = []
+    quality_priority: str = ""
+    latency_sensitivity: str = ""
+    evidence_notes: str = ""
+
+
 class ReviewSubmission(BaseModel):
     # Legacy fields (always required for backward compat)
     api_url: str
@@ -62,6 +72,7 @@ class ReviewSubmission(BaseModel):
     reviewer_segment: Optional[str] = None
     reasoning: Optional[str] = None
     downstream_outcome: Optional[str] = None
+    structured_reasoning: Optional[StructuredReasoning] = None
 
     @field_validator("task_intent")
     @classmethod
@@ -129,6 +140,7 @@ class ReviewResponse(BaseModel):
     rubric_scores: Optional[dict] = None
     confidence_level: Optional[dict] = None
     winner: Optional[str] = None
+    structured_reasoning: Optional[dict] = None
 
 
 @router.post("", response_model=ReviewResponse)
@@ -159,6 +171,7 @@ async def submit_review(review: ReviewSubmission):
         "reviewer_segment": review.reviewer_segment,
         "reasoning": review.reasoning,
         "downstream_outcome": review.downstream_outcome,
+        "structured_reasoning": review.structured_reasoning.model_dump() if review.structured_reasoning else None,
     }
     # Store review on Filecoin for permanent evidence
     try:
