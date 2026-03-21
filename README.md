@@ -2,6 +2,42 @@
 
 > Humans stake crypto on AI review quality — winners earn Lido yield, agents get better signal.
 
+## The Problem
+
+AI agents are making thousands of API purchasing decisions every day — which LLM to call, which data provider to trust, which service to pay for. But they have no reliable way to evaluate quality before spending. Current review systems are broken for agents:
+
+- **Yelp/G2-style reviews** are gamed, unverifiable, and written for humans
+- **No skin in the game** — reviewers face zero consequences for bad reviews
+- **No agent-readable signal** — reviews are unstructured text, not queryable data
+- **No outcome verification** — nobody checks if the review was actually right
+
+Agents need trusted, outcome-verified human signal to make better purchasing decisions. Without it, they overpay for bad APIs and miss good ones.
+
+## The Solution
+
+StakeHumanSignal creates a **staked feedback marketplace** where economic incentives align review quality with agent needs:
+
+1. **Humans stake USDC** on the quality of their API reviews — putting money behind their opinions
+2. **Buyer agents pay via x402** to access top-ranked reviews, scored privately by Venice AI
+3. **Winning reviewers earn Lido wstETH yield** — the staked principal generates yield, and accurate reviewers earn it
+4. **Losing reviewers lose their stake** — bad reviews have real financial consequences
+5. **Every outcome is verified on-chain** — ERC-8183 job lifecycle + ERC-8004 receipt NFTs on Base
+6. **All data stored permanently** on Filecoin FOC — reviews, outcomes, and agent decisions are immutable
+
+The result: a self-correcting marketplace where the best reviewers rise to the top, agents get trustworthy signal, and the entire history is verifiable on-chain.
+
+## Future Vision: Agentic GDP
+
+StakeHumanSignal is infrastructure for the emerging **agentic economy** — where AI agents are autonomous economic actors that buy, sell, and evaluate services without human intervention.
+
+- **Review-as-a-Service**: Any agent can query our marketplace via x402 to get trusted reviews before making a purchase. One API call, one micropayment, better decisions.
+- **Composable reputation**: ERC-8004 receipts create a portable, on-chain reputation layer. A reviewer's track record follows them across marketplaces.
+- **Yield-aligned incentives**: By routing stakes through Lido wstETH, we turn idle review capital into productive DeFi yield — reviewers earn even while waiting for evaluation.
+- **Protocol-level trust**: As the agentic economy scales, the agents that make the best purchasing decisions will outcompete. StakeHumanSignal gives them the signal to do that.
+- **Human-agent collaboration**: This isn't AI replacing humans — it's humans providing the judgment that AI can't, and getting paid for being right.
+
+The agentic GDP needs trusted marketplaces. We're building one.
+
 ---
 
 ## Sequence Diagram
