@@ -125,6 +125,15 @@ async def submit_review(review: ReviewSubmission):
         "reasoning": review.reasoning,
         "downstream_outcome": review.downstream_outcome,
     }
+    # Store review on Filecoin for permanent evidence
+    try:
+        from api.services.filecoin import store_review
+        cid = await store_review(entry)
+        if cid:
+            entry["filecoin_cid"] = cid
+    except Exception:
+        pass  # Filecoin storage is best-effort
+
     reviews_db[review_id] = entry
     return ReviewResponse(**entry)
 

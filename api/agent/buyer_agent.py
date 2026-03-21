@@ -74,6 +74,20 @@ async def complete_and_reward(winner: dict):
         return {}
 
 
+async def pin_agent_log():
+    """Pin current agent_log.json to Filecoin for immutable decision trail."""
+    try:
+        if not LOG_FILE.exists():
+            return
+        entries = json.loads(LOG_FILE.read_text())
+        from api.services.filecoin import store_agent_log
+        cid = await store_agent_log(entries)
+        if cid:
+            log(f"Agent log pinned to Filecoin: {cid}", action="pin", logCID=cid)
+    except Exception as e:
+        log(f"Failed to pin agent log: {e}", action="pin_error")
+
+
 async def run():
     """Main autonomous agent loop."""
     log("Agent starting autonomous loop", action="start")
@@ -118,6 +132,9 @@ async def run():
                 receipt_id=result.get("receipt_token_id"),
                 cid=result.get("filecoin_cid"),
             )
+
+            # 5. Pin agent_log.json to Filecoin for immutable decision trail
+            await pin_agent_log()
 
         except Exception as e:
             log(f"Error in cycle {cycle}: {str(e)}", action="error")
