@@ -1,12 +1,14 @@
 """StakeHumanSignal Buyer Agent — autonomous loop.
 
-Queries reviews via x402, scores with local heuristic scorer,
+Queries reviews via x402 payment gateway, scores with local heuristic scorer,
 completes ERC-8183 jobs, distributes yield, mints receipts.
+Pins agent_log.json to Filecoin after each cycle.
 """
 
 import asyncio
 import json
 import os
+import sys
 import time
 from pathlib import Path
 
@@ -14,6 +16,7 @@ import httpx
 
 LOG_FILE = Path("agent_log.json")
 API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
+X402_GATEWAY = os.getenv("X402_GATEWAY_URL", "http://localhost:3000")
 
 
 def log(msg: str, **kwargs):
@@ -24,12 +27,42 @@ def log(msg: str, **kwargs):
     print(f"[AGENT] {msg}")
 
 
-async def fetch_top_reviews() -> list[dict]:
-    """Fetch ranked reviews via x402 payment."""
+async def fetch_top_reviews_x402() -> list[dict]:
+    """Fetch ranked reviews via x402 payment gateway.
+
+    In production: pays 0.001 USDC via x402 header.
+    In dev mode: uses dryRun=true or falls back to direct API.
+    """
+    # Try x402 gateway with dryRun (dev mode)
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            resp = await client.get(f"{X402_GATEWAY}/reviews/top?dryRun=true")
+            if resp.status_code == 200:
+                data = resp.json()
+                log(
+                    f"Fetched reviews via x402 gateway (dryRun)",
+                    action="x402_payment",
+                    endpoint="/reviews/top",
+                    amount="0.001 USDC",
+                    network="base-sepolia",
+                    mode="dryRun",
+                )
+                return data.get("reviews", [])
+    except Exception:
+        pass  # Gateway not running, fall back
+
+    # Fallback: direct API (no x402 gate)
     try:
         async with httpx.AsyncClient(timeout=15) as client:
             resp = await client.get(f"{API_BASE}/reviews/top")
             data = resp.json()
+            log(
+                f"Fetched reviews direct (x402 gateway unavailable)",
+                action="x402_payment",
+                endpoint="/reviews/top",
+                amount="0 (direct)",
+                mode="fallback",
+            )
             return data.get("reviews", [])
     except Exception as e:
         log(f"Fetch error: {e}", action="error")
@@ -70,6 +103,9 @@ async def complete_and_reward(winner: dict):
                     "review_id": winner["id"],
                     "score": winner["score"],
                     "reasoning": winner.get("reasoning", ""),
+                    "rubric_scores": winner.get("rubric_scores"),
+                    "source_claim_id": winner.get("id"),
+                    "outcome_validated": winner.get("verdict") == "validated",
                 },
             )
             return resp.json()
@@ -85,6 +121,7 @@ async def pin_agent_log():
             return
         entries = json.loads(LOG_FILE.read_text())
         from api.services.filecoin import store_agent_log
+
         cid = await store_agent_log(entries)
         if cid:
             log(f"Agent log pinned to Filecoin: {cid}", action="pin", logCID=cid)
@@ -92,70 +129,80 @@ async def pin_agent_log():
         log(f"Failed to pin agent log: {e}", action="pin_error")
 
 
-async def run():
+async def run_cycle(cycle: int) -> bool:
+    """Run a single agent cycle. Returns True if reviews were processed."""
+    log(f"Cycle {cycle} starting", action="cycle_start")
+
+    # 1. Fetch top reviews via x402
+    reviews = await fetch_top_reviews_x402()
+    log(f"Fetched {len(reviews)} reviews", action="fetch", count=len(reviews))
+
+    if not reviews:
+        log("No reviews available", action="wait")
+        return False
+
+    # 2. Score with local heuristic scorer
+    scored = score_reviews_heuristic(reviews)
+    log(f"Scored {len(scored)} reviews with heuristic scorer", action="score")
+
+    # 3. Process each scored review: complete or reject
+    for review in scored:
+        verdict = review.get("verdict", "rejected")
+        confidence = review.get("score", 0) / 100
+
+        log(
+            f"Heuristic: {review.get('id', '?')} verdict={verdict} "
+            f"confidence={confidence:.2f}",
+            action="heuristic_score",
+            claim_id=review.get("id"),
+            task_intent=review.get("task_intent", ""),
+            verdict=verdict,
+            confidence=confidence,
+        )
+
+        if verdict == "validated" and confidence > 0.6:
+            result = await complete_and_reward(review)
+            log(
+                f"Completed job, tx={result.get('complete_tx')}, "
+                f"receipt={result.get('receipt_token_id')}",
+                action="complete",
+                tx=result.get("complete_tx"),
+                receipt_id=result.get("receipt_token_id"),
+                cid=result.get("filecoin_cid"),
+            )
+        else:
+            log(
+                f"Rejected review {review.get('id', '?')}: "
+                f"verdict={verdict}, confidence={confidence:.2f}",
+                action="reject",
+                claim_id=review.get("id"),
+            )
+
+    # 4. Pin agent_log.json to Filecoin
+    await pin_agent_log()
+
+    return True
+
+
+async def run(once: bool = False):
     """Main autonomous agent loop."""
     log("Agent starting autonomous loop", action="start")
 
     cycle = 0
     while True:
         cycle += 1
-        log(f"Cycle {cycle} starting", action="cycle_start")
-
         try:
-            # 1. Fetch top reviews (via x402 in production)
-            reviews = await fetch_top_reviews()
-            log(f"Fetched {len(reviews)} reviews", action="fetch", count=len(reviews))
-
-            if not reviews:
-                log("No reviews available, waiting...", action="wait")
-                await asyncio.sleep(60)
-                continue
-
-            # 2. Score with local heuristic scorer
-            scored = score_reviews_heuristic(reviews)
-            log(f"Scored {len(scored)} reviews with heuristic scorer", action="score")
-
-            # 3. Process each scored review: complete or reject
-            for review in scored:
-                verdict = review.get("verdict", "rejected")
-                confidence = review.get("score", 0) / 100
-
-                log(
-                    f"Heuristic: {review.get('id', '?')} verdict={verdict} "
-                    f"confidence={confidence:.2f}",
-                    action="heuristic_score",
-                    claim_id=review.get("id"),
-                    task_intent=review.get("task_intent", ""),
-                    verdict=verdict,
-                    confidence=confidence,
-                )
-
-                if verdict == "validated" and confidence > 0.6:
-                    result = await complete_and_reward(review)
-                    log(
-                        f"Completed job, tx={result.get('complete_tx')}, "
-                        f"receipt={result.get('receipt_token_id')}",
-                        action="complete",
-                        tx=result.get("complete_tx"),
-                        receipt_id=result.get("receipt_token_id"),
-                        cid=result.get("filecoin_cid"),
-                    )
-                else:
-                    log(
-                        f"Rejected review {review.get('id', '?')}: "
-                        f"verdict={verdict}, confidence={confidence:.2f}",
-                        action="reject",
-                        claim_id=review.get("id"),
-                    )
-
-            # 5. Pin agent_log.json to Filecoin for immutable decision trail
-            await pin_agent_log()
-
+            await run_cycle(cycle)
         except Exception as e:
             log(f"Error in cycle {cycle}: {str(e)}", action="error")
+
+        if once:
+            log("Single cycle complete (--once mode)", action="stop")
+            break
 
         await asyncio.sleep(60)
 
 
 if __name__ == "__main__":
-    asyncio.run(run())
+    once_mode = "--once" in sys.argv
+    asyncio.run(run(once=once_mode))
