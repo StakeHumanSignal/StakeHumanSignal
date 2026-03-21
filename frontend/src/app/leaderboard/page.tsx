@@ -202,7 +202,7 @@ export default function Leaderboard() {
         <div className="space-y-6">
           <div className="bg-surface-container-low rounded-lg p-6">
             <h4 className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-widest text-primary mb-6">
-              Recent ERC-8004 Mints
+              Protocol Info
             </h4>
             <div className="space-y-4">
               <div className="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-md border-l-2 border-secondary">
@@ -212,8 +212,8 @@ export default function Leaderboard() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-xs font-[family-name:var(--font-headline)] font-bold">Deepfake Oracle #812</p>
-                  <p className="text-[10px] font-[family-name:var(--font-mono)] text-on-surface-variant">Minted 2h ago</p>
+                  <p className="text-xs font-[family-name:var(--font-headline)] font-bold">ERC-8183 Jobs</p>
+                  <p className="text-[10px] font-[family-name:var(--font-mono)] text-on-surface-variant">Agentic Commerce Lifecycle</p>
                 </div>
               </div>
               <div className="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-md border-l-2 border-primary">
@@ -223,19 +223,19 @@ export default function Leaderboard() {
                   </svg>
                 </div>
                 <div>
-                  <p className="text-xs font-[family-name:var(--font-headline)] font-bold">LLM Consistency Badge</p>
-                  <p className="text-[10px] font-[family-name:var(--font-mono)] text-on-surface-variant">Minted 1d ago</p>
+                  <p className="text-xs font-[family-name:var(--font-headline)] font-bold">ERC-8004 Receipts</p>
+                  <p className="text-[10px] font-[family-name:var(--font-mono)] text-on-surface-variant">On-chain Reputation Registry</p>
                 </div>
               </div>
               <div className="flex items-center gap-4 bg-surface-container-lowest p-3 rounded-md border-l-2 border-tertiary">
                 <div className="w-10 h-10 bg-tertiary/20 rounded flex items-center justify-center">
                   <svg className="w-5 h-5 text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17l-5.652 3.182 1.4-6.4L2.005 7.5l6.545-.89L12 1l3.45 5.61 6.545.89-4.163 4.452 1.4 6.4-5.652-3.182zm0 0L12 15.25" />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
                   </svg>
                 </div>
                 <div>
-                  <p className="text-xs font-[family-name:var(--font-headline)] font-bold">Logic Arbiter III</p>
-                  <p className="text-[10px] font-[family-name:var(--font-mono)] text-on-surface-variant">Minted 3d ago</p>
+                  <p className="text-xs font-[family-name:var(--font-headline)] font-bold">x402 Micropayments</p>
+                  <p className="text-[10px] font-[family-name:var(--font-mono)] text-on-surface-variant">Agent-to-Human Value Transfer</p>
                 </div>
               </div>
             </div>
@@ -243,7 +243,7 @@ export default function Leaderboard() {
 
           <div className="bg-surface-container-low rounded-lg p-6">
             <h4 className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-widest text-tertiary mb-6">
-              ERC-8183 Evaluator History
+              Top Validator Stats
             </h4>
             <div className="space-y-3">
               <div className="flex justify-between items-center text-xs font-[family-name:var(--font-mono)]">
@@ -251,19 +251,23 @@ export default function Leaderboard() {
                 <span className="text-white">{topValidator ? topValidator.total_jobs.toLocaleString() : "0"}</span>
               </div>
               <div className="flex justify-between items-center text-xs font-[family-name:var(--font-mono)]">
-                <span className="text-on-surface-variant">Avg. Response Time</span>
-                <span className="text-white">12.4s</span>
+                <span className="text-on-surface-variant">Wins</span>
+                <span className="text-white">{topValidator ? topValidator.wins : "0"}</span>
               </div>
               <div className="flex justify-between items-center text-xs font-[family-name:var(--font-mono)]">
-                <span className="text-on-surface-variant">Reliability Score</span>
-                <span className="text-primary">99.2%</span>
+                <span className="text-on-surface-variant">Win Rate</span>
+                <span className="text-primary">{topValidator ? (topValidator.win_rate * 100).toFixed(1) + "%" : "—"}</span>
+              </div>
+              <div className="flex justify-between items-center text-xs font-[family-name:var(--font-mono)]">
+                <span className="text-on-surface-variant">Total Staked</span>
+                <span className="text-tertiary">{topValidator?.total_stake?.toFixed(1) ?? "0"} USDC</span>
               </div>
               <div className="pt-4 mt-4 border-t border-outline-variant/15">
-                <p className="text-[10px] text-on-surface-variant uppercase mb-3">Recent Activity</p>
+                <p className="text-[10px] text-on-surface-variant uppercase mb-3">Network</p>
                 <div className="text-[10px] font-[family-name:var(--font-mono)] text-tertiary space-y-1">
-                  <p>&gt; Task #4829 validated [SUCCESS]</p>
-                  <p>&gt; Stake finalized for epoch 92 [0.42 ETH]</p>
-                  <p>&gt; Reputation score increased +0.02</p>
+                  <p>&gt; Chain: Base Sepolia (84532)</p>
+                  <p>&gt; Protocol: ERC-8183 + ERC-8004</p>
+                  <p>&gt; Yield: Lido wstETH</p>
                 </div>
               </div>
             </div>

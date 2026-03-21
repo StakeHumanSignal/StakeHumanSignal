@@ -146,7 +146,7 @@ export default function Marketplace() {
             <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
             Live Network Feed
           </h3>
-          <span className="text-[10px] font-[family-name:var(--font-mono)] text-white/40">v1.2.0-MAINNET</span>
+          <span className="text-[10px] font-[family-name:var(--font-mono)] text-white/40">BASE SEPOLIA</span>
         </div>
 
         <div className="bg-surface-container-lowest border border-white/5 p-4 h-[600px] overflow-y-auto no-scrollbar font-[family-name:var(--font-mono)] text-[11px] leading-relaxed relative">

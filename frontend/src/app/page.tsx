@@ -62,8 +62,8 @@ export default function Home() {
             </div>
             <div className="flex justify-between items-start mb-12">
               <div className="space-y-1">
-                <h3 className="font-[family-name:var(--font-mono)] text-xs text-white/40">NODE_IDENTITY</h3>
-                <p className="font-[family-name:var(--font-headline)] text-xl font-bold tracking-tight">LLM-01_PRECISION</p>
+                <h3 className="font-[family-name:var(--font-mono)] text-xs text-white/40">NETWORK_STATUS</h3>
+                <p className="font-[family-name:var(--font-headline)] text-xl font-bold tracking-tight">BASE_SEPOLIA</p>
               </div>
               <svg className="w-8 h-8 text-primary" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/>
@@ -72,24 +72,24 @@ export default function Home() {
             <div className="space-y-6">
               <div className="flex justify-between items-end border-b border-white/5 pb-4">
                 <div>
-                  <h3 className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase">Economic Skin</h3>
+                  <h3 className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase">Total Staked</h3>
                   <p className="text-2xl font-[family-name:var(--font-headline)] font-bold">
-                    4.20 <span className="text-sm text-secondary">wstETH</span>
+                    {totalStake.toFixed(1)} <span className="text-sm text-secondary">USDC</span>
                   </p>
                 </div>
                 <div className="text-right">
-                  <h3 className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase">x402 Flow</h3>
-                  <p className="text-tertiary font-[family-name:var(--font-mono)]">+0.0021</p>
+                  <h3 className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase">Reviews</h3>
+                  <p className="text-tertiary font-[family-name:var(--font-mono)]">{reviewCount}</p>
                 </div>
               </div>
               <div className="bg-black/40 p-4 rounded-lg border border-white/5 font-[family-name:var(--font-mono)] text-[10px] space-y-2">
                 <div className="flex justify-between">
                   <span className="text-white/40">PROTOCOL</span>
-                  <span className="text-primary">ERC-8004</span>
+                  <span className="text-primary">ERC-8183 + ERC-8004</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/40">ATTESTATION</span>
-                  <span className="text-white/80 truncate ml-4">0x71C...8E23</span>
+                  <span className="text-white/40">CHAIN</span>
+                  <span className="text-white/80 truncate ml-4">Base Sepolia (84532)</span>
                 </div>
               </div>
             </div>
@@ -134,28 +134,28 @@ export default function Home() {
       <div className="w-full bg-[#000000] h-12 border-y border-[#00F0FF]/10 flex items-center overflow-hidden mb-20">
         <div className="flex whitespace-nowrap gap-12 px-6 animate-marquee">
           <div className="flex items-center gap-3">
-            <span className="text-primary font-[family-name:var(--font-mono)] text-[10px]">LIVE</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">AGENT 0x4f...21 PAID x402 -&gt; +0.005 wstETH REWARD MINTED</span>
+            <span className="text-primary font-[family-name:var(--font-mono)] text-[10px]">PROTOCOL</span>
+            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">ERC-8183 JOBS + x402 MICROPAYMENTS + LIDO wstETH YIELD + FILECOIN PERMANENT STORAGE</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-secondary font-[family-name:var(--font-mono)] text-[10px]">ALERT</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">NEW SUBMISSION: LLM_LATENCY_TEST_V2 BY 0x92...11</span>
+            <span className="text-secondary font-[family-name:var(--font-mono)] text-[10px]">CHAIN</span>
+            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">BASE SEPOLIA &mdash; {reviewCount} STAKED VERDICTS &mdash; {validatorCount} ACTIVE VALIDATORS</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-tertiary font-[family-name:var(--font-mono)] text-[10px]">SETTLED</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">VERDICT #8821 EPOCH 402 COMPLETE -&gt; 12.1% YIELD REVENUE</span>
+            <span className="text-tertiary font-[family-name:var(--font-mono)] text-[10px]">FLOW</span>
+            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">HUMAN STAKES USDC &rarr; AGENT PAYS x402 &rarr; WINNER EARNS wstETH YIELD &rarr; ERC-8004 RECEIPT MINTED</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-primary font-[family-name:var(--font-mono)] text-[10px]">LIVE</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">AGENT 0x4f...21 PAID x402 -&gt; +0.005 wstETH REWARD MINTED</span>
+            <span className="text-primary font-[family-name:var(--font-mono)] text-[10px]">PROTOCOL</span>
+            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">ERC-8183 JOBS + x402 MICROPAYMENTS + LIDO wstETH YIELD + FILECOIN PERMANENT STORAGE</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-secondary font-[family-name:var(--font-mono)] text-[10px]">ALERT</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">NEW SUBMISSION: LLM_LATENCY_TEST_V2 BY 0x92...11</span>
+            <span className="text-secondary font-[family-name:var(--font-mono)] text-[10px]">CHAIN</span>
+            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">BASE SEPOLIA &mdash; {reviewCount} STAKED VERDICTS &mdash; {validatorCount} ACTIVE VALIDATORS</span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-tertiary font-[family-name:var(--font-mono)] text-[10px]">SETTLED</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">VERDICT #8821 EPOCH 402 COMPLETE -&gt; 12.1% YIELD REVENUE</span>
+            <span className="text-tertiary font-[family-name:var(--font-mono)] text-[10px]">FLOW</span>
+            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">HUMAN STAKES USDC &rarr; AGENT PAYS x402 &rarr; WINNER EARNS wstETH YIELD &rarr; ERC-8004 RECEIPT MINTED</span>
           </div>
         </div>
       </div>
@@ -239,7 +239,7 @@ export default function Home() {
           <span className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter">Base</span>
         </div>
         <p className="text-white/40 font-[family-name:var(--font-headline)] text-[10px] uppercase tracking-tighter text-center max-w-2xl leading-relaxed">
-          2024 StakeHumanSignal. Decentralized Subjectivity Oracle for Autonomous Agents. Built on frontiers of human-AI economic coordination.
+          2026 StakeHumanSignal. Decentralized Subjectivity Oracle for Autonomous Agents. Built on frontiers of human-AI economic coordination.
         </p>
       </footer>
     </div>

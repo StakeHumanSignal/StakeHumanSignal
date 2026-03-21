@@ -53,8 +53,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <span>Live Network Feed: x402 Payments &amp; ERC-8004 Mints [Active]</span>
           </div>
           <div className="ml-auto flex items-center gap-6 text-white/40">
-            <span>Uptime: 99.99%</span>
-            <span className="hidden md:block">Block: 1840292</span>
+            <span>Base Sepolia</span>
+            <span className="hidden md:block">ERC-8183 + x402</span>
           </div>
         </footer>
         </Providers>

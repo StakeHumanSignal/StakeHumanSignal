@@ -173,7 +173,7 @@ export default function AgentFeed() {
             </div>
             <div className="flex justify-between items-center text-xs font-[family-name:var(--font-mono)]">
               <span className="text-on-surface-variant">Network</span>
-              <span className="text-white">Base Mainnet</span>
+              <span className="text-white">Base Sepolia</span>
             </div>
             <div className="flex justify-between items-center text-xs font-[family-name:var(--font-mono)]">
               <span className="text-on-surface-variant">Protocol</span>
