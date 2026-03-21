@@ -1,4 +1,11 @@
-"""Review scorer — ranks reviews by weighted rubric scores and stake."""
+"""Review scorer — ranks reviews by retrieval score and payout score.
+
+Retrieval score: task_match primary, stake is tie-breaker only.
+Payout score: sqrt(stake) × settlement_result (prevents stake farming).
+"""
+
+import math
+import time
 
 # Rubric dimension weights (must sum to 1.0)
 RUBRIC_WEIGHTS = {
@@ -22,6 +29,53 @@ def compute_weighted_rubric_score(rubric_scores: dict) -> float:
     for dim, weight in RUBRIC_WEIGHTS.items():
         total += rubric_scores.get(dim, 0.0) * weight
     return total
+
+
+def compute_retrieval_score(claim: dict, query_task_intent: str = "") -> float:
+    """Rank claims for buyer agents. task_match is primary, stake is tie-breaker."""
+    stop = {"the", "a", "an", "is", "to", "and", "or", "of", "in", "for", "on", "at", "by", "with"}
+
+    # Task match
+    if query_task_intent:
+        claim_terms = set(claim.get("task_intent", "").lower().split()) - stop
+        query_terms = set(query_task_intent.lower().split()) - stop
+        if claim_terms and query_terms:
+            task_match = len(claim_terms & query_terms) / len(claim_terms | query_terms)
+        else:
+            task_match = 0.5
+    else:
+        task_match = 0.5
+
+    # Freshness: decay over 7 days
+    age_days = (time.time() - claim.get("created_at", time.time())) / 86400
+    freshness = max(0.1, 1.0 - (age_days / 7))
+
+    # Observed success from downstream validation
+    wins = claim.get("downstream_wins", 0)
+    losses = claim.get("downstream_losses", 0)
+    total = wins + losses
+    observed_success = (wins / total) if total > 0 else 0.5
+
+    # Evidence quality
+    evidence_quality = 1.0 if claim.get("filecoin_cid") else 0.5
+
+    # Stake as minor tie-breaker (log scale, capped at 0.1)
+    stake = float(claim.get("stake_amount", 0))
+    stake_signal = min(math.log1p(stake) / 10, 0.1)
+
+    score = (
+        task_match * 0.40
+        + observed_success * 0.30
+        + freshness * 0.20
+        + evidence_quality * 0.10
+    ) + stake_signal
+
+    return round(min(score, 1.0), 4)
+
+
+def compute_payout_score(stake: float, settlement_result: float) -> float:
+    """Payout score for yield distribution. sqrt(stake) prevents stake farming."""
+    return round(math.sqrt(max(stake, 0)) * settlement_result, 4)
 
 
 def rank_reviews(reviews: list[dict]) -> list[dict]:

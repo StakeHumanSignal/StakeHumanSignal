@@ -23,6 +23,7 @@
 | `ReceiptRegistry.sol` | ERC-8004 receipt NFTs | `mintReceipt(jobId, winner, apiUrl, outcome, cid)`, `getReceipt(tokenId)`, `totalReceipts()` | ERC721, Ownable |
 | `interfaces/IERC8183.sol` | ERC-8183 interface | JobStatus enum, 5 events, 6 functions | — |
 | `interfaces/IWstETH.sol` | Lido wstETH interface | wrap, unwrap, rate conversion | IERC20 |
+| `mocks/MockERC20.sol` | Test mock ERC-20 token | Mint/transfer for Hardhat tests | ERC20 |
 
 **Contract wiring (done in deploy.js):**
 - StakeHumanSignalJob → sets LidoTreasury + ReceiptRegistry addresses
@@ -34,6 +35,9 @@
 | File | Purpose | Details |
 |------|---------|---------|
 | `deploy.js` | Deploy all 3 contracts + wire them | Deploys to Base Mainnet using USDC (0x8335...) and wstETH (0xc1CB...). Saves addresses.json. 8 transactions total (3 deploys + 5 config calls) |
+| `deploy-sepolia.js` | Deploy all 3 contracts to Base Sepolia | Same as deploy.js but with Sepolia USDC. Saves addresses-sepolia.json |
+| `wire-sepolia.js` | Wire contracts on Sepolia | Sets treasury, registry, whitelists, minter roles for Sepolia deployment |
+| `e2e-test-sepolia.js` | End-to-end test on Sepolia | Creates job, mints receipt, verifies receipt on-chain |
 
 ## Python API (`api/`)
 
@@ -46,8 +50,11 @@
 | `services/web3_client.py` | Base Mainnet contract calls | `Web3Service` class: create_job, complete_job, mint_receipt, distribute_yield. Reads addresses.json + Hardhat artifacts for ABIs. Singleton via `get_web3_service()` |
 | `services/venice.py` | Private LLM scoring | `score_review_privately(review_text, api_output)` → {score: 0-100, reasoning}. Calls Venice llama-3.3-70b. Needs VENICE_API_KEY |
 | `services/filecoin.py` | Filecoin FOC bridge client | `store_on_filecoin(data)` → CID, `retrieve_from_filecoin(cid)` → data. Calls Node.js bridge on FILECOIN_BRIDGE_URL (:3001) |
-| `services/scorer.py` | Review ranking algorithm | `rank_reviews(reviews)` → sorted by composite_score (stake * score/100 * win_rate) |
+| `services/scorer.py` | Review ranking algorithm | `rank_reviews(reviews)` → sorted by weighted rubric or flat score. `compute_weighted_rubric_score()`. `get_independence_score()` |
+| `services/bankr.py` | Bankr LLM ensemble scoring | Multi-LLM scoring via Bankr Gateway (OpenAI/Anthropic/Google). Returns score + reasoning |
+| `services/self_verify.py` | Self Protocol identity (DEFERRED) | ZK identity verification via Self Agent ID. Not active — kept for future reference |
 | `agent/buyer_agent.py` | Autonomous buyer loop | 60s cycles: fetch_top_reviews → score_with_venice → complete_and_reward. Writes agent_log.json. Reads API_BASE_URL env |
+| `agent/verifier_agent.py` | Autonomous verifier agent | Independent review validation via Venice + Bankr ensemble. Auto-completes/rejects ERC-8183 jobs |
 
 ## x402 Gateway (`x402-server/`)
 
@@ -56,11 +63,27 @@
 | `index.js` | Express payment proxy | Port 3000 (X402_PORT). GET /reviews/top returns 402 without payment header. ?dryRun=true bypasses. All other routes proxy to FastAPI (API_BACKEND, default :8000) |
 | `package.json` | x402 server deps | express, http-proxy-middleware |
 
+## Additional Directories
+
+| Directory | Purpose | Status |
+|-----------|---------|--------|
+| `filecoin-bridge/` | Node.js Filecoin Synapse SDK bridge (port 3001) | Scaffolded, not yet built |
+| `olas/` | Olas Pearl marketplace integration | Scaffolded |
+| `lido-mcp/` | MCP server for Lido stETH staking | Empty, Phase 2 target |
+
 ## Documentation (`docs/` — gitignored)
 
 | File | Purpose |
 |------|---------|
 | `STAKEHUMANSIGNAL_PROJECT.md` | Master project spec. Prize tracks, tech stack, build order, submission checklist, all reference links |
+| `claim-schema.md` | Structured claim schema definition. Rubric dimensions, policy objects, examples per task_type |
+| `design.md` | Frontend UI/UX design spec. Dark crypto aesthetic, 7+ page layouts, component library |
+| `bankr.md` | Bankr LLM Gateway integration spec |
+| `filecoin.md` | Filecoin FOC Synapse SDK integration spec |
+| `lido-mcp.md` | Lido MCP server spec |
+| `olas.md` | Olas mechs marketplace integration spec |
+| `self.md` | Self Protocol ZK identity spec (DEFERRED) |
+| `verifier-agent.md` | Auto-Verifier agent implementation spec |
 
 ## Generated at Runtime
 

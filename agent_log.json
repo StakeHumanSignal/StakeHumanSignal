@@ -149,5 +149,182 @@
     "iso": "2026-03-21T17:09:29Z",
     "message": "Fetch error: Connection refused",
     "action": "error"
+  },
+  {
+    "timestamp": 1774085628.336937,
+    "iso": "2026-03-21T17:33:48Z",
+    "message": "Agent starting autonomous loop",
+    "action": "start"
+  },
+  {
+    "timestamp": 1774085628.338193,
+    "iso": "2026-03-21T17:33:48Z",
+    "message": "Cycle 1 starting",
+    "action": "cycle_start"
+  },
+  {
+    "timestamp": 1774085628.403073,
+    "iso": "2026-03-21T17:33:48Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774085628.403465,
+    "iso": "2026-03-21T17:33:48Z",
+    "message": "Fetched 1 reviews",
+    "action": "fetch",
+    "count": 1
+  },
+  {
+    "timestamp": 1774085628.405178,
+    "iso": "2026-03-21T17:33:48Z",
+    "message": "Scored 1 reviews with heuristic scorer",
+    "action": "score"
+  },
+  {
+    "timestamp": 1774085628.405431,
+    "iso": "2026-03-21T17:33:48Z",
+    "message": "Heuristic: b85cd8e4 verdict=rejected confidence=0.38",
+    "action": "heuristic_score",
+    "claim_id": "b85cd8e4",
+    "task_intent": "evaluate Python async error handling",
+    "verdict": "rejected",
+    "confidence": 0.38
+  },
+  {
+    "timestamp": 1774085628.4056718,
+    "iso": "2026-03-21T17:33:48Z",
+    "message": "Rejected review b85cd8e4: verdict=rejected, confidence=0.38",
+    "action": "reject",
+    "claim_id": "b85cd8e4"
+  },
+  {
+    "timestamp": 1774085628.4149382,
+    "iso": "2026-03-21T17:33:48Z",
+    "message": "Agent log pinned to Filecoin: bafylocal33ab522281283b3be9654be99d9d32068927bfbc9dd2cbb1",
+    "action": "pin",
+    "logCID": "bafylocal33ab522281283b3be9654be99d9d32068927bfbc9dd2cbb1"
+  },
+  {
+    "timestamp": 1774085628.415452,
+    "iso": "2026-03-21T17:33:48Z",
+    "message": "Single cycle complete (--once mode)",
+    "action": "stop"
+  },
+  {
+    "timestamp": 1774085770.186411,
+    "iso": "2026-03-21T17:36:10Z",
+    "message": "Agent starting autonomous loop",
+    "action": "start"
+  },
+  {
+    "timestamp": 1774085770.187149,
+    "iso": "2026-03-21T17:36:10Z",
+    "message": "Cycle 1 starting",
+    "action": "cycle_start"
+  },
+  {
+    "timestamp": 1774085770.247102,
+    "iso": "2026-03-21T17:36:10Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774085770.2475362,
+    "iso": "2026-03-21T17:36:10Z",
+    "message": "Fetched 2 reviews",
+    "action": "fetch",
+    "count": 2
+  },
+  {
+    "timestamp": 1774085770.2484322,
+    "iso": "2026-03-21T17:36:10Z",
+    "message": "Scored 2 reviews with heuristic scorer",
+    "action": "score"
+  },
+  {
+    "timestamp": 1774085770.24869,
+    "iso": "2026-03-21T17:36:10Z",
+    "message": "Heuristic: b85cd8e4 verdict=rejected confidence=0.38",
+    "action": "heuristic_score",
+    "claim_id": "b85cd8e4",
+    "task_intent": "evaluate Python async error handling",
+    "verdict": "rejected",
+    "confidence": 0.38
+  },
+  {
+    "timestamp": 1774085770.248947,
+    "iso": "2026-03-21T17:36:10Z",
+    "message": "Rejected review b85cd8e4: verdict=rejected, confidence=0.38",
+    "action": "reject",
+    "claim_id": "b85cd8e4"
+  },
+  {
+    "timestamp": 1774085770.249202,
+    "iso": "2026-03-21T17:36:10Z",
+    "message": "Heuristic: 1525ffa1 verdict=rejected confidence=0.38",
+    "action": "heuristic_score",
+    "claim_id": "1525ffa1",
+    "task_intent": "compare LLM output quality for code review tasks",
+    "verdict": "rejected",
+    "confidence": 0.38
+  },
+  {
+    "timestamp": 1774085770.249857,
+    "iso": "2026-03-21T17:36:10Z",
+    "message": "Rejected review 1525ffa1: verdict=rejected, confidence=0.38",
+    "action": "reject",
+    "claim_id": "1525ffa1"
+  },
+  {
+    "timestamp": 1774085770.256917,
+    "iso": "2026-03-21T17:36:10Z",
+    "message": "Agent log pinned to Filecoin: bafylocalc8eb09b096188c24f44b084dc825f0e75feaf036e174cdb9",
+    "action": "pin",
+    "logCID": "bafylocalc8eb09b096188c24f44b084dc825f0e75feaf036e174cdb9"
+  },
+  {
+    "timestamp": 1774085770.257393,
+    "iso": "2026-03-21T17:36:10Z",
+    "message": "Single cycle complete (--once mode)",
+    "action": "stop"
+  },
+  {
+    "timestamp": 1774085788.976301,
+    "iso": "2026-03-21T17:36:28Z",
+    "message": "Fetched reviews via x402 gateway (dryRun)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0.001 USDC",
+    "network": "base-sepolia",
+    "mode": "dryRun"
+  },
+  {
+    "timestamp": 1774085788.979529,
+    "iso": "2026-03-21T17:36:28Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774086739.8580961,
+    "iso": "2026-03-21T17:52:19Z",
+    "message": "Fetched reviews via x402 gateway (dryRun)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0.001 USDC",
+    "network": "base-sepolia",
+    "mode": "dryRun"
+  },
+  {
+    "timestamp": 1774086739.860806,
+    "iso": "2026-03-21T17:52:19Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
   }
 ]
