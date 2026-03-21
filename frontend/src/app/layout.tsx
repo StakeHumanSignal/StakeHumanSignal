@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import { Providers } from "@/components/Providers";
+import { TopBar } from "@/components/TopBar";
 
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-headline",
@@ -33,47 +35,13 @@ const NAV_ITEMS = [
   { href: "/agent-feed", icon: "terminal", label: "Agent Feed" },
 ];
 
-const TOP_NAV = [
-  { href: "/marketplace", label: "Marketplace" },
-  { href: "/submit", label: "Submission" },
-  { href: "/leaderboard", label: "Leaderboard" },
-];
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`dark ${spaceGrotesk.variable} ${inter.variable} ${jetbrainsMono.variable} antialiased`}>
       <body className="min-h-screen bg-background text-on-surface font-[family-name:var(--font-body)]">
+        <Providers>
         {/* TopAppBar */}
-        <nav className="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-[#0e0e0e]/80 backdrop-blur-xl border-b border-[#00F0FF]/10 shadow-[0_0_20px_rgba(0,240,255,0.05)]">
-          <div className="flex items-center gap-8">
-            <Link href="/" className="text-xl font-bold tracking-tighter text-[#00F0FF] font-[family-name:var(--font-headline)] uppercase">
-              StakeHumanSignal
-            </Link>
-            <div className="hidden md:flex items-center gap-6 font-[family-name:var(--font-headline)] tracking-tight text-sm uppercase">
-              {TOP_NAV.map((n) => (
-                <Link
-                  key={n.href}
-                  href={n.href}
-                  className="text-white/60 hover:text-white transition-colors"
-                >
-                  {n.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="hidden lg:flex items-center gap-2 bg-surface-container-low px-3 py-1.5 rounded-lg border border-white/5">
-              <span className="text-[10px] text-white/40 font-[family-name:var(--font-mono)]">STAKED:</span>
-              <span className="text-xs font-[family-name:var(--font-mono)] text-primary">0.00 wstETH</span>
-            </div>
-            <Link
-              href="/submit"
-              className="bg-primary-container text-on-primary-container px-4 py-2 font-[family-name:var(--font-headline)] text-xs font-bold uppercase transition-all hover:brightness-110 active:scale-95"
-            >
-              Stake Now
-            </Link>
-          </div>
-        </nav>
+        <TopBar />
 
         {/* SideNavBar */}
         <aside className="hidden md:flex fixed left-0 top-0 h-full flex-col z-[60] bg-[#131313] w-20 hover:w-64 transition-all duration-500 border-r border-white/5 font-[family-name:var(--font-mono)] text-xs overflow-hidden group">
@@ -133,6 +101,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <span className="hidden md:block">Block: 1840292</span>
           </div>
         </footer>
+        </Providers>
       </body>
     </html>
   );

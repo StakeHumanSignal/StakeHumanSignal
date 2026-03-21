@@ -1,5 +1,7 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAccount } from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { api } from "@/lib/api";
 
 const RUBRICS = [
@@ -11,6 +13,7 @@ const RUBRICS = [
 ];
 
 export default function Submit() {
+  const { address, isConnected } = useAccount();
   const [form, setForm] = useState({
     reviewer_address: "",
     task_intent: "",
@@ -26,6 +29,12 @@ export default function Submit() {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [result, setResult] = useState<{ id?: string; filecoin_cid?: string } | null>(null);
   const [charCount, setCharCount] = useState(0);
+
+  useEffect(() => {
+    if (isConnected && address) {
+      setForm((f) => ({ ...f, reviewer_address: address }));
+    }
+  }, [isConnected, address]);
 
   const set = (k: string, v: unknown) => setForm((f) => ({ ...f, [k]: v }));
   const setRubric = (k: string, v: number) =>
@@ -120,12 +129,34 @@ export default function Submit() {
           <h2 className="font-[family-name:var(--font-headline)] text-sm font-medium text-on-surface uppercase tracking-widest mb-4">
             Wallet Address
           </h2>
-          <input
-            className="w-full bg-surface-container-lowest border border-outline-variant p-4 font-[family-name:var(--font-mono)] text-xs text-on-surface-variant focus:border-primary focus:ring-0 placeholder:text-white/10"
-            placeholder="0x..."
-            value={form.reviewer_address}
-            onChange={(e) => set("reviewer_address", e.target.value)}
-          />
+          {isConnected ? (
+            <input
+              className="w-full bg-surface-container-lowest border border-outline-variant p-4 font-[family-name:var(--font-mono)] text-xs text-on-surface-variant focus:border-primary focus:ring-0 placeholder:text-white/10"
+              placeholder="0x..."
+              value={form.reviewer_address}
+              readOnly
+            />
+          ) : (
+            <div className="flex flex-col gap-3">
+              <input
+                className="w-full bg-surface-container-lowest border border-outline-variant p-4 font-[family-name:var(--font-mono)] text-xs text-on-surface-variant focus:border-primary focus:ring-0 placeholder:text-white/10"
+                placeholder="0x... (connect wallet to auto-fill)"
+                value={form.reviewer_address}
+                onChange={(e) => set("reviewer_address", e.target.value)}
+              />
+              <ConnectButton.Custom>
+                {({ openConnectModal }) => (
+                  <button
+                    onClick={openConnectModal}
+                    type="button"
+                    className="self-start bg-primary-container text-on-primary-container px-4 py-2 font-[family-name:var(--font-headline)] text-xs font-bold uppercase transition-all hover:brightness-110 active:scale-95"
+                  >
+                    Connect Wallet to Auto-Fill
+                  </button>
+                )}
+              </ConnectButton.Custom>
+            </div>
+          )}
         </section>
 
         {/* Task Intent */}

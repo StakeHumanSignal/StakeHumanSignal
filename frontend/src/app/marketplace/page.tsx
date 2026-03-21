@@ -279,6 +279,7 @@ function VerdictRow({ review }: { review: Review }) {
           <span className="text-[9px] text-white/30 font-[family-name:var(--font-mono)] italic">
             402 Payment Required
           </span>
+          <span className="text-[9px] text-white/30 font-[family-name:var(--font-mono)]">Agents pay automatically via x402 protocol</span>
         </div>
       </td>
     </tr>
