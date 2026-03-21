@@ -12,39 +12,46 @@ import time
 import httpx
 
 FILECOIN_BRIDGE_URL = os.getenv("FILECOIN_BRIDGE_URL", "http://localhost:3001")
+LIGHTHOUSE_API_KEY = os.getenv("LIGHTHOUSE_API_KEY", "")
 
 
 async def store_review(review_data: dict) -> str | None:
-    """Store review JSON to Filecoin. Returns CID or None on failure."""
-    content = json.dumps({
+    """Store review JSON to Filecoin. Uses Lighthouse if API key set, else bridge."""
+    data = {
         "type": "review",
         "version": "1.0",
         "data": review_data,
         "timestamp": time.time(),
-    })
-    return await _store(content, "review.json")
+    }
+    if LIGHTHOUSE_API_KEY:
+        return await _store_lighthouse(data)
+    return await _store(json.dumps(data), "review.json")
 
 
 async def store_outcome(outcome_data: dict) -> str | None:
-    """Store outcome signal to Filecoin. Returns CID or None on failure."""
-    content = json.dumps({
+    """Store outcome signal to Filecoin. Uses Lighthouse if API key set, else bridge."""
+    data = {
         "type": "outcome",
         "version": "1.0",
         "data": outcome_data,
         "timestamp": time.time(),
-    })
-    return await _store(content, "outcome.json")
+    }
+    if LIGHTHOUSE_API_KEY:
+        return await _store_lighthouse(data)
+    return await _store(json.dumps(data), "outcome.json")
 
 
 async def store_agent_log(log_entries: list) -> str | None:
-    """Store agent_log.json entries to Filecoin. Returns CID or None on failure."""
-    content = json.dumps({
+    """Store agent_log.json entries to Filecoin. Uses Lighthouse if API key set, else bridge."""
+    data = {
         "type": "agent_log",
         "version": "1.0",
         "entries": log_entries,
         "timestamp": time.time(),
-    })
-    return await _store(content, "agent_log.json")
+    }
+    if LIGHTHOUSE_API_KEY:
+        return await _store_lighthouse(data)
+    return await _store(json.dumps(data), "agent_log.json")
 
 
 async def retrieve(cid: str) -> dict | None:
@@ -75,10 +82,30 @@ async def health() -> dict:
     return {"status": "unavailable", "network": "offline"}
 
 
+# --- Lighthouse SDK path (real Filecoin/IPFS) ---
+
+async def _store_lighthouse(data: dict) -> str | None:
+    """Store via Lighthouse SDK (real Filecoin/IPFS)."""
+    try:
+        import lighthouseweb3
+        lh = lighthouseweb3.Lighthouse(token=LIGHTHOUSE_API_KEY)
+        content = json.dumps(data, indent=2)
+        response = lh.uploadText(content)
+        cid = response.get("data", {}).get("Hash", "")
+        if cid:
+            print(f"[Filecoin] Stored on Lighthouse: {cid}")
+            return cid
+    except Exception as e:
+        print(f"[Filecoin] Lighthouse failed: {e}")
+    return None
+
+
 # --- Legacy API (backward compat) ---
 
 async def store_on_filecoin(data: dict) -> str | None:
     """Legacy: store raw dict to Filecoin. Returns CID or None."""
+    if LIGHTHOUSE_API_KEY:
+        return await _store_lighthouse(data)
     return await _store(json.dumps(data), "data.json")
 
 

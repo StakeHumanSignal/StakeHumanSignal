@@ -77,6 +77,17 @@ async def signal_outcome(outcome: OutcomeSignal):
         outcome=outcome_str,
     )
 
+    # 4. Distribute Lido yield to winner (best-effort)
+    try:
+        yield_result = await web3_svc.distribute_yield(
+            winner=outcome.winner_address,
+            amount=0  # distribute available yield
+        )
+        if yield_result:
+            print(f"[Yield] Distributed to {outcome.winner_address}: {yield_result}")
+    except Exception as e:
+        print(f"[Yield] Distribution skipped: {e}")
+
     # Downstream validation: update source claim if referenced
     if outcome.source_claim_id and outcome.outcome_validated is not None:
         update_claim_score(
