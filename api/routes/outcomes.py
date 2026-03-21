@@ -13,6 +13,10 @@ class OutcomeSignal(BaseModel):
     review_id: str
     score: float
     reasoning: str
+    # Structured claim fields (optional during transition)
+    rubric_scores: Optional[dict] = None
+    confidence_level: Optional[float] = None
+    downstream_outcome: Optional[str] = None
 
 
 class OutcomeResponse(BaseModel):
@@ -22,6 +26,7 @@ class OutcomeResponse(BaseModel):
     complete_tx: Optional[str] = None
     receipt_token_id: Optional[int] = None
     filecoin_cid: Optional[str] = None
+    rubric_weighted_score: Optional[float] = None
 
 
 @router.post("", response_model=OutcomeResponse)
@@ -38,21 +43,37 @@ async def signal_outcome(outcome: OutcomeSignal):
     from api.services.venice import score_review_privately
     from api.routes.reviews import reviews_db
 
+    from api.services.scorer import compute_weighted_rubric_score
+
     web3_svc = get_web3_service()
 
-    # Update review score
+    # Compute weighted rubric score if available
+    rubric_weighted = None
+    if outcome.rubric_scores:
+        rubric_weighted = compute_weighted_rubric_score(outcome.rubric_scores)
+
+    # Update review score and rubric data
     if outcome.review_id in reviews_db:
         reviews_db[outcome.review_id]["score"] = outcome.score
+        if outcome.rubric_scores:
+            reviews_db[outcome.review_id]["rubric_scores"] = outcome.rubric_scores
 
     # 1. Complete job on-chain (ERC-8183)
     complete_result = await web3_svc.complete_job(outcome.job_id)
 
-    # 2. Mint ERC-8004 receipt
+    # 2. Build outcome string for ERC-8004 receipt
+    if rubric_weighted is not None:
+        confidence = outcome.confidence_level if outcome.confidence_level else 0.0
+        outcome_str = f"rubric_avg:{rubric_weighted:.3f},confidence:{confidence:.2f},winner:{outcome.winner_address[:10]}"
+    else:
+        outcome_str = f"score:{outcome.score},reason:{outcome.reasoning}"
+
+    # 3. Mint ERC-8004 receipt
     receipt_result = await web3_svc.mint_receipt(
         job_id=outcome.job_id,
         winner=outcome.winner_address,
         api_url=reviews_db.get(outcome.review_id, {}).get("api_url", ""),
-        outcome=f"score:{outcome.score},reason:{outcome.reasoning}",
+        outcome=outcome_str,
     )
 
     return OutcomeResponse(
@@ -62,4 +83,5 @@ async def signal_outcome(outcome: OutcomeSignal):
         complete_tx=complete_result.get("tx_hash"),
         receipt_token_id=receipt_result.get("token_id"),
         filecoin_cid=receipt_result.get("filecoin_cid"),
+        rubric_weighted_score=rubric_weighted,
     )

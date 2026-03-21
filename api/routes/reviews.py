@@ -1,8 +1,8 @@
 """Review routes — submit, list, and ranked access (x402-gated)."""
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
-from typing import Optional
+from pydantic import BaseModel, field_validator
+from typing import Literal, Optional
 import time
 import uuid
 
@@ -11,14 +11,72 @@ router = APIRouter()
 # In-memory store (replace with DB for production)
 reviews_db: dict[str, dict] = {}
 
+# Valid enums for structured claims
+VALID_TASK_TYPES = {"code_review", "analysis", "creative", "data_extraction", "customer_support", "other"}
+VALID_WINNERS = {"policy_a", "policy_b", "tie"}
+VALID_CONFIDENCE_LEVELS = {"low", "medium", "high"}
+RUBRIC_DIMENSIONS = {"correctness", "efficiency", "relevance", "completeness", "reasoning_quality"}
+
 
 class ReviewSubmission(BaseModel):
+    # Legacy fields (always required for backward compat)
     api_url: str
     review_text: str
     reviewer_address: str
     stake_amount: float
     stake_tx_hash: str
     job_id: Optional[int] = None
+
+    # Structured claim fields (optional during transition)
+    task_type: Optional[str] = None
+    context_description: Optional[str] = None
+    policy_a: Optional[dict] = None
+    policy_b: Optional[dict] = None
+    winner: Optional[str] = None
+    rubric_scores: Optional[dict] = None
+    confidence_level: Optional[dict] = None
+    reviewer_segment: Optional[str] = None
+    reasoning: Optional[str] = None
+    downstream_outcome: Optional[str] = None
+
+    @field_validator("task_type")
+    @classmethod
+    def validate_task_type(cls, v):
+        if v is not None and v not in VALID_TASK_TYPES:
+            raise ValueError(f"task_type must be one of {VALID_TASK_TYPES}, got '{v}'")
+        return v
+
+    @field_validator("winner")
+    @classmethod
+    def validate_winner(cls, v):
+        if v is not None and v not in VALID_WINNERS:
+            raise ValueError(f"winner must be one of {VALID_WINNERS}, got '{v}'")
+        return v
+
+    @field_validator("rubric_scores")
+    @classmethod
+    def validate_rubric_scores(cls, v):
+        if v is None:
+            return v
+        for dim in RUBRIC_DIMENSIONS:
+            if dim in v:
+                val = v[dim]
+                if not isinstance(val, (int, float)) or val < 0.0 or val > 1.0:
+                    raise ValueError(f"rubric_scores.{dim} must be between 0.0 and 1.0, got {val}")
+        return v
+
+    @field_validator("confidence_level")
+    @classmethod
+    def validate_confidence_level(cls, v):
+        if v is None:
+            return v
+        level = v.get("level")
+        numeric = v.get("numeric")
+        if level is not None and level not in VALID_CONFIDENCE_LEVELS:
+            raise ValueError(f"confidence_level.level must be one of {VALID_CONFIDENCE_LEVELS}, got '{level}'")
+        if numeric is not None and (not isinstance(numeric, (int, float)) or numeric < 0.0 or numeric > 1.0):
+            raise ValueError(f"confidence_level.numeric must be between 0.0 and 1.0, got {numeric}")
+        return v
 
 
 class ReviewResponse(BaseModel):
@@ -32,6 +90,11 @@ class ReviewResponse(BaseModel):
     win_rate: Optional[float] = None
     filecoin_cid: Optional[str] = None
     created_at: float
+    # Structured claim fields
+    task_type: Optional[str] = None
+    rubric_scores: Optional[dict] = None
+    confidence_level: Optional[dict] = None
+    winner: Optional[str] = None
 
 
 @router.post("", response_model=ReviewResponse)
@@ -50,6 +113,17 @@ async def submit_review(review: ReviewSubmission):
         "win_rate": None,
         "filecoin_cid": None,
         "created_at": time.time(),
+        # Structured claim fields
+        "task_type": review.task_type,
+        "context_description": review.context_description,
+        "policy_a": review.policy_a,
+        "policy_b": review.policy_b,
+        "winner": review.winner,
+        "rubric_scores": review.rubric_scores,
+        "confidence_level": review.confidence_level,
+        "reviewer_segment": review.reviewer_segment,
+        "reasoning": review.reasoning,
+        "downstream_outcome": review.downstream_outcome,
     }
     reviews_db[review_id] = entry
     return ReviewResponse(**entry)
