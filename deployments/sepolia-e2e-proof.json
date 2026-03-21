@@ -1,0 +1,34 @@
+{
+  "network": "base-sepolia",
+  "chainId": 84532,
+  "timestamp": "2026-03-21T08:35:00Z",
+  "deployer": "0x557E1E07652B75ABaA667223B11704165fC94d09",
+  "contracts": {
+    "stakeHumanSignalJob": "0xE99027DDdF153Ac6305950cD3D58C25D17E39902",
+    "lidoTreasury": "0x8E29D161477D9BB00351eA2f69702451443d7bf5",
+    "receiptRegistry": "0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332"
+  },
+  "txs": {
+    "setLidoTreasury": "0x77b4bbe35134921704fad8d63063f66db788da7cb7b251e117fbd4a4ce75fa51",
+    "setReceiptRegistry": "0xc757fda9f70d9a5301ac4025185c70546eafac814f8ea94086efdb7ebcd5daaf",
+    "whitelistJobOnTreasury": "0xa250436d74d89040fc78f1b850d7588a171265db41a91d758b8c25b38042f70e",
+    "whitelistDeployerOnTreasury": "0xc1b762f9099c8bfc057f2b04776071170a496dac7fe35b6f59fd6fae571ef6f9",
+    "setMinterJobOnRegistry": "0x8ea7f9f613db0a50fdafc78f7076872bc99fefea9c8ade97edb9dfe23b9498ca",
+    "setMinterDeployerOnRegistry": "0xf666bed2677751854490dae011331639d169390eb58dcbd39d07d45a430a91d5",
+    "createJob": "0x3dee4cc14ef330eb2318114ea4c221e04092c99856faca2984dad3c9e405f6da",
+    "receiptMinted": "0x3740a500ca742f0edd47265270942fdae2d5f14566ba53e0500af1e91e7e03e8"
+  },
+  "cids": {
+    "reviewStorage": "bafylocale2e-phase9-proof"
+  },
+  "receiptTokenId": "0",
+  "onChainVerification": {
+    "totalReceipts": 1,
+    "agentWins": 1,
+    "agentJobs": 1,
+    "independenceSelf": 0,
+    "independenceUnrelated": 100,
+    "jobHasReceipt": true,
+    "receiptOwner": "0x557E1E07652B75ABaA667223B11704165fC94d09"
+  }
+}
