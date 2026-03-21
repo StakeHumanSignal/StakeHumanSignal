@@ -71,7 +71,7 @@ async def fetch_top_reviews_x402() -> list[dict]:
 
 def score_reviews_heuristic(reviews: list[dict]) -> list[dict]:
     """Score each review using local heuristic scorer."""
-    from api.services.venice import score_output
+    from api.services.scorer_local import score_output
 
     scored = []
     for review in reviews:

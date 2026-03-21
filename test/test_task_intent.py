@@ -73,7 +73,7 @@ class TestHeuristicScorer:
     """score_output() returns rubric scores without external API."""
 
     def test_returns_all_rubric_dimensions(self):
-        from api.services.venice import score_output
+        from api.services.scorer_local import score_output
 
         claim = {"reasoning": "found edge cases in error handling"}
         result = score_output(claim, "The error handling covers edge cases well", "evaluate code review")
@@ -86,7 +86,7 @@ class TestHeuristicScorer:
         assert "confidence" in result
 
     def test_high_relevance_when_terms_match(self):
-        from api.services.venice import score_output
+        from api.services.scorer_local import score_output
 
         claim = {"reasoning": "excellent error handling with retry logic"}
         output = "The code uses error handling and retry logic effectively"
@@ -94,7 +94,7 @@ class TestHeuristicScorer:
         assert result["relevance"] > 0.5
 
     def test_low_relevance_when_terms_mismatch(self):
-        from api.services.venice import score_output
+        from api.services.scorer_local import score_output
 
         claim = {"reasoning": "excellent error handling with retry logic"}
         output = "The weather today is sunny and warm"
@@ -102,7 +102,7 @@ class TestHeuristicScorer:
         assert result["relevance"] < 0.5
 
     def test_validated_verdict_above_threshold(self):
-        from api.services.venice import score_output
+        from api.services.scorer_local import score_output
 
         claim = {"reasoning": "good analysis of trading patterns and volatility metrics"}
         output = "The analysis covers trading patterns and volatility metrics comprehensively " * 20
@@ -111,7 +111,7 @@ class TestHeuristicScorer:
         assert result["confidence"] > 0.6
 
     def test_rejected_verdict_below_threshold(self):
-        from api.services.venice import score_output
+        from api.services.scorer_local import score_output
 
         claim = {"reasoning": "deep analysis of quantum computing algorithms"}
         output = "hi"
@@ -120,14 +120,14 @@ class TestHeuristicScorer:
         assert result["confidence"] <= 0.6
 
     def test_empty_reasoning_uses_default(self):
-        from api.services.venice import score_output
+        from api.services.scorer_local import score_output
 
         claim = {"reasoning": ""}
         result = score_output(claim, "some output text here", "general task")
         assert result["relevance"] == 0.5  # default when no reasoning terms
 
     def test_scores_bounded_zero_to_one(self):
-        from api.services.venice import score_output
+        from api.services.scorer_local import score_output
 
         claim = {"reasoning": "test analysis of complex systems"}
         output = "test " * 1000  # very long output
