@@ -30,8 +30,9 @@ typechain-types/
 .DS_Store
 Thumbs.db
 
-# Runtime data
-api/data/
+# Runtime data (but allow seed file)
+api/data/*
+!api/data/reviews.json
 
 # Deployment
 deployments/localhost/
