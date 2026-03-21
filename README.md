@@ -1,20 +1,126 @@
 # StakeHumanSignal
 
-**Staked human feedback marketplace** — humans stake crypto on AI review quality, buyer agents pay via x402 to access top-ranked reviews, and winning reviewers earn Lido stETH yield. Everything verified on-chain via ERC-8004 receipts.
+> Humans stake crypto on AI review quality — winners earn Lido yield, agents get better signal.
 
-## How It Works
+---
+
+## Sequence Diagram
 
 ```
-Human Reviewer          Buyer Agent            Smart Contracts
-     │                       │                       │
-     ├─ Stake USDC ──────────┼──────────────────────► │ ERC-8183 Job Created
-     ├─ Submit Review ───────┼──────────────────────► │ Job Submitted
-     │                       ├─ Pay x402 ───────────► │
-     │                       ├─ Score via Venice ───► │ Private LLM
-     │                       ├─ Pick Winner ────────► │ Job Completed
-     ◄─ Earn wstETH Yield ──┤                        │ Lido Treasury
-     │                       │                        │ ERC-8004 Receipt Minted
-     │                       │                        │ Stored on Filecoin FOC
+  Human Reviewer           x402 Gateway            Buyer Agent             Base Mainnet
+  ──────────────           ────────────            ───────────             ────────────
+        │                       │                       │                       │
+        │  1. createJob(spec)   │                       │                       │
+        ├───────────────────────┼───────────────────────┼──────────────────────►│
+        │                       │                       │         JobCreated #0 │
+        │                       │                       │◄──────────────────────┤
+        │                       │                       │                       │
+        │  2. fund(jobId, USDC) │                       │                       │
+        ├───────────────────────┼───────────────────────┼──────────────────────►│
+        │                       │                       │    USDC → LidoTreasury│
+        │                       │                       │◄──────────────────────┤
+        │                       │                       │                       │
+        │  3. submit(hash)      │                       │                       │
+        ├───────────────────────┼───────────────────────┼──────────────────────►│
+        │                       │                       │        JobSubmitted   │
+        │                       │                       │◄──────────────────────┤
+        │                       │                       │                       │
+        │                       │  4. GET /reviews/top  │                       │
+        │                       │◄──────────────────────┤                       │
+        │                       │   (x402: 0.001 USDC)  │                       │
+        │                       ├──────────────────────►│                       │
+        │                       │   ranked reviews      │                       │
+        │                       │                       │                       │
+        │                       │                       │  5. Venice LLM score  │
+        │                       │                       ├──────►[Venice AI]     │
+        │                       │                       │◄──────{score: 87}     │
+        │                       │                       │                       │
+        │                       │                       │  6. complete(jobId)   │
+        │                       │                       ├──────────────────────►│
+        │                       │                       │        JobCompleted   │
+        │                       │                       │◄──────────────────────┤
+        │                       │                       │                       │
+        │                       │                       │  7. mintReceipt()     │
+        │                       │                       ├──────────────────────►│
+        │                       │                       │    ERC-8004 NFT #0    │
+        │                       │                       │◄──────────────────────┤
+        │                       │                       │                       │
+        │  8. wstETH yield      │                       │  distributeYield()    │
+        │◄──────────────────────┼───────────────────────┼──────────────────────►│
+        │     (winner earns)    │                       │    wstETH → winner    │
+        │                       │                       │◄──────────────────────┤
+        │                       │                       │                       │
+        │                       │                       │  9. store on Filecoin │
+        │                       │                       ├──────►[FOC]           │
+        │                       │                       │◄──────{cid: bafy...}  │
+        ▼                       ▼                       ▼                       ▼
+```
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│                        StakeHumanSignal                             │
+├─────────────────────────────────────────────────────────────────────┤
+│                                                                     │
+│  ┌─────────────┐    ┌──────────────┐    ┌────────────────────────┐ │
+│  │   Frontend   │───►│  x402 Gateway │───►│   FastAPI Backend     │ │
+│  │  (Next.js)   │    │  (Express)    │    │   :8000               │ │
+│  │  :3000       │    │  :3000        │    │                        │ │
+│  └─────────────┘    │               │    │  /reviews  /jobs       │ │
+│                      │  Payment gate │    │  /reviews/top          │ │
+│                      │  on /top only │    │  /outcomes             │ │
+│                      └──────────────┘    └────────┬───────────────┘ │
+│                                                    │                 │
+│                    ┌───────────────────────────────┼─────────┐       │
+│                    │                               │         │       │
+│              ┌─────▼──────┐  ┌─────────────┐  ┌───▼───────┐ │       │
+│              │  Venice AI  │  │  Filecoin   │  │  Web3     │ │       │
+│              │  (scoring)  │  │  FOC        │  │  Client   │ │       │
+│              │  llama-3.3  │  │  (storage)  │  │  (web3.py)│ │       │
+│              └────────────┘  └─────────────┘  └───┬───────┘ │       │
+│                                                    │         │       │
+│                    ┌───────────────────────────────┘         │       │
+│                    │         Base (Sepolia / Mainnet)        │       │
+│              ┌─────▼───────────────────────────────────┐     │       │
+│              │                                         │     │       │
+│              │  ┌──────────────────┐  ┌─────────────┐  │     │       │
+│              │  │StakeHumanSignal  │  │   Lido      │  │     │       │
+│              │  │Job (ERC-8183)    │  │   Treasury  │  │     │       │
+│              │  │                  │──►│   (wstETH)  │  │     │       │
+│              │  │ createJob()      │  │             │  │     │       │
+│              │  │ fund()           │  │ principal   │  │     │       │
+│              │  │ submit()         │  │ locked      │  │     │       │
+│              │  │ complete()       │  │ yield only  │  │     │       │
+│              │  │ reject()         │  └─────────────┘  │     │       │
+│              │  └────────┬─────────┘                   │     │       │
+│              │           │                             │     │       │
+│              │  ┌────────▼─────────┐                   │     │       │
+│              │  │ReceiptRegistry   │                   │     │       │
+│              │  │(ERC-8004 NFTs)   │                   │     │       │
+│              │  │                  │                   │     │       │
+│              │  │ mintReceipt()    │                   │     │       │
+│              │  │ jobId + winner   │                   │     │       │
+│              │  │ + CID + score    │                   │     │       │
+│              │  └──────────────────┘                   │     │       │
+│              │                                         │     │       │
+│              └─────────────────────────────────────────┘     │       │
+│                                                              │       │
+│              ┌───────────────────────────────────────────┐   │       │
+│              │  Buyer Agent (autonomous Python loop)     │   │       │
+│              │                                           │   │       │
+│              │  every 60s:                               │   │       │
+│              │    1. fetch /reviews/top (x402 payment)   │   │       │
+│              │    2. score with Venice LLM               │   │       │
+│              │    3. pick winner (highest score)          │   │       │
+│              │    4. complete() on-chain                  │   │       │
+│              │    5. mintReceipt() ERC-8004               │   │       │
+│              │    6. store outcome on Filecoin FOC        │   │       │
+│              │    7. log to agent_log.json                │   │       │
+│              └───────────────────────────────────────────┘   │       │
+│                                                              │       │
+└──────────────────────────────────────────────────────────────┘       │
+                                                                       │
 ```
 
 ## Deployed Contracts (Base Sepolia)
