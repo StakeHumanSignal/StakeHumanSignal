@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.routes import reviews, jobs, outcomes
 from api.routes.agent import router as agent_router
 from api.routes.leaderboard import router as leaderboard_router
+from api.routes.sessions import router as sessions_router
 
 app = FastAPI(
     title="StakeHumanSignal",
@@ -25,6 +26,7 @@ app.include_router(jobs.router, prefix="/jobs", tags=["jobs"])
 app.include_router(outcomes.router, prefix="/outcomes", tags=["outcomes"])
 app.include_router(agent_router)
 app.include_router(leaderboard_router)
+app.include_router(sessions_router)
 
 
 @app.get("/")

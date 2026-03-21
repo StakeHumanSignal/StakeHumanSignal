@@ -33,6 +33,7 @@ const NAV_ITEMS = [
   { href: "/submit", icon: "work_outline", label: "Evaluator Jobs" },
   { href: "/leaderboard", icon: "leaderboard", label: "Leaderboard" },
   { href: "/agent-feed", icon: "terminal", label: "Agent Feed" },
+  { href: "/validate", icon: "verified_user", label: "Validate" },
 ];
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
