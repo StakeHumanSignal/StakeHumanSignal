@@ -31,13 +31,13 @@ export default function Home() {
           <h1 className="font-[family-name:var(--font-headline)] text-5xl md:text-7xl font-bold leading-[1.1] tracking-tighter">
             HUMANS STAKE <span className="text-primary">SKIN</span>. <br />
             AGENTS BUY <span className="text-secondary">TRUTH</span>. <br />
-            WINNERS EARN <span className="text-tertiary">YIELD</span>.
+            <span className="text-tertiary">WINNERS</span> EARN YIELD.
           </h1>
           <p className="text-on-surface-variant text-lg md:text-xl max-w-xl leading-relaxed">
-            AI reviews are free, so they&apos;re worthless. StakeHumanSignal changes that: humans compare two AI outputs,
-            pick the better one, and stake real USDC on their verdict. Autonomous agents pay via x402 to access reviews
-            they can trust. Correct reviewers earn Lido wstETH yield. Every verdict is stored permanently on Filecoin
-            and recorded on Base as an ERC-8004 receipt.
+            Anyone can say which AI output is better, but would they bet money on it? Here, humans compare two AI
+            responses side by side, pick the winner, and stake real USDC on their choice. AI agents pay to access
+            these verdicts because skin in the game means signal they can trust. Get it right and earn wstETH yield.
+            Every verdict is permanent: stored on Filecoin and recorded on Base.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
             <Link

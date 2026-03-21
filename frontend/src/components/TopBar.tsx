@@ -9,6 +9,7 @@ const TOP_NAV = [
   { href: '/submit', label: 'Submission' },
   { href: '/leaderboard', label: 'Leaderboard' },
   { href: '/agent-feed', label: 'Agent Feed' },
+  { href: '/town-square', label: 'Town Square' },
   { href: '/validate', label: 'Validate' },
 ]
 

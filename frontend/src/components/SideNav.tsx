@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { href: "/submit", icon: "work_outline", label: "Evaluator Jobs" },
   { href: "/leaderboard", icon: "leaderboard", label: "Leaderboard" },
   { href: "/agent-feed", icon: "terminal", label: "Agent Feed" },
+  { href: "/town-square", icon: "hub", label: "Town Square" },
   { href: "/validate", icon: "verified_user", label: "Validate" },
 ]
 
@@ -29,6 +30,19 @@ const ICONS: Record<string, React.ReactNode> = {
   terminal: (
     <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+    </svg>
+  ),
+  hub: (
+    <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <circle cx="12" cy="12" r="3" />
+      <circle cx="5" cy="6" r="2" />
+      <circle cx="19" cy="6" r="2" />
+      <circle cx="5" cy="18" r="2" />
+      <circle cx="19" cy="18" r="2" />
+      <line x1="9.5" y1="10.5" x2="6.5" y2="7.5" />
+      <line x1="14.5" y1="10.5" x2="17.5" y2="7.5" />
+      <line x1="9.5" y1="13.5" x2="6.5" y2="16.5" />
+      <line x1="14.5" y1="13.5" x2="17.5" y2="16.5" />
     </svg>
   ),
   verified_user: (
