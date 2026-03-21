@@ -122,17 +122,6 @@ filecoin-bridge/                  # Filecoin FOC + x402 gateway
 test/                             # 128 tests (78 Solidity + 50 Python)
 ```
 
-## Team
-
-- **Ling Siew Win** (@LingSiewWin) — Core developer. Co-author of ERC-7857. ETHGlobal hackathon winner. GDG KL AI Lead. APU Malaysia CS (AI) graduate.
-- **Keita** (cruujon.eth) — CEO / product.
-
-## Key links
-
-- Agent ERC-8004 identity: [`0xcd3eb6...`](https://basescan.org/tx/0xcd3eb6582b19a2fad433a24396c0f55e78bf1ccdaea082ee9738fec26eacc1d0)
-- Demo video: [TBD — Phase 12]
-- Synthesis submission: [TBD — Phase 12]
-
 ## License
 
 MIT
