@@ -99,10 +99,8 @@ async def complete_and_reward(winner: dict):
     """Complete the ERC-8183 job and signal outcome."""
     try:
         async with httpx.AsyncClient(timeout=30) as client:
-            resp = await client.post(
-                f"{API_BASE}/outcomes",
-                json={
-                    "job_id": winner.get("job_id", 0),
+            payload = {
+                    "job_id": winner.get("job_id") or 0,
                     "winner_address": winner["reviewer_address"],
                     "review_id": winner["id"],
                     "score": winner["score"],
@@ -110,8 +108,10 @@ async def complete_and_reward(winner: dict):
                     "rubric_scores": winner.get("rubric_scores"),
                     "source_claim_id": winner.get("id"),
                     "outcome_validated": winner.get("verdict") == "validated",
-                },
-            )
+                }
+            resp = await client.post(f"{API_BASE}/outcomes", json=payload)
+            if resp.status_code != 200:
+                log(f"Outcomes API error {resp.status_code}: {resp.text[:200]}", action="error")
             return resp.json()
     except Exception as e:
         log(f"Complete error: {e}", action="error")

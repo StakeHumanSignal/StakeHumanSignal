@@ -8,7 +8,7 @@ router = APIRouter()
 
 
 class OutcomeSignal(BaseModel):
-    job_id: int
+    job_id: Optional[int] = 0
     winner_address: str
     review_id: str
     score: float
