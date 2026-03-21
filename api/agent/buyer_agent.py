@@ -16,7 +16,7 @@ import httpx
 
 LOG_FILE = Path("agent_log.json")
 API_BASE = os.getenv("API_BASE_URL", "http://localhost:8000")
-X402_GATEWAY = os.getenv("X402_GATEWAY_URL", "http://localhost:3000")
+X402_GATEWAY = os.getenv("X402_GATEWAY_URL", "")
 
 
 def log(msg: str, **kwargs):
@@ -33,23 +33,24 @@ async def fetch_top_reviews_x402() -> list[dict]:
     In production: pays 0.001 USDC via x402 header.
     In dev mode: uses dryRun=true or falls back to direct API.
     """
-    # Try x402 gateway with dryRun (dev mode)
-    try:
-        async with httpx.AsyncClient(timeout=15) as client:
-            resp = await client.get(f"{X402_GATEWAY}/reviews/top?dryRun=true")
-            if resp.status_code == 200:
-                data = resp.json()
-                log(
-                    f"Fetched reviews via x402 gateway (dryRun)",
-                    action="x402_payment",
-                    endpoint="/reviews/top",
-                    amount="0.001 USDC",
-                    network="base-sepolia",
-                    mode="dryRun",
-                )
-                return data.get("reviews", [])
-    except Exception:
-        pass  # Gateway not running, fall back
+    # Try x402 gateway with dryRun (dev mode) — only if explicitly configured
+    if X402_GATEWAY:
+        try:
+            async with httpx.AsyncClient(timeout=15) as client:
+                resp = await client.get(f"{X402_GATEWAY}/reviews/top?dryRun=true")
+                if resp.status_code == 200:
+                    data = resp.json()
+                    log(
+                        f"Fetched reviews via x402 gateway (dryRun)",
+                        action="x402_payment",
+                        endpoint="/reviews/top",
+                        amount="0.001 USDC",
+                        network="base-sepolia",
+                        mode="dryRun",
+                    )
+                    return data.get("reviews", [])
+        except Exception:
+            pass  # Gateway not running, fall back
 
     # Fallback: direct API (no x402 gate)
     try:
@@ -77,7 +78,7 @@ def score_reviews_heuristic(reviews: list[dict]) -> list[dict]:
     for review in reviews:
         claim = {"reasoning": review.get("reasoning", review.get("review_text", ""))}
         task_intent = review.get("task_intent", "general review")
-        result = score_output(claim, review.get("api_url", ""), task_intent)
+        result = score_output(claim, review.get("review_text", review.get("reasoning", "")), task_intent)
 
         review["score"] = round(result["confidence"] * 100)
         review["reasoning"] = result.get("summary", "")

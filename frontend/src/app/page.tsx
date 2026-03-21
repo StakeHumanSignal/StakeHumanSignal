@@ -90,7 +90,7 @@ export default function Home() {
           <div className="space-y-2">
             <p className="font-[family-name:var(--font-mono)] text-[10px] text-white/40 uppercase tracking-widest">Staked Verdicts</p>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-[family-name:var(--font-headline)] font-bold">{reviewCount > 0 ? reviewCount.toLocaleString() : "1,284"}</span>
+              <span className="text-3xl font-[family-name:var(--font-headline)] font-bold">{reviewCount.toLocaleString()}</span>
               <span className="text-xs text-tertiary neon-pulse px-1 font-[family-name:var(--font-mono)]">+12h</span>
             </div>
           </div>
