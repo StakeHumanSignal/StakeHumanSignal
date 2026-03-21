@@ -1,6 +1,6 @@
 """StakeHumanSignal Buyer Agent — autonomous loop.
 
-Queries reviews via x402, scores privately with Venice,
+Queries reviews via x402, scores with local heuristic scorer,
 completes ERC-8183 jobs, distributes yield, mints receipts.
 """
 
@@ -36,18 +36,22 @@ async def fetch_top_reviews() -> list[dict]:
         return []
 
 
-async def score_with_venice(reviews: list[dict]) -> list[dict]:
-    """Score each review privately using Venice LLM."""
-    from api.services.venice import score_review_privately
+def score_reviews_heuristic(reviews: list[dict]) -> list[dict]:
+    """Score each review using local heuristic scorer."""
+    from api.services.venice import score_output
 
     scored = []
     for review in reviews:
-        result = await score_review_privately(
-            review.get("review_text", ""),
-            review.get("api_url", ""),
-        )
-        review["score"] = result.get("score", 50)
-        review["reasoning"] = result.get("reasoning", "")
+        claim = {"reasoning": review.get("reasoning", review.get("review_text", ""))}
+        task_intent = review.get("task_intent", "general review")
+        result = score_output(claim, review.get("api_url", ""), task_intent)
+
+        review["score"] = round(result["confidence"] * 100)
+        review["reasoning"] = result.get("summary", "")
+        review["verdict"] = result["verdict"]
+        review["rubric_scores"] = {
+            k: result[k] for k in ["correctness", "efficiency", "relevance", "completeness", "reasoning_quality"]
+        }
         scored.append(review)
 
     scored.sort(key=lambda r: r.get("score", 0), reverse=True)
@@ -107,31 +111,42 @@ async def run():
                 await asyncio.sleep(60)
                 continue
 
-            # 2. Score privately with Venice LLM
-            scored = await score_with_venice(reviews)
-            log(f"Scored {len(scored)} reviews with Venice", action="score")
+            # 2. Score with local heuristic scorer
+            scored = score_reviews_heuristic(reviews)
+            log(f"Scored {len(scored)} reviews with heuristic scorer", action="score")
 
-            # 3. Pick winner (highest score)
-            winner = scored[0]
-            log(
-                f"Selected winner: {winner['reviewer_address']}, "
-                f"score={winner['score']}, stake={winner.get('stake_amount', 0)}",
-                action="select",
-                winner=winner["reviewer_address"],
-                score=winner["score"],
-            )
+            # 3. Process each scored review: complete or reject
+            for review in scored:
+                verdict = review.get("verdict", "rejected")
+                confidence = review.get("score", 0) / 100
 
-            # 4. Complete job on-chain + mint receipt + store on Filecoin
-            result = await complete_and_reward(winner)
-            log(
-                f"Completed job, tx={result.get('complete_tx')}, "
-                f"receipt={result.get('receipt_token_id')}, "
-                f"cid={result.get('filecoin_cid')}",
-                action="complete",
-                tx=result.get("complete_tx"),
-                receipt_id=result.get("receipt_token_id"),
-                cid=result.get("filecoin_cid"),
-            )
+                log(
+                    f"Heuristic: {review.get('id', '?')} verdict={verdict} "
+                    f"confidence={confidence:.2f}",
+                    action="heuristic_score",
+                    claim_id=review.get("id"),
+                    task_intent=review.get("task_intent", ""),
+                    verdict=verdict,
+                    confidence=confidence,
+                )
+
+                if verdict == "validated" and confidence > 0.6:
+                    result = await complete_and_reward(review)
+                    log(
+                        f"Completed job, tx={result.get('complete_tx')}, "
+                        f"receipt={result.get('receipt_token_id')}",
+                        action="complete",
+                        tx=result.get("complete_tx"),
+                        receipt_id=result.get("receipt_token_id"),
+                        cid=result.get("filecoin_cid"),
+                    )
+                else:
+                    log(
+                        f"Rejected review {review.get('id', '?')}: "
+                        f"verdict={verdict}, confidence={confidence:.2f}",
+                        action="reject",
+                        claim_id=review.get("id"),
+                    )
 
             # 5. Pin agent_log.json to Filecoin for immutable decision trail
             await pin_agent_log()

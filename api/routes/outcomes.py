@@ -17,6 +17,9 @@ class OutcomeSignal(BaseModel):
     rubric_scores: Optional[dict] = None
     confidence_level: Optional[float] = None
     downstream_outcome: Optional[str] = None
+    # Downstream validation loop
+    source_claim_id: Optional[str] = None
+    outcome_validated: Optional[bool] = None
 
 
 class OutcomeResponse(BaseModel):
@@ -40,10 +43,8 @@ async def signal_outcome(outcome: OutcomeSignal):
     4. Filecoin FOC permanent storage
     """
     from api.services.web3_client import get_web3_service
-    from api.services.venice import score_review_privately
     from api.routes.reviews import reviews_db
-
-    from api.services.scorer import compute_weighted_rubric_score
+    from api.services.scorer import compute_weighted_rubric_score, update_claim_score
 
     web3_svc = get_web3_service()
 
@@ -75,6 +76,14 @@ async def signal_outcome(outcome: OutcomeSignal):
         api_url=reviews_db.get(outcome.review_id, {}).get("api_url", ""),
         outcome=outcome_str,
     )
+
+    # Downstream validation: update source claim if referenced
+    if outcome.source_claim_id and outcome.outcome_validated is not None:
+        update_claim_score(
+            outcome.source_claim_id,
+            outcome.outcome_validated,
+            outcome.rubric_scores or {},
+        )
 
     return OutcomeResponse(
         job_id=outcome.job_id,

@@ -1,51 +1,82 @@
-"""Venice API — private LLM scoring for reviews."""
+"""Local heuristic scorer — replaces Venice API.
 
-import os
-import json
-import httpx
+No external API. No API key needed. Scores agent outputs against
+structured claim predictions using term matching and length heuristics.
+"""
 
-VENICE_BASE = "https://api.venice.ai/api/v1"
+STOP_WORDS = {"the", "a", "an", "is", "it", "to", "and", "or", "of", "in", "for", "on", "at", "by", "with", "was", "are", "be", "has", "had", "not", "but", "from", "this", "that"}
+
+
+def score_output(claim: dict, output: str, task_intent: str) -> dict:
+    """Score whether an agent output matches the claim's prediction.
+
+    Args:
+        claim: structured claim dict with 'reasoning' field
+        output: the agent's actual output text
+        task_intent: what the human was trying to accomplish
+
+    Returns:
+        dict with rubric scores (0.0-1.0), verdict, confidence, summary
+    """
+    reasoning_terms = claim.get("reasoning", "").lower().split()
+    reasoning_terms = [t for t in reasoning_terms if t not in STOP_WORDS and len(t) > 2]
+
+    output_lower = output.lower()
+
+    # relevance: reasoning terms found in output
+    if reasoning_terms:
+        relevance = sum(1 for t in reasoning_terms if t in output_lower) / len(reasoning_terms)
+    else:
+        relevance = 0.5
+
+    # completeness: output length proxy (~200 words = complete)
+    word_count = len(output.split())
+    completeness = min(word_count / 200, 1.0)
+
+    # efficiency: penalise very long outputs (>500 words = bloated)
+    efficiency = max(0.5, 1.0 - max(0, word_count - 200) / 600)
+
+    # correctness: assume well-formed output is baseline correct
+    correctness = 0.75
+
+    # reasoning quality: blend of relevance + completeness
+    reasoning_quality = relevance * 0.7 + completeness * 0.3
+
+    # weighted average (same weights as rubric schema)
+    avg = (
+        correctness * 0.30
+        + relevance * 0.25
+        + completeness * 0.20
+        + efficiency * 0.15
+        + reasoning_quality * 0.10
+    )
+
+    matched = len([t for t in reasoning_terms if t in output_lower])
+    total_terms = len(reasoning_terms)
+
+    return {
+        "correctness": round(correctness, 2),
+        "efficiency": round(efficiency, 2),
+        "relevance": round(relevance, 2),
+        "completeness": round(completeness, 2),
+        "reasoning_quality": round(reasoning_quality, 2),
+        "verdict": "validated" if avg > 0.6 else "rejected",
+        "confidence": round(avg, 2),
+        "summary": f"Heuristic score {avg:.0%}: {matched}/{total_terms} reasoning terms matched",
+    }
+
+
+# --- Legacy compat wrapper ---
 
 
 async def score_review_privately(review_text: str, api_output: str) -> dict:
-    """Score a review privately using Venice LLM.
+    """Legacy wrapper: converts old call signature to heuristic scorer.
 
     Returns: {"score": 0-100, "reasoning": "..."}
     """
-    api_key = os.getenv("VENICE_API_KEY")
-    if not api_key:
-        return {"score": 50, "reasoning": "Venice API key not configured — default score"}
-
-    async with httpx.AsyncClient(timeout=30) as client:
-        response = await client.post(
-            f"{VENICE_BASE}/chat/completions",
-            headers={"Authorization": f"Bearer {api_key}"},
-            json={
-                "model": "llama-3.3-70b",
-                "messages": [
-                    {
-                        "role": "system",
-                        "content": (
-                            "You are a private review scorer for StakeHumanSignal marketplace. "
-                            "Analyze the review quality against the actual API output. "
-                            "Score criteria: accuracy (40%), depth (30%), actionability (30%). "
-                            "Return ONLY a JSON object: {\"score\": 0-100, \"reasoning\": \"one sentence\"}"
-                        ),
-                    },
-                    {
-                        "role": "user",
-                        "content": f"Review: {review_text}\n\nAPI Output sample: {api_output[:500]}",
-                    },
-                ],
-                "venice_parameters": {"include_venice_system_prompt": False},
-            },
-        )
-
-    if response.status_code != 200:
-        return {"score": 50, "reasoning": f"Venice API error: {response.status_code}"}
-
-    content = response.json()["choices"][0]["message"]["content"]
-    try:
-        return json.loads(content)
-    except json.JSONDecodeError:
-        return {"score": 50, "reasoning": content[:200]}
+    claim = {"reasoning": review_text}
+    result = score_output(claim, api_output, "review")
+    return {
+        "score": round(result["confidence"] * 100),
+        "reasoning": result["summary"],
+    }

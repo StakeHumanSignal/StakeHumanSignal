@@ -19,6 +19,7 @@ class TestReviewSubmissionBackwardCompat:
             reviewer_address="0x557E1E07652B75ABaA667223B11704165fC94d09",
             stake_amount=10.0,
             stake_tx_hash="0xabc123",
+            task_intent="evaluate API response quality",
         )
         assert review.api_url == "https://api.openai.com/v1/chat/completions"
         assert review.review_text == "Great API, fast responses"
@@ -36,6 +37,7 @@ class TestReviewSubmissionBackwardCompat:
             stake_amount=5.0,
             stake_tx_hash="0xdef456",
             job_id=42,
+            task_intent="test API quality",
         )
         assert review.job_id == 42
 
@@ -52,6 +54,7 @@ class TestReviewSubmissionStructuredClaim:
             reviewer_address="0x557E1E07652B75ABaA667223B11704165fC94d09",
             stake_amount=10.0,
             stake_tx_hash="0xabc123",
+            task_intent="compare CSV parser implementations",
             task_type="code_review",
             context_description="Review a CSV parser function",
             policy_a={"model": "gpt-4o", "system_prompt_hash": "abc123", "tool_config": "none"},

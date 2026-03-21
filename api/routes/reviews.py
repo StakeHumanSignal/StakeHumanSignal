@@ -27,6 +27,9 @@ class ReviewSubmission(BaseModel):
     stake_tx_hash: str
     job_id: Optional[int] = None
 
+    # Task intent (required) — what the human was trying to accomplish
+    task_intent: str
+
     # Structured claim fields (optional during transition)
     task_type: Optional[str] = None
     context_description: Optional[str] = None
@@ -38,6 +41,15 @@ class ReviewSubmission(BaseModel):
     reviewer_segment: Optional[str] = None
     reasoning: Optional[str] = None
     downstream_outcome: Optional[str] = None
+
+    @field_validator("task_intent")
+    @classmethod
+    def validate_task_intent(cls, v):
+        if not v or not v.strip():
+            raise ValueError("task_intent cannot be empty")
+        if len(v) > 200:
+            raise ValueError(f"task_intent must be at most 200 characters, got {len(v)}")
+        return v
 
     @field_validator("task_type")
     @classmethod
@@ -90,6 +102,7 @@ class ReviewResponse(BaseModel):
     win_rate: Optional[float] = None
     filecoin_cid: Optional[str] = None
     created_at: float
+    task_intent: Optional[str] = None
     # Structured claim fields
     task_type: Optional[str] = None
     rubric_scores: Optional[dict] = None
@@ -113,6 +126,7 @@ async def submit_review(review: ReviewSubmission):
         "win_rate": None,
         "filecoin_cid": None,
         "created_at": time.time(),
+        "task_intent": review.task_intent,
         # Structured claim fields
         "task_type": review.task_type,
         "context_description": review.context_description,

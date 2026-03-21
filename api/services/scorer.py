@@ -57,6 +57,32 @@ def rank_reviews(reviews: list[dict]) -> list[dict]:
     return scored + unscored
 
 
+def update_claim_score(source_claim_id: str, outcome_validated: bool, rubric_scores: dict) -> None:
+    """Update claim win/loss record based on downstream outcome.
+
+    If outcome_validated=True: increment wins, recalculate accuracy.
+    If outcome_validated=False: increment losses, recalculate accuracy.
+    downstream_accuracy = wins / (wins + losses)
+    """
+    from api.routes.reviews import reviews_db
+
+    claim = reviews_db.get(source_claim_id)
+    if not claim:
+        return
+
+    # Ensure counters exist
+    claim.setdefault("wins", 0)
+    claim.setdefault("losses", 0)
+
+    if outcome_validated:
+        claim["wins"] += 1
+    else:
+        claim["losses"] += 1
+
+    total = claim["wins"] + claim["losses"]
+    claim["downstream_accuracy"] = claim["wins"] / total if total > 0 else 0.0
+
+
 def get_independence_score(reviewer_address: str, agent_owner_address: str) -> float:
     """Score how independent a reviewer is from the agent owner.
 
