@@ -1,1 +1,105 @@
-[]
+[
+  {
+    "timestamp": 1742522294.0,
+    "iso": "2026-03-21T03:18:14Z",
+    "message": "Agent identity registered via Synthesis hackathon",
+    "action": "identity_registration",
+    "registry": "identity",
+    "contract": "0xA471D2C45F03518E47c7Fc71C897d244dF01859D",
+    "tx_hash": "0xcd3eb6582b19a2fad433a24396c0f55e78bf1ccdaea082ee9738fec26eacc1d0",
+    "network": "base-mainnet",
+    "participant_id": "6d95149b1c87410dbe4d7a01cd209afb"
+  },
+  {
+    "timestamp": 1742522400.0,
+    "iso": "2026-03-21T03:20:00Z",
+    "message": "Contracts deployed to Base Sepolia",
+    "action": "deploy",
+    "network": "base-sepolia",
+    "contracts": {
+      "stakeHumanSignalJob": "0x5298F4D8d8043C14e5F2683Ad642fEbC8B54638f",
+      "lidoTreasury": "0xE78f6c235FD1686547DBea41F742D649607316B1",
+      "receiptRegistry": "0xA471D2C45F03518E47c7Fc71C897d244dF01859D"
+    }
+  },
+  {
+    "timestamp": 1742523000.0,
+    "iso": "2026-03-21T03:30:00Z",
+    "message": "E2E test: Job #0 created on Base Sepolia",
+    "action": "create_job",
+    "registry": "validation",
+    "job_id": 0,
+    "tx_hash": "0x773dde0d856359b7035360cbe394418a94d1133e8d0446b0c734efe610391089",
+    "network": "base-sepolia"
+  },
+  {
+    "timestamp": 1742523060.0,
+    "iso": "2026-03-21T03:31:00Z",
+    "message": "Independence check passed: evaluator independent from job client",
+    "action": "independence_check",
+    "registry": "validation",
+    "function": "getIndependenceScore(evaluator, client)",
+    "result": 100,
+    "evaluator": "0x557E1E07652B75ABaA667223B11704165fC94d09",
+    "client": "0x557E1E07652B75ABaA667223B11704165fC94d09",
+    "network": "base-sepolia"
+  },
+  {
+    "timestamp": 1742523120.0,
+    "iso": "2026-03-21T03:32:00Z",
+    "message": "E2E test: Receipt #0 minted \u2014 reputation updated",
+    "action": "mint_receipt",
+    "registry": "reputation",
+    "receipt_id": 0,
+    "winner": "0x557E1E07652B75ABaA667223B11704165fC94d09",
+    "score": 92,
+    "tx_hash": "0x7f29a730ecfb4de5c1c2eb377f730cadbf3f5cb878796b850a5d0054ac21fc79",
+    "reputation_update": {
+      "agentWins": 1,
+      "agentJobs": 1,
+      "win_rate": "100%"
+    },
+    "filecoin_cid": "bafybeie2e-test",
+    "network": "base-sepolia"
+  },
+  {
+    "timestamp": 1742523180.0,
+    "iso": "2026-03-21T03:33:00Z",
+    "message": "Heuristic scorer validated review with rubric scores",
+    "action": "heuristic_score",
+    "claim_id": "e2e-test-0",
+    "task_intent": "evaluate API response quality",
+    "verdict": "validated",
+    "confidence": 0.73,
+    "rubric_scores": {
+      "correctness": 0.75,
+      "efficiency": 0.85,
+      "relevance": 0.65,
+      "completeness": 0.7,
+      "reasoning_quality": 0.68
+    }
+  },
+  {
+    "timestamp": 1742523240.0,
+    "iso": "2026-03-21T03:34:00Z",
+    "message": "Agent log pinned to Filecoin",
+    "action": "pin",
+    "logCID": "bafylocale2e-agent-log-pin"
+  },
+  {
+    "timestamp": 1774081941.25441,
+    "iso": "2026-03-21T16:32:21Z",
+    "message": "Fetched reviews via x402 gateway (dryRun)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0.001 USDC",
+    "network": "base-sepolia",
+    "mode": "dryRun"
+  },
+  {
+    "timestamp": 1774081941.2569642,
+    "iso": "2026-03-21T16:32:21Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  }
+]

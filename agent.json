@@ -1,14 +1,16 @@
 {
   "name": "StakeHumanSignal Buyer Agent",
-  "version": "1.0.0",
-  "description": "Autonomous agent operating a staked human feedback marketplace. Queries reviews via x402, scores privately with Venice LLM, completes ERC-8183 jobs, distributes Lido wstETH yield, mints ERC-8004 receipts, stores outcomes on Filecoin FOC.",
+  "version": "2.0.0",
+  "description": "Autonomous agent operating a staked human feedback marketplace. Queries reviews via x402, scores with local heuristic scorer (5-dim rubric), enforces independence on-chain, completes ERC-8183 jobs, mints ERC-8004 receipts with rubric scores, stores outcomes on Filecoin FOC.",
   "capabilities": [
     "x402-payments",
     "filecoin-foc-storage",
     "erc-8004-receipts",
     "erc-8183-jobs",
     "lido-yield-distribution",
-    "venice-private-inference"
+    "heuristic-rubric-scoring",
+    "independence-verification",
+    "structured-claims"
   ],
   "standards": ["ERC-8183", "ERC-8004"],
   "harness": "claude-code",
@@ -18,9 +20,11 @@
     "registrationTxn": "https://basescan.org/tx/0xcd3eb6582b19a2fad433a24396c0f55e78bf1ccdaea082ee9738fec26eacc1d0"
   },
   "endpoints": {
-    "reviews_public": "FILL_AFTER_DEPLOY/reviews",
-    "reviews_ranked_x402": "FILL_AFTER_DEPLOY/reviews/top",
-    "outcomes": "FILL_AFTER_DEPLOY/outcomes"
+    "reviews_public": "http://localhost:8000/reviews",
+    "reviews_ranked_x402": "http://localhost:3000/reviews/top",
+    "outcomes": "http://localhost:8000/outcomes",
+    "jobs": "http://localhost:8000/jobs",
+    "health": "http://localhost:8000/health"
   },
   "onchain": {
     "network": "base-sepolia",
@@ -29,6 +33,26 @@
       "stakeHumanSignalJob": "0x5298F4D8d8043C14e5F2683Ad642fEbC8B54638f",
       "lidoTreasury": "0xE78f6c235FD1686547DBea41F742D649607316B1",
       "receiptRegistry": "0xA471D2C45F03518E47c7Fc71C897d244dF01859D"
+    },
+    "tokens": {
+      "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e"
+    }
+  },
+  "erc8004_registries": {
+    "identity": {
+      "description": "Agent identity registration via Synthesis hackathon",
+      "contract": "0xA471D2C45F03518E47c7Fc71C897d244dF01859D",
+      "registrationTx": "0xcd3eb6582b19a2fad433a24396c0f55e78bf1ccdaea082ee9738fec26eacc1d0"
+    },
+    "reputation": {
+      "description": "Win/loss tracking and human reputation scoring",
+      "contract": "0xA471D2C45F03518E47c7Fc71C897d244dF01859D",
+      "functions": ["agentWins", "agentJobs", "getHumanReputationScore"]
+    },
+    "validation": {
+      "description": "Independence score verification blocking self-review",
+      "contract": "0xA471D2C45F03518E47c7Fc71C897d244dF01859D",
+      "functions": ["getIndependenceScore", "registerAgentOwnership"]
     }
   }
 }
