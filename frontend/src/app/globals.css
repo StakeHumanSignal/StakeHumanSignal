@@ -124,13 +124,13 @@ body {
 }
 
 /* Animations */
-@keyframes ticker {
+@keyframes marquee {
   0% { transform: translateX(0); }
   100% { transform: translateX(-100%); }
 }
 
-.animate-ticker {
-  animation: ticker 25s linear infinite;
+.animate-marquee {
+  animation: marquee 30s linear infinite;
 }
 
 @keyframes pulse-tertiary {
