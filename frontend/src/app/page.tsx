@@ -133,32 +133,22 @@ export default function Home() {
 
       {/* Ticker */}
       <div className="w-full bg-[#000000] h-12 border-y border-[#00F0FF]/10 flex items-center overflow-hidden mb-20">
-        <div className="flex whitespace-nowrap gap-12 px-6 animate-marquee">
-          <div className="flex items-center gap-3">
-            <span className="text-primary font-[family-name:var(--font-mono)] text-[10px]">PROTOCOL</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">ERC-8183 JOBS + x402 MICROPAYMENTS + LIDO wstETH YIELD + FILECOIN PERMANENT STORAGE</span>
+        {[0, 1].map((i) => (
+          <div key={i} className="flex shrink-0 items-center gap-12 px-6 animate-ticker">
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="text-primary font-[family-name:var(--font-mono)] text-[10px]">PROTOCOL</span>
+              <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">ERC-8183 JOBS + x402 MICROPAYMENTS + LIDO wstETH YIELD + FILECOIN STORAGE</span>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="text-secondary font-[family-name:var(--font-mono)] text-[10px]">CHAIN</span>
+              <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">BASE MAINNET &mdash; {reviewCount} STAKED VERDICTS &mdash; {validatorCount} ACTIVE VALIDATORS</span>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="text-tertiary font-[family-name:var(--font-mono)] text-[10px]">FLOW</span>
+              <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">HUMAN STAKES USDC &rarr; AGENT PAYS x402 &rarr; WINNER EARNS wstETH YIELD &rarr; ERC-8004 RECEIPT MINTED</span>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-secondary font-[family-name:var(--font-mono)] text-[10px]">CHAIN</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">BASE MAINNET &mdash; {reviewCount} STAKED VERDICTS &mdash; {validatorCount} ACTIVE VALIDATORS</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-tertiary font-[family-name:var(--font-mono)] text-[10px]">FLOW</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">HUMAN STAKES USDC &rarr; AGENT PAYS x402 &rarr; WINNER EARNS wstETH YIELD &rarr; ERC-8004 RECEIPT MINTED</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-primary font-[family-name:var(--font-mono)] text-[10px]">PROTOCOL</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">ERC-8183 JOBS + x402 MICROPAYMENTS + LIDO wstETH YIELD + FILECOIN PERMANENT STORAGE</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-secondary font-[family-name:var(--font-mono)] text-[10px]">CHAIN</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">BASE MAINNET &mdash; {reviewCount} STAKED VERDICTS &mdash; {validatorCount} ACTIVE VALIDATORS</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-tertiary font-[family-name:var(--font-mono)] text-[10px]">FLOW</span>
-            <span className="font-[family-name:var(--font-mono)] text-[10px] text-white/60">HUMAN STAKES USDC &rarr; AGENT PAYS x402 &rarr; WINNER EARNS wstETH YIELD &rarr; ERC-8004 RECEIPT MINTED</span>
-          </div>
-        </div>
+        ))}
       </div>
 
       {/* Protocol Architecture (Bento Grid) */}
