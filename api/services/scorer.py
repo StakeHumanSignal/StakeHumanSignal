@@ -61,11 +61,11 @@ def get_independence_score(reviewer_address: str, agent_owner_address: str) -> f
     """Score how independent a reviewer is from the agent owner.
 
     Returns:
-        0.0 — same wallet or zero address
+        0.0 — same wallet, zero address, or on-chain relationship detected
         1.0 — completely unrelated wallets
-        0.5 — indirect relationship (future: same team, etc.)
 
-    Phase 1: only wallet comparison. Phase 2 will add on-chain checks.
+    Phase 2: checks on-chain ReceiptRegistry ownership mapping.
+    Falls back to wallet comparison if contract unavailable.
     """
     if not reviewer_address or not agent_owner_address:
         return 0.0
@@ -80,5 +80,18 @@ def get_independence_score(reviewer_address: str, agent_owner_address: str) -> f
     # Same wallet = not independent
     if reviewer_lower == owner_lower:
         return 0.0
+
+    # Try on-chain independence check via ReceiptRegistry
+    try:
+        from api.services.web3_client import get_web3_service
+        web3_svc = get_web3_service()
+        if web3_svc and web3_svc.receipt_registry:
+            on_chain_score = web3_svc.receipt_registry.functions.getIndependenceScore(
+                reviewer_address,
+                agent_owner_address,
+            ).call()
+            return on_chain_score / 100.0
+    except Exception:
+        pass  # Fall back to off-chain check
 
     return 1.0

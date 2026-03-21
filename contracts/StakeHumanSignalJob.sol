@@ -7,6 +7,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "./interfaces/IERC8183.sol";
 
+/// @notice Minimal interface for ReceiptRegistry independence check
+interface IReceiptRegistry {
+    function getIndependenceScore(address reviewer, address agentOwner) external view returns (uint256);
+}
+
 /// @title StakeHumanSignalJob - ERC-8183 Agentic Commerce for staked reviews
 /// @notice Humans stake USDC on review quality. Buyer agents evaluate and complete jobs.
 /// @dev Implements ERC-8183 job lifecycle with Lido yield distribution hooks.
@@ -115,9 +120,17 @@ contract StakeHumanSignalJob is IERC8183, Ownable, ReentrancyGuard {
     }
 
     /// @notice Buyer agent completes the job — triggers yield distribution
+    /// @dev Checks independence before allowing completion to prevent self-review
     function complete(uint256 jobId) external onlyEvaluator nonReentrant {
         Job storage job = jobs[jobId];
         require(job.status == JobStatus.Submitted, "Job not submitted");
+
+        // Independence check: evaluator must not be related to job client
+        if (receiptRegistry != address(0)) {
+            IReceiptRegistry registry = IReceiptRegistry(receiptRegistry);
+            uint256 independence = registry.getIndependenceScore(msg.sender, job.client);
+            require(independence > 0, "Evaluator not independent");
+        }
 
         job.status = JobStatus.Completed;
 
