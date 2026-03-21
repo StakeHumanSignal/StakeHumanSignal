@@ -14,6 +14,5 @@ RUN mkdir -p api/data
 
 ENV PORT=8000
 
-EXPOSE $PORT
-
-CMD sh -c "uvicorn api.main:app --host 0.0.0.0 --port ${PORT}"
+ENTRYPOINT ["sh", "-c"]
+CMD ["uvicorn api.main:app --host 0.0.0.0 --port ${PORT}"]
