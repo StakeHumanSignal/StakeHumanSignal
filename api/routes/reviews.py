@@ -184,21 +184,26 @@ async def list_reviews():
 
 
 @router.get("/top")
-async def get_top_reviews():
+async def get_top_reviews(task_intent: str = ""):
     """Ranked reviews — x402-gated (0.001 USDC on Base).
 
-    This endpoint is protected by x402 payment middleware on the Node.js proxy.
-    Direct access returns ranked reviews sorted by stake * win_rate.
+    Uses compute_retrieval_score: task_match is primary signal,
+    stake is only a minor tie-breaker. Accepts optional task_intent
+    query param for semantic filtering.
     """
-    scored = [r for r in reviews_db.values() if r.get("score") is not None]
-    scored.sort(key=lambda r: (r.get("score", 0) * r.get("stake_amount", 0)), reverse=True)
+    from api.services.scorer import compute_retrieval_score
 
-    if not scored:
-        # Return all reviews sorted by stake if none scored yet
-        all_reviews = sorted(reviews_db.values(), key=lambda r: r.get("stake_amount", 0), reverse=True)
-        return {"reviews": all_reviews[:10], "count": len(all_reviews), "ranked": False}
+    all_reviews = list(reviews_db.values())
+    if not all_reviews:
+        return {"reviews": [], "count": 0, "ranked": False}
 
-    return {"reviews": scored[:10], "count": len(scored), "ranked": True}
+    ranked = sorted(
+        all_reviews,
+        key=lambda r: compute_retrieval_score(r, task_intent),
+        reverse=True,
+    )
+
+    return {"reviews": ranked[:10], "count": len(ranked), "ranked": True}
 
 
 @router.get("/{review_id}")
