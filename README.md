@@ -40,6 +40,38 @@ The agentic GDP needs trusted marketplaces. We're building one.
 
 ---
 
+## Prize Tracks
+
+| # | Sponsor | Track | Prize | What We Ship | Tech Stack | Status |
+|---|---------|-------|-------|-------------|------------|--------|
+| 1 | **Lido** | stETH Agent Treasury | $3,000 | Principal locked forever, yield-only distribution to winners, real wstETH transfers | `LidoTreasury.sol`, wstETH on Base, `distributeYield()` | Deployed |
+| 2 | **Lido** | Lido MCP Server | $5,000 | MCP server wrapping stETH staking + position management, callable by any agent | `@modelcontextprotocol/sdk`, `LidoTreasury.sol`, wstETH | To build |
+| 3 | **Base** | Agent Services on Base | $5,000 | x402-gated review marketplace, discoverable agent service on Base | `@x402/express`, `@x402/evm`, viem, Express, Base Sepolia/Mainnet | Working |
+| 4 | **Protocol Labs** | Let the Agent Cook | $4,000 | Auto-Verifier Agent — zero human in scoring loop, full autonomy | `verifier-agent.py`, Venice API, `agent.json`, `agent_log.json` | To build |
+| 5 | **Protocol Labs** | Agents With Receipts — ERC-8004 | $4,000 | Receipt NFT minted on every job completion, on-chain verifiable | `ReceiptRegistry.sol` (ERC-721), Base, Hardhat | Deployed |
+| 6 | **Filecoin** | Agentic Storage | $2,000 | Reviews + outcomes stored permanently on FOC mainnet, real CIDs | `@filecoin-synapse/sdk`, Synapse bridge, ethers | To build |
+| 7 | **Venice** | Private Agents, Trusted Actions | $11,500 | Venice LLM as load-bearing private scorer — sensitive review data never exposed | `httpx`, Venice API (`llama-3.3-70b`), `venice.py` | Working |
+| 8 | **Bankr** | Best Bankr LLM Gateway | $5,000 | Multi-LLM ensemble scoring via Bankr Gateway (20+ models) | Bankr LLM Gateway API, `bankr.py` | To build |
+| 9 | **Olas** | Monetize on Olas Marketplace | $1,000 | `/reviews/top` registered as Olas mech, 50+ requests served | `@valory-xyz/mech-client`, `mech-server.js`, Olas Pearl | To build |
+| 10 | **Self** | Best Self Protocol Integration | $1,000 | Self Agent ID for human reviewer verification (proof of human) | Self Agent ID API (`app.ai.self.xyz`) | To build |
+| + | **Synthesis** | Open Track | $28,309 | Full end-to-end staked marketplace with all integrations | Everything above | In progress |
+
+**Total potential: $69,809 across 11 tracks.**
+**Conservative target: $15,000-25,000 (6-7 tracks landed).**
+
+### Track Priority (build order)
+
+```
+DONE     Lido Treasury + Base x402 + ERC-8004 + Venice scoring
+         ─────────────────────────────────────────────────────
+NEXT     Bankr LLM (2h) → Verifier Agent (2h) → Olas mech (3h)
+         → Self Agent ID (2h) → Filecoin bridge (2h) → Lido MCP (4h)
+         ─────────────────────────────────────────────────────
+LAST     Frontend → Deploy mainnet → Demo video → Submit all tracks
+```
+
+---
+
 ## Sequence Diagram
 
 ```
