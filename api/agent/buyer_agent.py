@@ -76,7 +76,10 @@ def score_reviews_heuristic(reviews: list[dict]) -> list[dict]:
 
     scored = []
     for review in reviews:
-        claim = {"reasoning": review.get("reasoning", review.get("review_text", ""))}
+        claim = {
+            "reasoning": review.get("reasoning", review.get("review_text", "")),
+            "rubric_scores": review.get("rubric_scores"),
+        }
         task_intent = review.get("task_intent", "general review")
         result = score_output(claim, review.get("review_text", review.get("reasoning", "")), task_intent)
 

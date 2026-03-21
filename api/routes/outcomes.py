@@ -43,7 +43,7 @@ async def signal_outcome(outcome: OutcomeSignal):
     4. Filecoin FOC permanent storage
     """
     from api.services.web3_client import get_web3_service
-    from api.routes.reviews import reviews_db
+    from api.routes.reviews import reviews_db, _save_reviews
     from api.services.scorer import compute_weighted_rubric_score, update_claim_score
 
     web3_svc = get_web3_service()
@@ -53,11 +53,12 @@ async def signal_outcome(outcome: OutcomeSignal):
     if outcome.rubric_scores:
         rubric_weighted = compute_weighted_rubric_score(outcome.rubric_scores)
 
-    # Update review score and rubric data
+    # Update review score and rubric data (persist to disk so scores survive restarts)
     if outcome.review_id in reviews_db:
         reviews_db[outcome.review_id]["score"] = outcome.score
         if outcome.rubric_scores:
             reviews_db[outcome.review_id]["rubric_scores"] = outcome.rubric_scores
+        _save_reviews()
 
     # 1. Complete job on-chain (ERC-8183)
     complete_result = await web3_svc.complete_job(outcome.job_id)
