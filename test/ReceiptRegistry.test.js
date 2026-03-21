@@ -119,6 +119,17 @@ describe("ReceiptRegistry", function () {
         .mintReceipt(99, winner.address, "api", "ok", "cid");
       expect(await registry.ownerOf(0)).to.equal(winner.address);
     });
+
+    it("reverts on duplicate receipt for same jobId", async function () {
+      await registry
+        .connect(minter)
+        .mintReceipt(42, winner.address, "api", "ok", "cid1");
+      await expect(
+        registry
+          .connect(minter)
+          .mintReceipt(42, winner.address, "api", "ok2", "cid2")
+      ).to.be.revertedWith("Receipt already minted for job");
+    });
   });
 
   describe("getReceipt", function () {

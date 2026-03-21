@@ -239,5 +239,23 @@ describe("StakeHumanSignalJob", function () {
         job.connect(owner).setReceiptRegistry(ethers.ZeroAddress)
       ).to.be.revertedWith("Registry address cannot be zero");
     });
+
+    it("emits EvaluatorUpdated event", async function () {
+      await expect(job.connect(owner).setEvaluator(other.address))
+        .to.emit(job, "EvaluatorUpdated")
+        .withArgs(evaluator.address, other.address);
+    });
+
+    it("emits LidoTreasuryUpdated event", async function () {
+      await expect(job.connect(owner).setLidoTreasury(other.address))
+        .to.emit(job, "LidoTreasuryUpdated")
+        .withArgs(ethers.ZeroAddress, other.address);
+    });
+
+    it("emits ReceiptRegistryUpdated event", async function () {
+      await expect(job.connect(owner).setReceiptRegistry(other.address))
+        .to.emit(job, "ReceiptRegistryUpdated")
+        .withArgs(ethers.ZeroAddress, other.address);
+    });
   });
 });

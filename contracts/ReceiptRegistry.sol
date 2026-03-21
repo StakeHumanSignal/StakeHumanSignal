@@ -34,6 +34,9 @@ contract ReceiptRegistry is ERC721, Ownable, ReentrancyGuard {
     mapping(address => uint256) public agentWins;
     mapping(address => uint256) public agentJobs;
 
+    /// @notice Guard: one receipt per job
+    mapping(uint256 => bool) public jobHasReceipt;
+
     event ReceiptMinted(
         uint256 indexed tokenId,
         uint256 indexed jobId,
@@ -43,6 +46,7 @@ contract ReceiptRegistry is ERC721, Ownable, ReentrancyGuard {
 
     event MinterUpdated(address indexed addr, bool status);
     event AgentRegistered(address indexed agent, address indexed agentOwner);
+    event ParticipationRecorded(address indexed agent, uint256 totalJobs);
 
     modifier onlyMinter() {
         require(minters[msg.sender] || msg.sender == owner(), "Not minter");
@@ -96,6 +100,7 @@ contract ReceiptRegistry is ERC721, Ownable, ReentrancyGuard {
     function recordParticipation(address agent) external onlyMinter {
         require(agent != address(0), "Agent cannot be zero address");
         agentJobs[agent]++;
+        emit ParticipationRecorded(agent, agentJobs[agent]);
     }
 
     /// @notice Get human reputation score across all owned agents
@@ -134,8 +139,10 @@ contract ReceiptRegistry is ERC721, Ownable, ReentrancyGuard {
     ) external onlyMinter nonReentrant returns (uint256 tokenId) {
         require(winner != address(0), "Winner cannot be zero address");
         require(bytes(apiUrl).length > 0, "API URL cannot be empty");
+        require(!jobHasReceipt[jobId], "Receipt already minted for job");
 
         tokenId = nextTokenId++;
+        jobHasReceipt[jobId] = true;
 
         // Track wins and jobs
         agentWins[winner]++;

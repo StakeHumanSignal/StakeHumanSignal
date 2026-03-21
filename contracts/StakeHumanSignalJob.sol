@@ -36,6 +36,10 @@ contract StakeHumanSignalJob is IERC8183, Ownable, ReentrancyGuard {
     uint256 public nextJobId;
     mapping(uint256 => Job) public jobs;
 
+    event LidoTreasuryUpdated(address indexed oldTreasury, address indexed newTreasury);
+    event ReceiptRegistryUpdated(address indexed oldRegistry, address indexed newRegistry);
+    event EvaluatorUpdated(address indexed oldEvaluator, address indexed newEvaluator);
+
     modifier onlyEvaluator() {
         require(msg.sender == evaluator, "Only evaluator");
         _;
@@ -53,17 +57,23 @@ contract StakeHumanSignalJob is IERC8183, Ownable, ReentrancyGuard {
 
     function setLidoTreasury(address _treasury) external onlyOwner {
         require(_treasury != address(0), "Treasury address cannot be zero");
+        address old = lidoTreasury;
         lidoTreasury = _treasury;
+        emit LidoTreasuryUpdated(old, _treasury);
     }
 
     function setReceiptRegistry(address _registry) external onlyOwner {
         require(_registry != address(0), "Registry address cannot be zero");
+        address old = receiptRegistry;
         receiptRegistry = _registry;
+        emit ReceiptRegistryUpdated(old, _registry);
     }
 
     function setEvaluator(address _evaluator) external onlyOwner {
         require(_evaluator != address(0), "Evaluator address cannot be zero");
+        address old = evaluator;
         evaluator = _evaluator;
+        emit EvaluatorUpdated(old, _evaluator);
     }
 
     /// @notice Human reviewer creates a job by specifying the API to review
