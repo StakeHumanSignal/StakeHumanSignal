@@ -1,7 +1,6 @@
 {
   "name": "stakehumansignal-filecoin-bridge",
   "version": "1.0.0",
-  "type": "module",
   "description": "Filecoin FOC storage bridge + x402 gateway for StakeHumanSignal",
   "scripts": {
     "start": "node index.js",

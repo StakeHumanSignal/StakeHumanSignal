@@ -5,49 +5,19 @@
  * Start: node filecoin-bridge/x402-server.js
  */
 
-import express from "express";
-import dotenv from "dotenv";
-dotenv.config({ path: "../.env" });
+require("dotenv").config({ path: "../.env" });
+const express = require("express");
 
 const app = express();
 app.use(express.json());
 
 const RECEIVER = process.env.RECEIVER_ADDRESS;
-const API_URL = process.env.API_URL ?? "http://localhost:8000";
-const PORT = process.env.X402_PORT ?? 3002;
+const API_URL = process.env.API_URL || "http://localhost:8000";
+const PORT = process.env.X402_PORT || 3002;
 
-// Try real x402 middleware, fall back to manual gate
-async function setup() {
-  try {
-    const { paymentMiddleware } = await import("@x402/express");
-
-    if (!RECEIVER) {
-      console.log("[x402] No RECEIVER_ADDRESS — using manual mode");
-      return null;
-    }
-
-    // Public facilitator — no CDP keys needed
-    const facilitator = { url: "https://x402.org/facilitator" };
-
-    app.use(
-      paymentMiddleware(
-        RECEIVER,
-        {
-          "GET /reviews/top": {
-            price: "$0.001",
-            network: "base-sepolia",
-          },
-        },
-        facilitator
-      )
-    );
-    console.log(`[x402] SDK middleware active, receiver: ${RECEIVER}`);
-    return true;
-  } catch (err) {
-    console.log("[x402] SDK not available:", err.message);
-    return null;
-  }
-}
+// x402 SDK is not used — manual gate only.
+// The @x402/express SDK has API incompatibilities with current version.
+// Manual gate provides the same 402 behavior for hackathon demo.
 
 // Manual fallback gate
 function manualGate(req, res, next) {
@@ -78,8 +48,8 @@ function manualGate(req, res, next) {
   next();
 }
 
-// Proxy to Python API
-app.get("/reviews/top", async (req, res) => {
+// Proxy to Python API (manualGate runs first as middleware)
+app.get("/reviews/top", manualGate, async (req, res) => {
   try {
     const upstream = await fetch(`${API_URL}/reviews/top`);
     const data = await upstream.json();
@@ -99,10 +69,7 @@ app.get("/health", (_, res) =>
 );
 
 async function start() {
-  const sdkActive = await setup();
-  if (!sdkActive) {
-    app.use("/reviews/top", manualGate);
-  }
+  console.log("[x402] Using manual 402 gate");
   app.listen(PORT, () => {
     console.log(`[x402] Gateway on :${PORT}`);
     console.log(`[x402] Proxying to ${API_URL}`);
