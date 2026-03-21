@@ -30,6 +30,9 @@ typechain-types/
 .DS_Store
 Thumbs.db
 
+# Runtime data
+api/data/
+
 # Deployment
 deployments/localhost/
 .env

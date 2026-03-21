@@ -3,13 +3,34 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, field_validator
 from typing import Literal, Optional
+from pathlib import Path
+import json
 import time
 import uuid
 
 router = APIRouter()
 
-# In-memory store (replace with DB for production)
-reviews_db: dict[str, dict] = {}
+# JSON file persistence — reviews survive API restarts
+REVIEWS_FILE = Path("api/data/reviews.json")
+REVIEWS_FILE.parent.mkdir(exist_ok=True)
+
+
+def _load_reviews() -> dict[str, dict]:
+    if REVIEWS_FILE.exists():
+        try:
+            data = json.loads(REVIEWS_FILE.read_text())
+            if isinstance(data, dict):
+                return data
+        except Exception:
+            pass
+    return {}
+
+
+def _save_reviews():
+    REVIEWS_FILE.write_text(json.dumps(reviews_db, indent=2))
+
+
+reviews_db: dict[str, dict] = _load_reviews()
 
 # Valid enums for structured claims
 VALID_TASK_TYPES = {"code_review", "analysis", "creative", "data_extraction", "customer_support", "other"}
@@ -149,6 +170,7 @@ async def submit_review(review: ReviewSubmission):
         pass  # Filecoin storage is best-effort
 
     reviews_db[review_id] = entry
+    _save_reviews()
     return ReviewResponse(**entry)
 
 
