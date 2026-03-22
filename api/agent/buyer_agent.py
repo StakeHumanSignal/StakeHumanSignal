@@ -236,7 +236,21 @@ async def run_cycle(cycle: int) -> bool:
                 claim_id=review.get("id"),
             )
 
-    # 4. Pin agent_log.json to Filecoin
+    # 4. Log Locus wallet status (if configured)
+    try:
+        from api.services.locus import get_balance
+        locus_balance = await get_balance()
+        if locus_balance.get("mode") != "demo":
+            log(
+                f"Locus balance: {locus_balance.get('balance', '?')} USDC",
+                action="locus_balance",
+                balance=locus_balance.get("balance"),
+                mode=locus_balance.get("mode"),
+            )
+    except Exception:
+        pass  # Locus is supplementary
+
+    # 5. Pin agent_log.json to Filecoin
     await pin_agent_log()
 
     return True

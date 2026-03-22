@@ -89,6 +89,19 @@ async def signal_outcome(outcome: OutcomeSignal):
     except Exception as e:
         print(f"[Yield] Distribution skipped: {e}")
 
+    # 5. Locus payment tracking (if configured)
+    try:
+        from api.services.locus import send_payment, LOCUS_API_KEY
+        if LOCUS_API_KEY:
+            locus_result = await send_payment(
+                to_address=outcome.winner_address,
+                amount_usdc=0.001,
+                memo=f"StakeHumanSignal reward for review {outcome.review_id}"
+            )
+            print(f"[Locus] Payment: {locus_result}")
+    except Exception as e:
+        print(f"[Locus] Payment skipped: {e}")
+
     # Downstream validation: update source claim if referenced
     if outcome.source_claim_id and outcome.outcome_validated is not None:
         update_claim_score(
