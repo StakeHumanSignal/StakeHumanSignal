@@ -1,20 +1,30 @@
 # StakeHumanSignal
 
-**A staked human feedback marketplace where humans bet real money on AI evaluation quality, agents pay to access trusted verdicts, and winners earn yield.**
+**A staked human feedback/policy marketplace where humans bet real money on AI evaluation quality, agents pay to access trusted verdicts, and winners earn yield.**
 
 **Live:** [stakehumansignal.vercel.app](https://stakehumansignal.vercel.app) | **API:** [stakesignal-api-production.up.railway.app](https://stakesignal-api-production.up.railway.app/health) | **GitHub:** [StakeHumanSignal/StakeHumanSignal](https://github.com/StakeHumanSignal/StakeHumanSignal)
 
 Built for [Synthesis Hackathon](https://synthesis.md) — March 2026.
 
 ---
-
 ## Problem
 
-AI agents can execute tools, call APIs, and choose between models — but they have no trustworthy way to learn which option actually works for a given user and task.
+AI agents can already call models, APIs, and tools.  
+The harder problem is deciding **which policy will work best for a specific user, task, and constraint**.
 
-The ecosystem is stuck between two extremes: passive signals (clicks, usage volume) scale but are too noisy, while active evaluation (structured reviews, expert judgments) is high-quality but too expensive to collect at scale.
+That problem is still unsolved because:
 
-The result: every agent re-learns the same expensive lessons independently. Human judgment about what works stays trapped inside one-off interactions. There is no shared, incentive-aligned infrastructure for agents to learn from prior human preference.
+- **Performance is context-dependent.**  
+  The same API, model, or prompt bundle can perform very differently depending on user intent, task type, quality requirements, latency/cost constraints, and output preferences.
+
+- **Existing signals are either too weak or too expensive.**  
+  Passive signals like clicks or usage scale well, but they do not reliably tell an agent which policy was actually better in context.  
+  Stronger signals like structured reviews, expert evals, and staking are useful, but too high-friction to require from every user.
+
+- **Good judgment does not compound.**  
+  Valuable human preference is constantly produced in real usage, but it usually disappears inside one-off sessions, private workflows, or unstructured feedback. Other agents cannot reuse it.
+
+As a result, every agent keeps re-learning the same routing decisions from scratch, wasting money and producing worse outputs.
 
 ## Solution
 
@@ -22,10 +32,25 @@ StakeHumanSignal turns human preference into a reusable policy-ranking layer for
 
 Humans compare two AI outputs side by side, pick the winner, and optionally stake real USDC on their choice. AI buyer agents pay via x402 micropayments to access these ranked, staked verdicts — because skin in the game means signal they can trust. Winners earn Lido wstETH yield. Every outcome is permanently recorded as an ERC-8004 receipt on Base and stored on Filecoin Onchain Cloud.
 
-**Two-layer signal model:**
+- **Policy creators stake policies in advance.**  
+  A policy is the execution logic behind an output — for example an API, model, prompt, tool, or bundle of these choices.
 
-- **Passive layer** — users pick the better output in a blind A/B comparison. No stake required. 0.3x yield multiplier. Low barrier for adoption.
-- **Active layer** — high-conviction users stake USDC with reasoning. 0.7x weight, sqrt-scaled to prevent whale farming. Durable signal for agents.
+- **Buyer agents retrieve relevant policies and generate competing outputs.**  
+  Human B simply chooses the better result in their own context. No staking is required at this stage.
+
+- **The winning policy is rewarded.**  
+  If Human B prefers the output generated under Human A’s policy, Human A earns higher yield.
+
+- **High-conviction users can add stronger validation.**  
+  If Human B believes the winning policy will also help others with similar intent, they can optionally inspect it, attach context, and stake on it themselves.
+
+This creates a two-layer system:
+
+- **Passive selection layer:** users pick the better output in a blind A/B comparison. No stake required. 0.3x yield multiplier. Low barrier for adoption.
+- **Active validation layer:** high-conviction users stake USDC with reasoning. 0.7x weight, sqrt-scaled to prevent whale farming. Durable signal for agents.
+
+Over time, this builds a policy ranking layer that agents can use to make better decisions about which policy to run for which user and task.
+
 
 ## What's Built and Deployed
 
