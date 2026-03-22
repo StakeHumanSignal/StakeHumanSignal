@@ -1,6 +1,6 @@
 # StakeHumanSignal
 
-**A staked human feedback/policy marketplace where humans bet real money on AI evaluation quality, agents pay to access trusted verdicts, and winners earn yield.**
+**StakeHumanSignal helps AI agents choose the best API, model, and prompt bundle for each task using staked signals from real human output choices.**
 
 **Live:** [stakehumansignal.vercel.app](https://stakehumansignal.vercel.app) | **API:** [stakesignal-api-production.up.railway.app](https://stakesignal-api-production.up.railway.app/health) | **GitHub:** [StakeHumanSignal/StakeHumanSignal](https://github.com/StakeHumanSignal/StakeHumanSignal)
 
