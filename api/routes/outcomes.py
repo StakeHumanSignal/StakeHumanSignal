@@ -30,6 +30,10 @@ class OutcomeResponse(BaseModel):
     receipt_token_id: Optional[int] = None
     filecoin_cid: Optional[str] = None
     rubric_weighted_score: Optional[float] = None
+    distribution_model: Optional[str] = None
+    passive_selections: Optional[int] = None
+    yield_score: Optional[float] = None
+    payout_amount: Optional[float] = None
 
 
 @router.post("", response_model=OutcomeResponse)
@@ -102,12 +106,17 @@ async def signal_outcome(outcome: OutcomeSignal):
     except Exception as e:
         print(f"[Locus] Payment skipped: {e}")
 
-    # 6. Two-layer yield calculation (log only — distribution via Lido MCP)
+    # Initialize two-layer fields
+    distribution_model = None
+    passive_count = 0
+    yield_score_val = None
+    payout_amount_val = None
+
+    # 6. Two-layer yield calculation
     try:
         from api.services.scorer import compute_two_layer_payout
         from api.routes.sessions import passive_signals
 
-        # Count passive selections for this review
         passive_count = sum(1 for s in passive_signals if s.get("preferred_review_id") == outcome.review_id)
 
         two_layer = compute_two_layer_payout(
@@ -118,6 +127,10 @@ async def signal_outcome(outcome: OutcomeSignal):
                 "active_stake_amount": outcome.score,  # using score as proxy
             }]
         )
+        if two_layer:
+            distribution_model = "two-layer"
+            yield_score_val = two_layer[0].get("yield_score")
+            payout_amount_val = two_layer[0].get("payout_amount")
         print(f"[Yield] Two-layer: {two_layer}")
     except Exception as e:
         print(f"[Yield] Two-layer calc skipped: {e}")
@@ -138,4 +151,8 @@ async def signal_outcome(outcome: OutcomeSignal):
         receipt_token_id=receipt_result.get("token_id"),
         filecoin_cid=receipt_result.get("filecoin_cid"),
         rubric_weighted_score=rubric_weighted,
+        distribution_model=distribution_model,
+        passive_selections=passive_count,
+        yield_score=yield_score_val,
+        payout_amount=payout_amount_val,
     )
