@@ -10,118 +10,155 @@ Built for [Synthesis Hackathon](https://synthesis.md) — March 2026.
 
 ---
 
-## What it does
+## How it works
 
-1. **Human A** submits a structured review claim comparing two AI outputs. Stakes USDC. Review stored permanently on Filecoin.
-2. **Buyer Agent** pays 0.001 USDC via x402 to access ranked reviews. Heuristic-scores each claim against task intent.
-3. **ERC-8183 job** lifecycle: Open → Funded → Submitted → Completed. Independence check prevents self-review at contract level.
-4. **Winning reviewer** earns Lido wstETH yield. ERC-8004 receipt minted. Human reputation score updated.
-5. **Human B** submits outcome — validates or rejects Human A's prediction. Feeds back into yield weight.
+```mermaid
+graph TD
+    A[👤 Human A connects wallet] --> B[Submit structured review claim]
+    B --> C[Stored on Filecoin — CID returned]
+    C --> D[ERC-8183 job opens on Base]
+    D --> E[🤖 Buyer Agent pays x402]
+    E --> F[Heuristic scorer — task match × evidence × wins]
+    F --> G{Independence check}
+    G -->|pass| H[complete — ERC-8004 receipt minted]
+    G -->|fail| I[rejected — self-review blocked]
+    H --> J[Lido yield paid — wstETH to winner]
+    H --> K[👤 Human B blind A/B compare]
+    K -->|validates| L[Reputation updated — score recalculated]
+    K -->|rejects| M[Claim flagged — yield reduced]
+    J --> L
 
-## Architecture
-
+    style A fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style B fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style C fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style D fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style E fill:#1a1a2e,stroke:#ac89ff,color:#fff
+    style F fill:#1a1a2e,stroke:#ac89ff,color:#fff
+    style G fill:#1a1a2e,stroke:#ac89ff,color:#fff
+    style H fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style I fill:#1a1a2e,stroke:#666,color:#999
+    style J fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style K fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style L fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style M fill:#1a1a2e,stroke:#666,color:#999
 ```
-Human A
-  └── POST /reviews (staked claim + task_intent)
-        └── Filecoin FOC storage → CID returned
-              └── ERC-8183 Job created on Base Sepolia
-                    └── Buyer Agent (pays x402)
-                          └── Heuristic scorer (verdict)
-                                └── Independence check
-                                      ├── complete() → Lido yield hook
-                                      │       └── wstETH yield to reviewer
-                                      └── ERC-8004 receipt minted
-                                              └── Human reputation updated
+
+## Sponsor track integration
+
+```mermaid
+graph TD
+    A[Human A stakes + submits] --> B[Review stored]
+    B -->|Filecoin| B1[CID on Lighthouse/IPFS]
+    B --> C[ERC-8183 job opens]
+    C -->|Virtuals| C1[Job lifecycle contract]
+    C --> D[Agent pays, scores, completes]
+    D -->|Base x402| D1[Payment gate — no browser]
+    D --> E[ERC-8004 receipt minted]
+    E -->|Protocol Labs| E1[Identity + receipt on-chain]
+    E --> F[Lido yield distributed]
+    F -->|Lido| F1[wstETH yield-only payout]
+    F --> G[Reputation recalculated]
+    G -->|Protocol Labs| G1[agentToOwner + score avg]
+
+    style A fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style B fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style C fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style D fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style E fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style F fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style G fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style B1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
+    style C1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
+    style D1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
+    style E1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
+    style F1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
+    style G1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
 ```
 
-## Contracts (Base Sepolia Testnet)
+## Human reputation system
+
+```mermaid
+graph TD
+    H[👤 Human wallet — owner] -->|owns| A1[Agent A — 8/10 wins = 80%]
+    H -->|owns| A2[Agent B — 3/10 wins = 30%]
+    H -->|owns| A3[Agent C — 7/10 wins = 70%]
+    A1 --> R[getHumanReputationScore]
+    A2 --> R
+    A3 --> R
+    R --> S["(80 + 30 + 70) / 3 = 60% human score"]
+    S --> E[ERC-8004 reputation registry — on-chain]
+
+    style H fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style A1 fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style A2 fill:#1a1a2e,stroke:#ac89ff,color:#fff
+    style A3 fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style R fill:#1a1a2e,stroke:#ac89ff,color:#fff
+    style S fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style E fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+```
+
+---
+
+## Contracts (Base Sepolia)
 
 | Contract | Address | Basescan |
 |----------|---------|----------|
 | StakeHumanSignalJob (ERC-8183) | `0xE99027DDdF153Ac6305950cD3D58C25D17E39902` | [View](https://sepolia.basescan.org/address/0xE99027DDdF153Ac6305950cD3D58C25D17E39902) |
 | LidoTreasury | `0x8E29D161477D9BB00351eA2f69702451443d7bf5` | [View](https://sepolia.basescan.org/address/0x8E29D161477D9BB00351eA2f69702451443d7bf5) |
 | ReceiptRegistry (ERC-8004) | `0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332` | [View](https://sepolia.basescan.org/address/0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332) |
+| SessionEscrow | `0xe817C338aD7612184CFB59AeA7962905b920e2e9` | [View](https://sepolia.basescan.org/address/0xe817C338aD7612184CFB59AeA7962905b920e2e9) |
 
-## Prize tracks
-
-| Track | Sponsor | Prize | Evidence |
-|-------|---------|-------|----------|
-| stETH Agent Treasury | Lido | $2,000 | LidoTreasury.sol, yield-only withdrawal enforced |
-| Lido MCP Server | Lido | $3,000 | lido-mcp/ with 5 tools + dry_run + SKILL.md |
-| Vault Monitor Alert Agent | Lido | $1,500 | lido-mcp/vault-monitor.js |
-| Agents With Receipts ERC-8004 | Protocol Labs | $2,000 | docs/erc8004-proof.md, all 3 registries |
-| Let the Agent Cook | Protocol Labs | $2,000 | buyer_agent.py autonomous loop, agent_log.json |
-| Agent Services on Base | Base | $1,667 | x402 gate on /reviews/top, real payments |
-| Agentic Storage | Filecoin | $1,000 | Every review has Filecoin CID |
-| ERC-8183 Open Build | Virtuals | $2,000 | StakeHumanSignalJob.sol full lifecycle |
-| Open Track | Synthesis | share | Full end-to-end working system |
-
-## ERC standards implemented
+## ERC standards
 
 - **ERC-8183** — Agentic Commerce: every review is a Job with Client/Provider/Evaluator lifecycle
-- **ERC-8004** — Agent Identity & Receipts: 3 registries used (identity, reputation, validation)
-- **ERC-7857** — Private AI Agent Metadata: co-authored by Ling Siew Win; used for structured claim metadata architecture
+- **ERC-8004** — Agent Identity & Receipts: 3 registries (identity, reputation, validation)
+- **ERC-7857** — Private AI Agent Metadata: structured claim metadata architecture
 
 ## Running locally
 
 ```bash
-# Clone
 git clone https://github.com/StakeHumanSignal/StakeHumanSignal
-cd StakeHumanSignal
-cp .env.example .env
-# Fill .env with your Base Sepolia keys
+cd StakeHumanSignal && cp .env.example .env
 
-# Contracts
-bun install
-npx hardhat test                              # 78 Solidity tests
+bun install && pip install -r requirements.txt
+npx hardhat test                    # 91 Solidity tests
+python -m pytest test/ -v           # 67 Python tests
 
-# Backend
-pip install -r requirements.txt
-python -m pytest test/ -v                     # 50 Python tests
+# Start services
 uvicorn api.main:app --port 8000
-
-# Filecoin bridge (mock mode if no FILECOIN_PRIVATE_KEY)
-cd filecoin-bridge && bun install && node index.js
-
-# x402 gateway (real payments on Base Sepolia)
-# First: get testnet USDC at https://faucet.circle.com
-node x402-server.js
-
-# Frontend
+cd filecoin-bridge && node index.js
 cd frontend && bun install && bun dev
 
-# Run buyer agent (single cycle)
+# Run buyer agent
 python -m api.agent.buyer_agent --once
 ```
 
 ## Project structure
 
 ```
-contracts/                        # 3 Solidity contracts on Base
+contracts/                        # 4 Solidity contracts on Base Sepolia
 ├── StakeHumanSignalJob.sol       # ERC-8183 jobs + independence check
 ├── LidoTreasury.sol              # wstETH yield-only treasury
-└── ReceiptRegistry.sol           # ERC-8004 receipts + ownership + reputation
+├── ReceiptRegistry.sol           # ERC-8004 receipts + ownership + reputation
+└── SessionEscrow.sol             # Blind A/B compare escrow
 
 api/                              # Python FastAPI backend
-├── routes/                       # reviews, jobs, outcomes, agent, leaderboard
-├── services/                     # scorer, filecoin, web3, bankr
-└── agent/                        # buyer_agent, verifier_agent
+├── routes/                       # reviews, jobs, outcomes, sessions, agent, leaderboard
+├── services/                     # scorer, scorer_local, filecoin, web3
+└── agent/                        # buyer_agent (autonomous loop)
 
-frontend/                         # Next.js 16 + Tailwind dark theme
-├── src/app/                      # 5 pages: landing, marketplace, submit,
-│                                 #   agent-feed, leaderboard
-└── src/lib/api.ts                # API client
+frontend/                         # Next.js + Tailwind + RainbowKit
+├── src/app/                      # 7 pages: landing, marketplace, submit,
+│                                 #   agent-feed, leaderboard, validate, town-square
+└── src/components/               # TopBar, SideNav, WalletDisplay, Providers
 
 lido-mcp/                         # MCP server for Lido stETH operations
-├── index.js                      # 5 tools: stake, yield, distribute, health, jobs
-├── vault-monitor.js              # Continuous APY monitoring + alerts
-└── SKILL.md                      # Agent-consumable skill file
+├── index.js                      # 5 tools with dry_run support
+└── vault-monitor.js              # APY monitoring + alerts
 
-filecoin-bridge/                  # Filecoin FOC + x402 gateway
-├── index.js                      # Synapse SDK bridge (:3001)
-└── x402-server.js                # Real x402 with public facilitator (:3002)
-
-test/                             # 128 tests (78 Solidity + 50 Python)
+filecoin-bridge/                  # Filecoin storage + x402 gateway
+├── index.js                      # Lighthouse SDK bridge
+└── x402-server.js                # Manual 402 payment gate
 ```
 
 ## License
