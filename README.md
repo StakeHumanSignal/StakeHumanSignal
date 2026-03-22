@@ -171,22 +171,6 @@ Each track maps to specific folders. Click through for architecture, deployed ad
 | ReceiptRegistry (ERC-8004) | `0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332` | [View](https://sepolia.basescan.org/address/0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332) |
 | SessionEscrow | `0xe817C338aD7612184CFB59AeA7962905b920e2e9` | [View](https://sepolia.basescan.org/address/0xe817C338aD7612184CFB59AeA7962905b920e2e9) |
 
-### Proof-of-Work Transactions
-
-Every critical operation has a verifiable on-chain TX — no mocks, no simulations.
-
-| Action | Network | TX Hash | Block |
-|--------|---------|---------|-------|
-| createJob (ERC-8183) | Base Sepolia | [`0x3dee4cc1...`](https://sepolia.basescan.org/tx/0x3dee4cc14ef330eb2318114ea4c221e04092c99856faca2984dad3c9e405f6da) | 39156980 |
-| mintReceipt (ERC-8004) | Base Sepolia | [`0x3740a500...`](https://sepolia.basescan.org/tx/0x3740a500ca742f0edd47265270942fdae2d5f14566ba53e0500af1e91e7e03e8) | 39156981 |
-| depositPrincipal (Lido Treasury) | Base Sepolia | [`0x3a7bc31e...`](https://sepolia.basescan.org/tx/0x3a7bc31ea1f2aaddfd0edec3e035c33ca8d30309ae9d70e5f7390638c6f84024) | 39211824 |
-| distributeYield (Lido Treasury) | Base Sepolia | [`0x30ad2db8...`](https://sepolia.basescan.org/tx/0x30ad2db8d5047f9296abdf589b8e8108dbdddbaeba529b387b79c010136550ce) | 39211827 |
-| FOC storage deposit (USDFC) | Filecoin Calibration | [`0x244c2a1d...`](https://filecoin-testnet.blockscout.com/tx/0x244c2a1df2dc9aea6a3b9648cd9a2b3a206017d4f511f1871627f9a72a9a3d2d) | 3562333 |
-
-**Filecoin PieceCID:** `bafkzcibcduch6lsgmz3rpfq6uhjibwca2lofa6r43ppgul6gqy7vlut7mxsj4ny` (FOC Warm Storage with PDP proofs)
-
-**Lighthouse CIDs:** [`QmPmYuNvaV5z9CUAH9X86CxWjStQnWBobXs4dxDHnZ36jz`](https://gateway.lighthouse.storage/ipfs/QmPmYuNvaV5z9CUAH9X86CxWjStQnWBobXs4dxDHnZ36jz) (agent log, HTTP 200)
-
 ## ERC standards
 
 - **ERC-8183** — Agentic Commerce: every review is a Job with Client/Provider/Evaluator lifecycle
