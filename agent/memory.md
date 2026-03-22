@@ -2,6 +2,32 @@
 
 > Last updated: March 22, 2026
 
+## Phase 5 Fixes — March 22, 2026 16:47 MYT
+
+**Status: COMPLETED — All 4 checks PASS**
+
+### What was done
+1. Added `distribution_model`, `passive_selections`, `yield_score`, `payout_amount` to `OutcomeResponse`
+2. Wired two-layer yield calc results into outcome API response (was print-only)
+3. Set Railway env vars: `LIGHTHOUSE_API_KEY`, `RECEIVER_ADDRESS`, `PASSIVE_MULTIPLIER=0.3`, `ACTIVE_MULTIPLIER=0.7`
+4. Fixed `requirements.txt`: `eth-account>=0.13.7` (was ==0.13.4, conflicted with lighthouseweb3 0.1.6)
+5. Added `healthcheckPath=/health` to `railway.toml`
+6. Railway deploy SUCCESS after fixing dependency conflict
+
+### Verification Results
+```
+A3: x402 gate          — HTTP 402 (PASS)
+A5: Filecoin CID       — QmdhYksWDws... (PASS, real Lighthouse CID)
+C1: Passive selection   — recorded=true (PASS)
+C2: Outcome two-layer   — distribution_model=two-layer (PASS)
+Tests: 91 Solidity + 71 Python = 162 passing
+```
+
+### Root cause of Railway deploy failures
+- `lighthouseweb3==0.1.6` requires `eth-account>=0.13.7`
+- `requirements.txt` pinned `eth-account==0.13.4` (too old)
+- pip resolution failed silently on Railway, old deploy kept serving traffic
+
 ## Ground Truth Audit — March 22, 2026 15:30 MYT
 
 ```
@@ -548,13 +574,34 @@ Settlement pays yield to Human A (or refunds buyer)
 - DESIGN.md preserved in agent/DESIGN.md
 - No critical issues found
 
-### Final Test Count
+### Final Test Count (Phase 2)
 **91 Solidity + 67 Python = 158 tests, all passing**
+
+---
+
+## Phase 3 — March 22, 2026 (Two-Layer Yield + Judge Evidence)
+
+### Two-Layer Yield Weights
+- Added `compute_two_layer_payout()` to `api/services/scorer.py`
+- Passive layer: selection count * 0.3 multiplier
+- Active layer: sqrt(stake) * 0.7 multiplier (prevents farming)
+- 4 new tests in `test/test_scorer.py` (passive only, active only, mixed sums, zero safety)
+- Wired into `api/routes/outcomes.py` as step 6 (log-only, distribution via Lido MCP)
+- Added PASSIVE_MULTIPLIER and ACTIVE_MULTIPLIER to `.env.example`
+
+### Judge Evidence Package
+- Created `docs/conversation-log.md` with zero placeholders
+- All real data: contract addresses, TX hashes, CIDs, agent_log count (86 entries)
+- Updated README.md with Two-Layer Human Signal section and agent usage instructions
+
+### Test Count (Phase 3)
+**91 Solidity + 71 Python = 162 tests, all passing**
+- Commit: a27bcde
 
 ## READY TO RECORD DEMO: YES
 
 ## Next Session
-**Record demo video + submit to Synthesis.**
+**Phase 4: Demo video + Moltbook post + submission curl**
 Deadline: March 22, 2026 11:59 PM PT / March 23, 2026 2:59 PM MYT
 
 ## Key Decisions Made
