@@ -99,6 +99,7 @@ incentive-aligned enough for useful signals to compound
 The core problem we solve is therefore:
 
 how to turn ordinary human output selection into a scalable, trustworthy policy-ranking layer for AI agents, without requiring every user to actively review or stake from the start.
+
 ---
 
 ## How it works
