@@ -13,7 +13,7 @@
 | Dockerfile | python:3.11-slim for Railway deploy |
 | railway.toml | Railway build config (dockerfile builder) |
 | agent.json | Agent identity manifest (v2.0, real addresses) |
-| agent_log.json | Agent decision log (76+ entries) |
+| agent_log.json | Agent decision log (131+ entries, real Lighthouse CIDs) |
 | AGENTS.md | Agent interface docs (endpoints, contracts, safety) |
 | README.md | Repo README with Mermaid diagrams |
 

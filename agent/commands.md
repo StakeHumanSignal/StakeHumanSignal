@@ -33,7 +33,7 @@ npx hardhat run scripts/deploy-and-e2e-sepolia.js --network base-sepolia
 
 ```bash
 uvicorn api.main:app --reload --port 8000    # Start with hot-reload
-python -m pytest test/ -v                     # Run all 67 Python tests
+python -m pytest test/ -v                     # Run all 71 Python tests (52% coverage)
 python -m pytest test/test_integration.py -v  # Integration tests only
 
 # Verify imports

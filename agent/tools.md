@@ -20,23 +20,37 @@
 - USDC: 0x036CbD53842c5426634e7929541eC2318f3dCF7e
 - wstETH: 0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452 (Base Mainnet)
 
+### Filecoin Calibration (Chain ID: 314159)
+- RPC: https://api.calibration.node.glif.io/rpc/v1
+- Explorer: https://filecoin-testnet.blockscout.com
+- USDFC: 0xb3042734b608a1B16e9e86B374A3f3e389B4cDf0
+- USDFC obtained via CDP on Secured Finance (https://stg.usdfc.net)
+
 ## Payment
 
 ### x402 Protocol
 - Manual 402 gate on /reviews/top (0.001 USDC)
-- Server: filecoin-bridge/x402-server.js (port 3002)
-- Also: x402-server/index.js (legacy, port 3000)
-- Public facilitator: https://x402.org/facilitator
-- No CDP keys needed
+- Server: x402-server/index.js (port 3000)
+- FastAPI inline gate: api/routes/reviews.py line 210
+- Verification: checks header presence (theatrical — no crypto verification)
+- CDP keys blocked (2FA issue from Malaysia)
 
 ## Storage
 
-### Lighthouse (Filecoin/IPFS)
+### Filecoin Onchain Cloud (FOC) — PRIMARY
+- SDK: `@filoz/synapse-sdk` v0.40.0
+- Network: calibration (chain 314159) — same contracts as mainnet
+- Bridge: filecoin-bridge/index.js (ESM, express + Synapse SDK)
+- Deposit TX: 0x244c2a1d... (USDFC payment for storage)
+- PieceCID: bafkzcibcduch6lsgmz3rpfq6uhjibwca2lofa6r43ppgul6gqy7vlut7mxsj4ny
+- Tests: filecoin-bridge/filecoin-bridge.test.js (6 passing)
+
+### Lighthouse (IPFS/Filecoin) — SECONDARY
 - Python SDK: `pip install lighthouseweb3`
-- Stores on IPFS (instant) + Filecoin (background deal)
 - Gateway: https://gateway.lighthouse.storage/ipfs/{CID}
 - Env: LIGHTHOUSE_API_KEY
-- Integration: api/services/filecoin.py
+- Integration: api/services/filecoin.py (used by buyer_agent for log pinning)
+- Status: working, real Qm... CIDs confirmed
 
 ## Scoring
 
@@ -46,45 +60,34 @@
 - Fallback: term matching + length heuristics
 - No external API, no API key needed
 
-### Bankr LLM Gateway (optional)
-- URL: https://llm.bankr.bot/v1/chat/completions
-- Auth: X-API-Key header
-- OpenAI-compatible format
-- Env: BANKR_API_KEY
-- Integration: api/services/bankr.py
-- Status: key exists, needs credits ($2 USDC on Base)
-
-### Locus Payments (optional)
-- URL: https://beta-api.paywithlocus.com
-- USDC on Base, sponsored gas
-- Env: LOCUS_API_KEY
-- Integration: api/services/locus.py
-- Status: key exists, 401 auth issue
-
-### Olas mech-client (optional)
-- SDK: pip install mech-client
-- Python MarketplaceService for hiring agents
-- Env: OLAS_MECH_ADDRESS
-- Integration: api/services/olas.py
-- Status: demo mode (0 live requests)
-
 ## MCP
 
 ### Lido MCP Server
 - Location: lido-mcp/
 - 9 tools: stake, unstake, wrap, unwrap, get_yield, distribute, vault_health, list_jobs, vote
 - All write ops: dry_run=true default
+- dry_run reads REAL chain state via RPC (no hardcoded ratios)
 - Vault monitor: lido-mcp/vault-monitor.js
 - Skill file: lido-mcp/lido.skill.md
+- Tests: lido-mcp/lido-mcp.test.js (7 passing)
+
+### StakeSignal MCP Server
+- Location: stakesignal-mcp/
+- 5 tools: get_ranked_reviews, submit_passive_selection, stake_on_review, get_leaderboard, check_agent_decisions
+- Hits live Railway API
+- Skill file: stakesignal-mcp/stakesignal.skill.md
+- Tests: stakesignal-mcp/stakesignal-mcp.test.js (6 passing)
 
 ## Frontend
 
-### Next.js 16 + Tailwind + RainbowKit
+### Next.js 16 + Tailwind 4 + RainbowKit
 - Location: frontend/
 - 7 pages: landing, marketplace, submit, agent-feed, leaderboard, validate, town-square
+- Shared nav routes: frontend/src/lib/nav-routes.ts (single source of truth)
 - Wallet connect: RainbowKit + wagmi v2 (Base Sepolia)
 - Design: Obsidian Architect (cyan #8ff5ff, purple #ac89ff, mint #c5ffc9)
 - API client: frontend/src/lib/api.ts → Railway fallback
+- Tests: vitest (5 nav consistency) + Playwright scaffold (not run)
 
 ## Deployment
 
@@ -95,13 +98,22 @@
 
 ### Vercel (Frontend)
 - URL: https://stakehumansignal.vercel.app
-- Domain: stakehumansignal.vercel.app
-- Env: NEXT_PUBLIC_API_URL → Railway URL
+- Connected to: github.com/StakeHumanSignal/StakeHumanSignal
+- Root directory: frontend
+- Framework: Next.js
+- Auto-deploys on push to main
+
+## CI
+
+### GitHub Actions
+- File: .github/workflows/ci.yml
+- 4 jobs: solidity-tests, python-tests, frontend-tests, security-scan
+- Runs on push/PR to main
 
 ## Hackathon
 
 ### Synthesis
-- Deadline: March 22, 2026 11:59 PM PT
+- Deadline: March 22, 2026 11:59 PM PT / March 23, 2026 2:59 PM MYT
 - Team ID: baacd78ca8d44b7b97e48ed8bdc1b9db
 - Submission API: https://synthesis.devfolio.co
-- Track UUIDs: see docs/aim-tracks.md
+- Track UUIDs: see docs/aim-tracks.md and agent/skills/submission.md

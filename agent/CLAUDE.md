@@ -22,20 +22,26 @@
 Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 
 ### Current Sprint Goal
-**Phase 7: Demo + Submission** — Record demo video, submit to all tracks
-- Phase 6 audit PASSED — all 7 tracks verified, 162 tests (91 Solidity + 71 Python)
-- All live services healthy (Vercel 200, Railway 200, x402 402)
-- Judge-facing files cleaned (README, agent.json, conversation-log)
+**FINAL: Demo video → Submit via Synthesis API**
+- All critical bugs fixed — Lido MCP ratios use real RPC, FOC integrated, buyer agent runs clean
+- distributeYield TX on-chain: `0x30ad2db8...` (block 39211827)
+- FOC upload proven: PieceCID `bafkzcibcduch6lsgmz3rpfq6uhjibwca2lofa6r43ppgul6gqy7vlut7mxsj4ny`
+- 3 validate sessions seeded, live on Railway
+- Tests: 91 Solidity + 71 Python + 5 frontend + 13 MCP + 6 FOC = 186 total
 - TODO: Record 2-min demo video, submit via Synthesis API
 
-### Tracks (7 + Open)
-1. Virtuals ERC-8183 (90% weight — core product)
-2. Protocol Labs ERC-8004 (85% — 3 registries)
-3. Lido stETH Treasury (75% — principal locked, yield-only)
-4. Lido MCP Server (45% — 9 tools, mock mode)
-5. Base x402 (70% — payment gate)
-6. Filecoin Storage (65% — real Lighthouse CIDs)
-7. Open Track (100% — full system)
+### Tracks (10 + Open + Student)
+1. Virtuals ERC-8183 — $2,000 — STRONG
+2. Protocol Labs ERC-8004 — $4,000 — GOOD (real receipt mint on-chain)
+3. Protocol Labs Agent Cook — $4,000 — GOOD (131+ log entries, real decisions)
+4. Lido stETH Treasury — $3,000 — FIXED (distributeYield TX proven)
+5. Lido MCP Server — $5,000 — FIXED (9 tools, real RPC calls, no hardcoded ratios)
+6. Base x402 — $5,000 — ACCEPTED (correct 402 format, verification theatrical)
+7. Octant Mechanism Design — $1,000 — STRONG (sqrt staking, two-layer model)
+8. Octant Data Collection — $1,000 — GOOD (5-dimension rubric, Lighthouse CIDs)
+9. Filecoin Storage — $2,000 — REAL FOC (Synapse SDK, USDFC payment, PieceCID proven)
+10. Open Track — $28,000+ — GOOD (full system)
+11. Student Founder — $500 + travel — ELIGIBLE (student ID ready)
 
 ### Package Management
 - Use `bun add` for JS packages, `pip install` for Python
@@ -43,7 +49,12 @@ Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 
 ### Key Commands
 - Compile: `npx hardhat compile`
-- Test: `npx hardhat test` (91 passing) + `python -m pytest test/ -v` (71 passing)
+- Test Solidity: `npx hardhat test` (91 passing)
+- Test Python: `python -m pytest test/ -v` (71 passing, 52% coverage)
+- Test Frontend: `cd frontend && bun run test` (5 passing)
+- Test MCP: `cd lido-mcp && npm test` + `cd stakesignal-mcp && npm test` (13 passing)
+- Test FOC: `cd filecoin-bridge && npm test` (6 passing)
+- Test All: `npm run test:all`
 - Deploy Sepolia: `npx hardhat run scripts/deploy-sepolia.js --network base-sepolia`
 - API: `uvicorn api.main:app --reload --port 8000`
 - Agent: `python -m api.agent.buyer_agent --once`
@@ -55,17 +66,17 @@ Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 ### Architecture
 - `contracts/` — 4 Solidity contracts (ERC-8183 Job, Lido Treasury, ERC-8004 Registry, SessionEscrow)
 - `api/` — Python FastAPI backend (reviews, jobs, outcomes, sessions, agent, leaderboard)
-- `api/services/` — scorer, scorer_local, filecoin (Lighthouse), bankr, locus, olas, web3_client
-- `api/agent/` — buyer_agent.py (autonomous loop with --once flag)
-- `frontend/` — Next.js 16 + Tailwind + RainbowKit (7 pages)
+- `api/services/` — scorer, scorer_local, filecoin (Lighthouse + FOC bridge), web3_client
+- `api/agent/` — buyer_agent.py (autonomous loop with --once flag, loads dotenv)
+- `frontend/` — Next.js 16 + Tailwind 4 + RainbowKit (7 pages, shared nav-routes.ts)
 - `x402-server/` — Express x402 payment gateway (manual 402 gate)
-- `filecoin-bridge/` — Filecoin storage bridge + x402 gateway
-- `lido-mcp/` — MCP server with 9 Lido tools + vault monitor
+- `filecoin-bridge/` — Filecoin Onchain Cloud bridge (@filoz/synapse-sdk, ESM)
+- `lido-mcp/` — MCP server with 9 Lido tools + vault monitor (real RPC, no hardcoded ratios)
 - `stakesignal-mcp/` — MCP server with 5 StakeHumanSignal tools
-- `openserv-worker/` — OpenServ agent worker (4 capabilities)
-- `scripts/` — deploy, wire, e2e test, seed, verify
+- `scripts/` — deploy, wire, e2e test, seed, check-treasury, distribute-yield
 - `agent/` — project docs (CLAUDE.md, memory.md, files.md, tools.md, skills/)
-- `docs/` — gitignored specs (hackathon.md, aim-tracks.md, design.md, etc.)
+- `docs/` — gitignored specs (honest-audit, aim-tracks, design, presubmission)
+- `.github/workflows/ci.yml` — 4 CI jobs (solidity, python, frontend, security)
 
 ### Live URLs
 - Frontend: https://stakehumansignal.vercel.app
@@ -74,12 +85,19 @@ Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 
 ### Contracts (Base Sepolia)
 - StakeHumanSignalJob: 0xE99027DDdF153Ac6305950cD3D58C25D17E39902
-- LidoTreasury: 0x8E29D161477D9BB00351eA2f69702451443d7bf5
+- LidoTreasury (original): 0x8E29D161477D9BB00351eA2f69702451443d7bf5 (dummy wstETH — unusable)
+- LidoTreasury (fresh + yield proof): 0x639bBbE3D9624b96a7b6aC9a0A95493642bf2b72
 - ReceiptRegistry: 0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332
 - SessionEscrow: 0xe817C338aD7612184CFB59AeA7962905b920e2e9
+
+### On-Chain Proof TXs
+- createJob: 0x3dee4cc1... (block 39156980)
+- receiptMinted: 0x3740a500... (block 39156981)
+- depositPrincipal: 0x3a7bc31e... (block 39211824)
+- distributeYield: 0x30ad2db8... (block 39211827)
+- FOC deposit: 0x244c2a1d... (Filecoin calibration block 3562333)
 
 ### DO NOT touch
 - contracts/ (deployed on Sepolia — any change requires redeploy)
 - deployments/ (evidence for judges)
 - frontend design/colors/fonts (Obsidian Architect theme finalized)
-- scorer.py — OK to modify (no redeploy needed, logic is off-chain)
