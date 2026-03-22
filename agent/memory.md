@@ -86,8 +86,8 @@ Failures to fix:
 - [x] Synthesis hackathon registration
   - Participant ID: `6d95149b1c87410dbe4d7a01cd209afb`
   - Team ID: `baacd78ca8d44b7b97e48ed8bdc1b9db`
-  - Invite code: `036c9a15cb67`
-  - API Key: `sk-synth-14121259f1f07c38a5180aecf3786191821adf30b2be1303`
+  - Invite code: (see Synthesis dashboard)
+  - API Key: (set SYNTHESIS_API_KEY in .env)
   - On-chain TX: https://basescan.org/tx/0xcd3eb6582b19a2fad433a24396c0f55e78bf1ccdaea082ee9738fec26eacc1d0
 - [x] 3 Solidity contracts written and compiled (0.8.28, Cancun EVM)
   - StakeHumanSignalJob.sol — ERC-8183 agentic commerce (createJob, fund, submit, complete, reject)

@@ -1,0 +1,21 @@
+{
+  "network": "base-sepolia",
+  "timestamp": "2026-03-22T15:05:42.172Z",
+  "deployer": "0x557E1E07652B75ABaA667223B11704165fC94d09",
+  "contracts": {
+    "mockWstETH": "0xe9080C306f4d368c86Fdcb1a57E80e7364dCD71f",
+    "mockUSDC": "0x47E7c5F5c25c5844f588E9c1B11e54A9060Dc145",
+    "lidoTreasury": "0x639bBbE3D9624b96a7b6aC9a0A95493642bf2b72"
+  },
+  "txs": {
+    "depositPrincipal": "0x3a7bc31ea1f2aaddfd0edec3e035c33ca8d30309ae9d70e5f7390638c6f84024",
+    "depositPrincipalBlock": 39211824,
+    "distributeYield": "0x30ad2db8d5047f9296abdf589b8e8108dbdddbaeba529b387b79c010136550ce",
+    "distributeYieldBlock": 39211827
+  },
+  "state": {
+    "principalLocked": "0.5",
+    "yieldDistributed": "0.1",
+    "yieldRemaining": "0.3"
+  }
+}

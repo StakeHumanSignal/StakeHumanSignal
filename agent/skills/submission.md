@@ -8,21 +8,20 @@ March 22, 2026 11:59 PM PT / March 23, 2026 2:59 PM MYT
 - Invite code: (check Synthesis dashboard)
 - API Key: (set SYNTHESIS_API_KEY in .env)
 
-## Track UUIDs (10 + Open)
+## Track UUIDs (10 active + Open)
 
-| Track | UUID |
-|-------|------|
-| Virtuals ERC-8183 | 49c3d90b1f084c44a3585231dc733f83 |
-| Protocol Labs ERC-8004 | 3bf41be958da497bbb69f1a150c76af9 |
-| Lido stETH Treasury | 5e445a077b5248e0974904915f76e1a0 |
-| Lido MCP | ee885a40e4bc4d3991546cec7a4433e2 |
-| Base x402 | 6f0e3d7dcadf4ef080d3f424963caff5 |
-| Filecoin Storage | 49a19e54cdde48a6a22bd7604d07292e |
-| OpenServ | 9bd8b3fde4d0458698d618daf496d1c7 |
-| Locus | f50e31188e2641bc93764e7a6f26b0f6 |
-| Bankr | dcaf0b1bf5d44c72a34bb771008e137a |
-| Olas Hire | 7d6e542ff0674030925fbc2c7ef96210 |
-| Open Track | fdb76d08812b43f6a5f454744b66f590 |
+| Track | Sponsor | UUID |
+|-------|---------|------|
+| ERC-8183 Open Build | Virtuals | `49c3d90b1f084c44a3585231dc733f83` |
+| Agents With Receipts ERC-8004 | Protocol Labs | `3bf41be958da497bbb69f1a150c76af9` |
+| Let the Agent Cook | Protocol Labs | `10bd47fac07e4f85bda33ba482695b24` |
+| stETH Agent Treasury | Lido | `5e445a077b5248e0974904915f76e1a0` |
+| Lido MCP | Lido | `ee885a40e4bc4d3991546cec7a4433e2` |
+| Agent Services on Base | Base | `6f0e3d7dcadf4ef080d3f424963caff5` |
+| Mechanism Design | Octant | `32de074327bd4f6d935798d285becdfb` |
+| Data Collection | Octant | `db41ba89c2214fc18ef707331645d3fe` |
+| Filecoin Storage | Filecoin | `49a19e54cdde48a6a22bd7604d07292e` |
+| Open Track | Synthesis | `fdb76d08812b43f6a5f454744b66f590` |
 
 ## Submission API
 
