@@ -2,6 +2,40 @@
 
 > Last updated: March 22, 2026
 
+## Phase 6 Pre-Submission Audit — March 22, 2026
+
+**Status: COMPLETED — All 7 tracks verified, submission ready**
+
+### Track Evidence Report
+
+| Track | Name | Key Evidence | Status |
+|-------|------|-------------|--------|
+| 1 | ERC-8183 Virtuals | Job 0xE990..., 8 valid TX hashes, 5 independence refs | PASS |
+| 2 | ERC-8004 Protocol Labs | 7 registry functions, 121 agent_log entries, agent.json v2.0.0 | PASS |
+| 3 | stETH Treasury Lido | 10 contract refs, two-layer scorer, wstETH address confirmed | PASS |
+| 4 | Lido MCP | 18 lido_ tools, skill file EXISTS, 24 vote/governance refs, 49 dry_run refs | PASS |
+| 5 | Base x402 | HTTP 402 on /reviews/top, agent.json clean (0 TODOs), 10 MCP tools | PASS |
+| 6 | Filecoin | 15 lighthouse refs, 5 route refs, CID1 HTTP 200, CID2 HTTP 200 | PASS |
+| 7 | Open Track | 4 contracts, 6 frontend pages, Vercel 200, Railway 200 | PASS |
+
+### Final Test Counts
+- Solidity: 91 passing
+- Python: 71 passing
+- Total: 162 passing
+
+### Judge-Facing Fixes Made
+- README.md: "67 Python" -> "71 Python", lido-mcp "5 tools" -> "9 tools", added stakesignal-mcp to project structure, added passive/active selection nodes to Mermaid diagram
+- agent.json + frontend/public/agent.json: added two-layer-human-signal and mcp-server capabilities
+- docs/conversation-log.md: agent_log count 86 -> 121
+- openserv-worker/index.js: added "Track dropped" comment
+- agent/CLAUDE.md: sprint goal updated to Phase 7
+
+### Live Services
+- Vercel: HTTP 200
+- Railway: HTTP 200
+- x402 gate: HTTP 402
+- Filecoin CIDs: both HTTP 200
+
 ## Phase 5 Fixes — March 22, 2026 16:47 MYT
 
 **Status: COMPLETED — All 4 checks PASS**

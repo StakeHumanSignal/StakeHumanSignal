@@ -22,12 +22,11 @@
 Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 
 ### Current Sprint Goal
-**Phase 5: COMPLETED** — All integration failures fixed
-1. Railway redeployed successfully (x402 402, /sessions/passive PASS)
-2. LIGHTHOUSE_API_KEY set on Railway (Filecoin CIDs returning real QmHash)
-3. distribution_model added to OutcomeResponse (two-layer PASS)
-4. Fixed eth-account version conflict (lighthouseweb3 needed >=0.13.7)
-5. 162 tests passing (91 Solidity + 71 Python)
+**Phase 7: Demo + Submission** — Record demo video, submit to all tracks
+- Phase 6 audit PASSED — all 7 tracks verified, 162 tests (91 Solidity + 71 Python)
+- All live services healthy (Vercel 200, Railway 200, x402 402)
+- Judge-facing files cleaned (README, agent.json, conversation-log)
+- TODO: Record 2-min demo video, submit via Synthesis API
 
 ### Tracks (7 + Open)
 1. Virtuals ERC-8183 (90% weight — core product)

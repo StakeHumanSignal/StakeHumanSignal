@@ -10,7 +10,9 @@
     "lido-yield-distribution",
     "heuristic-rubric-scoring",
     "independence-verification",
-    "structured-claims"
+    "structured-claims",
+    "two-layer-human-signal",
+    "mcp-server"
   ],
   "standards": ["ERC-8183", "ERC-8004"],
   "harness": "claude-code",

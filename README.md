@@ -24,7 +24,11 @@ graph TD
     G -->|fail| I[rejected — self-review blocked]
     H --> J[Lido yield paid — wstETH to winner]
     H --> K[👤 Human B blind A/B compare]
-    K -->|validates| L[Reputation updated — score recalculated]
+    K --> K1{Selection type}
+    K1 -->|passive| K2[No stake — 0.3x yield multiplier]
+    K1 -->|active| K3[Stake USDC — 0.7x sqrt-scaled]
+    K2 --> L[Reputation updated — score recalculated]
+    K3 --> L
     K -->|rejects| M[Claim flagged — yield reduced]
     J --> L
 
@@ -39,6 +43,9 @@ graph TD
     style I fill:#1a1a2e,stroke:#666,color:#999
     style J fill:#1a1a2e,stroke:#8ff5ff,color:#fff
     style K fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style K1 fill:#1a1a2e,stroke:#ac89ff,color:#fff
+    style K2 fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style K3 fill:#1a1a2e,stroke:#8ff5ff,color:#fff
     style L fill:#1a1a2e,stroke:#8ff5ff,color:#fff
     style M fill:#1a1a2e,stroke:#666,color:#999
 ```
@@ -142,7 +149,7 @@ cd StakeHumanSignal && cp .env.example .env
 
 bun install && pip install -r requirements.txt
 npx hardhat test                    # 91 Solidity tests
-python -m pytest test/ -v           # 67 Python tests
+python -m pytest test/ -v           # 71 Python tests
 
 # Start services
 uvicorn api.main:app --port 8000
@@ -173,8 +180,11 @@ frontend/                         # Next.js + Tailwind + RainbowKit
 └── src/components/               # TopBar, SideNav, WalletDisplay, Providers
 
 lido-mcp/                         # MCP server for Lido stETH operations
-├── index.js                      # 5 tools with dry_run support
+├── index.js                      # 9 tools with dry_run support
 └── vault-monitor.js              # APY monitoring + alerts
+
+stakesignal-mcp/                  # MCP server for StakeHumanSignal operations
+└── index.js                      # 5 tools (get_ranked, submit_passive, stake_on, etc.)
 
 filecoin-bridge/                  # Filecoin storage + x402 gateway
 ├── index.js                      # Lighthouse SDK bridge
