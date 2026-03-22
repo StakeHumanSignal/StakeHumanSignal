@@ -95,6 +95,38 @@ def score_reviews_heuristic(reviews: list[dict]) -> list[dict]:
     return scored
 
 
+async def score_with_bankr_ensemble(reviews: list[dict]) -> list[dict]:
+    """Additional scoring via Bankr LLM Gateway (if API key set)."""
+    from api.services.bankr import score_with_bankr, BANKR_KEY
+
+    if not BANKR_KEY:
+        return reviews  # skip if no key
+
+    for review in reviews:
+        result = await score_with_bankr(
+            review.get("review_text", review.get("reasoning", "")),
+            review.get("task_intent", "general review"),
+        )
+        review["bankr_score"] = result.get("score", 50)
+        review["bankr_reasoning"] = result.get("reasoning", "")
+
+        # Blend: 70% heuristic + 30% Bankr
+        heuristic_score = review.get("score", 50)
+        blended = round(heuristic_score * 0.7 + review["bankr_score"] * 0.3)
+        review["score"] = blended
+
+        log(
+            f"Bankr ensemble: {review.get('id', '?')} "
+            f"heuristic={heuristic_score} bankr={review['bankr_score']} blended={blended}",
+            action="bankr_score",
+            claim_id=review.get("id"),
+            bankr_score=review["bankr_score"],
+            blended_score=blended,
+        )
+
+    return reviews
+
+
 async def complete_and_reward(winner: dict):
     """Complete the ERC-8183 job and signal outcome."""
     try:
@@ -148,6 +180,9 @@ async def run_cycle(cycle: int) -> bool:
     # 2. Score with local heuristic scorer
     scored = score_reviews_heuristic(reviews)
     log(f"Scored {len(scored)} reviews with heuristic scorer", action="score")
+
+    # 2b. Ensemble scoring via Bankr LLM Gateway (if configured)
+    scored = await score_with_bankr_ensemble(scored)
 
     # 3. Process each scored review: complete or reject
     for review in scored:
