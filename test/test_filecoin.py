@@ -5,6 +5,9 @@ import pytest
 import httpx
 from unittest.mock import AsyncMock, MagicMock, patch
 
+# Force bridge path in tests (not Lighthouse) regardless of env vars
+import api.services.filecoin as _filecoin_mod
+_filecoin_mod.LIGHTHOUSE_API_KEY = ""
 
 MOCK_CID = "bafylocal1234567890abcdef1234567890abcdef12345678"
 

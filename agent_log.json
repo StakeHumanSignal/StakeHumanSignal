@@ -1059,5 +1059,737 @@
     "iso": "2026-03-22T19:11:56Z",
     "message": "Fetch error: Connection refused",
     "action": "error"
+  },
+  {
+    "timestamp": 1774191971.348493,
+    "iso": "2026-03-22T23:06:11Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774191971.3541498,
+    "iso": "2026-03-22T23:06:11Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774193773.585726,
+    "iso": "2026-03-22T23:36:13Z",
+    "message": "Agent starting autonomous loop",
+    "action": "start"
+  },
+  {
+    "timestamp": 1774193773.586913,
+    "iso": "2026-03-22T23:36:13Z",
+    "message": "Cycle 1 starting",
+    "action": "cycle_start"
+  },
+  {
+    "timestamp": 1774193773.737778,
+    "iso": "2026-03-22T23:36:13Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774193773.739097,
+    "iso": "2026-03-22T23:36:13Z",
+    "message": "Fetched 0 reviews",
+    "action": "fetch",
+    "count": 0
+  },
+  {
+    "timestamp": 1774193773.739987,
+    "iso": "2026-03-22T23:36:13Z",
+    "message": "No reviews available",
+    "action": "wait"
+  },
+  {
+    "timestamp": 1774193773.740812,
+    "iso": "2026-03-22T23:36:13Z",
+    "message": "Single cycle complete (--once mode)",
+    "action": "stop"
+  },
+  {
+    "timestamp": 1774193809.6211998,
+    "iso": "2026-03-22T23:36:49Z",
+    "message": "Agent starting autonomous loop",
+    "action": "start"
+  },
+  {
+    "timestamp": 1774193809.622321,
+    "iso": "2026-03-22T23:36:49Z",
+    "message": "Cycle 1 starting",
+    "action": "cycle_start"
+  },
+  {
+    "timestamp": 1774193809.8066602,
+    "iso": "2026-03-22T23:36:49Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774193809.8088279,
+    "iso": "2026-03-22T23:36:49Z",
+    "message": "Fetched 10 reviews",
+    "action": "fetch",
+    "count": 10
+  },
+  {
+    "timestamp": 1774193809.8106802,
+    "iso": "2026-03-22T23:36:49Z",
+    "message": "Scored 10 reviews with heuristic scorer",
+    "action": "score"
+  },
+  {
+    "timestamp": 1774193809.811976,
+    "iso": "2026-03-22T23:36:49Z",
+    "message": "Heuristic: 2fb10aa1 verdict=validated confidence=0.88",
+    "action": "heuristic_score",
+    "claim_id": "2fb10aa1",
+    "task_intent": "extract structured data from unstructured medical notes",
+    "verdict": "validated",
+    "confidence": 0.88
+  },
+  {
+    "timestamp": 1774193810.950818,
+    "iso": "2026-03-22T23:36:50Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193810.952729,
+    "iso": "2026-03-22T23:36:50Z",
+    "message": "Heuristic: e0d20c71 verdict=validated confidence=0.88",
+    "action": "heuristic_score",
+    "claim_id": "e0d20c71",
+    "task_intent": "extract structured data from unstructured medical notes",
+    "verdict": "validated",
+    "confidence": 0.88
+  },
+  {
+    "timestamp": 1774193811.034219,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193811.035329,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Heuristic: 2a2c3de4 verdict=validated confidence=0.87",
+    "action": "heuristic_score",
+    "claim_id": "2a2c3de4",
+    "task_intent": "evaluate Python async error handling across two LLM policies",
+    "verdict": "validated",
+    "confidence": 0.87
+  },
+  {
+    "timestamp": 1774193811.1068292,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193811.108056,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Heuristic: 1e41c962 verdict=validated confidence=0.87",
+    "action": "heuristic_score",
+    "claim_id": "1e41c962",
+    "task_intent": "evaluate Python async error handling across two LLM policies",
+    "verdict": "validated",
+    "confidence": 0.87
+  },
+  {
+    "timestamp": 1774193811.179229,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193811.180587,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Heuristic: 05ee3131 verdict=validated confidence=0.85",
+    "action": "heuristic_score",
+    "claim_id": "05ee3131",
+    "task_intent": "compare trading strategy analysis for BTC/USD volatility",
+    "verdict": "validated",
+    "confidence": 0.85
+  },
+  {
+    "timestamp": 1774193811.333727,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193811.335412,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Heuristic: c132408c verdict=validated confidence=0.85",
+    "action": "heuristic_score",
+    "claim_id": "c132408c",
+    "task_intent": "compare trading strategy analysis for BTC/USD volatility",
+    "verdict": "validated",
+    "confidence": 0.85
+  },
+  {
+    "timestamp": 1774193811.409815,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193811.4118268,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Heuristic: 59c39a58 verdict=validated confidence=0.82",
+    "action": "heuristic_score",
+    "claim_id": "59c39a58",
+    "task_intent": "generate creative marketing copy for Web3 developer tools",
+    "verdict": "validated",
+    "confidence": 0.82
+  },
+  {
+    "timestamp": 1774193811.4966779,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193811.498467,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Heuristic: 6de8a8fe verdict=validated confidence=0.82",
+    "action": "heuristic_score",
+    "claim_id": "6de8a8fe",
+    "task_intent": "generate creative marketing copy for Web3 developer tools",
+    "verdict": "validated",
+    "confidence": 0.82
+  },
+  {
+    "timestamp": 1774193811.582274,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193811.583572,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Heuristic: 554c0e9a verdict=validated confidence=0.81",
+    "action": "heuristic_score",
+    "claim_id": "554c0e9a",
+    "task_intent": "assess customer support response tone for fintech users",
+    "verdict": "validated",
+    "confidence": 0.81
+  },
+  {
+    "timestamp": 1774193811.667988,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193811.6692119,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Heuristic: 6b0f72a9 verdict=validated confidence=0.81",
+    "action": "heuristic_score",
+    "claim_id": "6b0f72a9",
+    "task_intent": "assess customer support response tone for fintech users",
+    "verdict": "validated",
+    "confidence": 0.81
+  },
+  {
+    "timestamp": 1774193811.830671,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193811.909356,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Agent log pinned to Filecoin: bafylocal97136f1e16bc2d89fa41c37192a5d4980108522b4a75aa6c",
+    "action": "pin",
+    "logCID": "bafylocal97136f1e16bc2d89fa41c37192a5d4980108522b4a75aa6c"
+  },
+  {
+    "timestamp": 1774193811.9113102,
+    "iso": "2026-03-22T23:36:51Z",
+    "message": "Single cycle complete (--once mode)",
+    "action": "stop"
+  },
+  {
+    "timestamp": 1774193880.7488241,
+    "iso": "2026-03-22T23:38:00Z",
+    "message": "Agent starting autonomous loop",
+    "action": "start"
+  },
+  {
+    "timestamp": 1774193880.750606,
+    "iso": "2026-03-22T23:38:00Z",
+    "message": "Cycle 1 starting",
+    "action": "cycle_start"
+  },
+  {
+    "timestamp": 1774193880.906361,
+    "iso": "2026-03-22T23:38:00Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774193880.907593,
+    "iso": "2026-03-22T23:38:00Z",
+    "message": "Fetched 10 reviews",
+    "action": "fetch",
+    "count": 10
+  },
+  {
+    "timestamp": 1774193880.909557,
+    "iso": "2026-03-22T23:38:00Z",
+    "message": "Scored 10 reviews with heuristic scorer",
+    "action": "score"
+  },
+  {
+    "timestamp": 1774193881.98072,
+    "iso": "2026-03-22T23:38:01Z",
+    "message": "Bankr ensemble: 2fb10aa1 heuristic=88 bankr=50 blended=77",
+    "action": "bankr_score",
+    "claim_id": "2fb10aa1",
+    "bankr_score": 50,
+    "blended_score": 77
+  },
+  {
+    "timestamp": 1774193882.926889,
+    "iso": "2026-03-22T23:38:02Z",
+    "message": "Bankr ensemble: e0d20c71 heuristic=88 bankr=50 blended=77",
+    "action": "bankr_score",
+    "claim_id": "e0d20c71",
+    "bankr_score": 50,
+    "blended_score": 77
+  },
+  {
+    "timestamp": 1774193883.877363,
+    "iso": "2026-03-22T23:38:03Z",
+    "message": "Bankr ensemble: 2a2c3de4 heuristic=87 bankr=50 blended=76",
+    "action": "bankr_score",
+    "claim_id": "2a2c3de4",
+    "bankr_score": 50,
+    "blended_score": 76
+  },
+  {
+    "timestamp": 1774193884.826039,
+    "iso": "2026-03-22T23:38:04Z",
+    "message": "Bankr ensemble: 1e41c962 heuristic=87 bankr=50 blended=76",
+    "action": "bankr_score",
+    "claim_id": "1e41c962",
+    "bankr_score": 50,
+    "blended_score": 76
+  },
+  {
+    "timestamp": 1774193885.779,
+    "iso": "2026-03-22T23:38:05Z",
+    "message": "Bankr ensemble: 05ee3131 heuristic=85 bankr=50 blended=74",
+    "action": "bankr_score",
+    "claim_id": "05ee3131",
+    "bankr_score": 50,
+    "blended_score": 74
+  },
+  {
+    "timestamp": 1774193886.7046442,
+    "iso": "2026-03-22T23:38:06Z",
+    "message": "Bankr ensemble: c132408c heuristic=85 bankr=50 blended=74",
+    "action": "bankr_score",
+    "claim_id": "c132408c",
+    "bankr_score": 50,
+    "blended_score": 74
+  },
+  {
+    "timestamp": 1774193887.6170712,
+    "iso": "2026-03-22T23:38:07Z",
+    "message": "Bankr ensemble: 59c39a58 heuristic=82 bankr=50 blended=72",
+    "action": "bankr_score",
+    "claim_id": "59c39a58",
+    "bankr_score": 50,
+    "blended_score": 72
+  },
+  {
+    "timestamp": 1774193888.500538,
+    "iso": "2026-03-22T23:38:08Z",
+    "message": "Bankr ensemble: 6de8a8fe heuristic=82 bankr=50 blended=72",
+    "action": "bankr_score",
+    "claim_id": "6de8a8fe",
+    "bankr_score": 50,
+    "blended_score": 72
+  },
+  {
+    "timestamp": 1774193889.421359,
+    "iso": "2026-03-22T23:38:09Z",
+    "message": "Bankr ensemble: 554c0e9a heuristic=81 bankr=50 blended=72",
+    "action": "bankr_score",
+    "claim_id": "554c0e9a",
+    "bankr_score": 50,
+    "blended_score": 72
+  },
+  {
+    "timestamp": 1774193890.247796,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Bankr ensemble: 6b0f72a9 heuristic=81 bankr=50 blended=72",
+    "action": "bankr_score",
+    "claim_id": "6b0f72a9",
+    "bankr_score": 50,
+    "blended_score": 72
+  },
+  {
+    "timestamp": 1774193890.251586,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Heuristic: 2fb10aa1 verdict=validated confidence=0.77",
+    "action": "heuristic_score",
+    "claim_id": "2fb10aa1",
+    "task_intent": "extract structured data from unstructured medical notes",
+    "verdict": "validated",
+    "confidence": 0.77
+  },
+  {
+    "timestamp": 1774193890.347852,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193890.349622,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Heuristic: e0d20c71 verdict=validated confidence=0.77",
+    "action": "heuristic_score",
+    "claim_id": "e0d20c71",
+    "task_intent": "extract structured data from unstructured medical notes",
+    "verdict": "validated",
+    "confidence": 0.77
+  },
+  {
+    "timestamp": 1774193890.4950259,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193890.496275,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Heuristic: 2a2c3de4 verdict=validated confidence=0.76",
+    "action": "heuristic_score",
+    "claim_id": "2a2c3de4",
+    "task_intent": "evaluate Python async error handling across two LLM policies",
+    "verdict": "validated",
+    "confidence": 0.76
+  },
+  {
+    "timestamp": 1774193890.571136,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193890.572494,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Heuristic: 1e41c962 verdict=validated confidence=0.76",
+    "action": "heuristic_score",
+    "claim_id": "1e41c962",
+    "task_intent": "evaluate Python async error handling across two LLM policies",
+    "verdict": "validated",
+    "confidence": 0.76
+  },
+  {
+    "timestamp": 1774193890.6505668,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193890.652299,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Heuristic: 05ee3131 verdict=validated confidence=0.74",
+    "action": "heuristic_score",
+    "claim_id": "05ee3131",
+    "task_intent": "compare trading strategy analysis for BTC/USD volatility",
+    "verdict": "validated",
+    "confidence": 0.74
+  },
+  {
+    "timestamp": 1774193890.727981,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193890.732401,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Heuristic: c132408c verdict=validated confidence=0.74",
+    "action": "heuristic_score",
+    "claim_id": "c132408c",
+    "task_intent": "compare trading strategy analysis for BTC/USD volatility",
+    "verdict": "validated",
+    "confidence": 0.74
+  },
+  {
+    "timestamp": 1774193890.808028,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193890.8096871,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Heuristic: 59c39a58 verdict=validated confidence=0.72",
+    "action": "heuristic_score",
+    "claim_id": "59c39a58",
+    "task_intent": "generate creative marketing copy for Web3 developer tools",
+    "verdict": "validated",
+    "confidence": 0.72
+  },
+  {
+    "timestamp": 1774193890.887617,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193890.889249,
+    "iso": "2026-03-22T23:38:10Z",
+    "message": "Heuristic: 6de8a8fe verdict=validated confidence=0.72",
+    "action": "heuristic_score",
+    "claim_id": "6de8a8fe",
+    "task_intent": "generate creative marketing copy for Web3 developer tools",
+    "verdict": "validated",
+    "confidence": 0.72
+  },
+  {
+    "timestamp": 1774193891.040086,
+    "iso": "2026-03-22T23:38:11Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193891.042319,
+    "iso": "2026-03-22T23:38:11Z",
+    "message": "Heuristic: 554c0e9a verdict=validated confidence=0.72",
+    "action": "heuristic_score",
+    "claim_id": "554c0e9a",
+    "task_intent": "assess customer support response tone for fintech users",
+    "verdict": "validated",
+    "confidence": 0.72
+  },
+  {
+    "timestamp": 1774193891.127054,
+    "iso": "2026-03-22T23:38:11Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193891.128926,
+    "iso": "2026-03-22T23:38:11Z",
+    "message": "Heuristic: 6b0f72a9 verdict=validated confidence=0.72",
+    "action": "heuristic_score",
+    "claim_id": "6b0f72a9",
+    "task_intent": "assess customer support response tone for fintech users",
+    "verdict": "validated",
+    "confidence": 0.72
+  },
+  {
+    "timestamp": 1774193891.2050629,
+    "iso": "2026-03-22T23:38:11Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774193892.044514,
+    "iso": "2026-03-22T23:38:12Z",
+    "message": "Locus balance: 0.00 USDC",
+    "action": "locus_balance",
+    "balance": "0.00",
+    "mode": "error"
+  },
+  {
+    "timestamp": 1774193892.984885,
+    "iso": "2026-03-22T23:38:12Z",
+    "message": "Agent log pinned to Filecoin: QmPmYuNvaV5z9CUAH9X86CxWjStQnWBobXs4dxDHnZ36jz",
+    "action": "pin",
+    "logCID": "QmPmYuNvaV5z9CUAH9X86CxWjStQnWBobXs4dxDHnZ36jz"
+  },
+  {
+    "timestamp": 1774193892.98677,
+    "iso": "2026-03-22T23:38:12Z",
+    "message": "Single cycle complete (--once mode)",
+    "action": "stop"
+  },
+  {
+    "timestamp": 1774193916.11681,
+    "iso": "2026-03-22T23:38:36Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774193916.1232672,
+    "iso": "2026-03-22T23:38:36Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774193952.63455,
+    "iso": "2026-03-22T23:39:12Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774193952.641218,
+    "iso": "2026-03-22T23:39:12Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774193983.611582,
+    "iso": "2026-03-22T23:39:43Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774193983.6185112,
+    "iso": "2026-03-22T23:39:43Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774194025.285248,
+    "iso": "2026-03-22T23:40:25Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774194025.288485,
+    "iso": "2026-03-22T23:40:25Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774194044.4146008,
+    "iso": "2026-03-22T23:40:44Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774194044.417652,
+    "iso": "2026-03-22T23:40:44Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774194055.201962,
+    "iso": "2026-03-22T23:40:55Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774194055.20507,
+    "iso": "2026-03-22T23:40:55Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774194100.591339,
+    "iso": "2026-03-22T23:41:40Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774194100.597822,
+    "iso": "2026-03-22T23:41:40Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
   }
 ]

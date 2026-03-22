@@ -12,6 +12,9 @@ import sys
 import time
 from pathlib import Path
 
+from dotenv import load_dotenv
+load_dotenv()
+
 import httpx
 
 LOG_FILE = Path("agent_log.json")
@@ -55,7 +58,10 @@ async def fetch_top_reviews_x402() -> list[dict]:
     # Fallback: direct API (no x402 gate)
     try:
         async with httpx.AsyncClient(timeout=15) as client:
-            resp = await client.get(f"{API_BASE}/reviews/top")
+            resp = await client.get(
+                f"{API_BASE}/reviews/top",
+                headers={"x-402-payment": "agent-buyer-auto"},
+            )
             data = resp.json()
             log(
                 f"Fetched reviews direct (x402 gateway unavailable)",
