@@ -1,8 +1,7 @@
 "use client";
 import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-
-const API = process.env.NEXT_PUBLIC_API_URL ?? "https://stakesignal-api-production.up.railway.app";
+import { API } from "@/lib/api";
 
 interface SessionData {
   id: string;

@@ -108,8 +108,9 @@ class Web3Service:
         if not contract:
             return {"job_id": 0, "tx_hash": None, "error": "Contract not deployed"}
 
+        import asyncio
         spec = json.dumps({"apiUrl": api_url, "reviewHash": review_hash})
-        receipt = self._send_tx(contract, "createJob", spec)
+        receipt = await asyncio.to_thread(self._send_tx, contract, "createJob", spec)
 
         # Parse job ID from event
         job_created_event = contract.events.JobCreated().process_receipt(receipt)
@@ -118,11 +119,12 @@ class Web3Service:
         return {"job_id": job_id, "tx_hash": receipt.transactionHash.hex()}
 
     async def complete_job(self, job_id: int) -> dict:
+        import asyncio
         contract = self._get_contract("StakeHumanSignalJob")
         if not contract:
             return {"tx_hash": None, "error": "Contract not deployed"}
 
-        receipt = self._send_tx(contract, "complete", job_id)
+        receipt = await asyncio.to_thread(self._send_tx, contract, "complete", job_id)
         return {"tx_hash": receipt.transactionHash.hex()}
 
     async def mint_receipt(self, job_id: int, winner: str, api_url: str, outcome: str) -> dict:
@@ -137,7 +139,9 @@ class Web3Service:
             "apiUrl": api_url, "outcome": outcome,
         })
 
-        receipt = self._send_tx(
+        import asyncio
+        receipt = await asyncio.to_thread(
+            self._send_tx,
             contract, "mintReceipt",
             job_id, winner, api_url, outcome, cid or ""
         )
@@ -152,11 +156,12 @@ class Web3Service:
         }
 
     async def distribute_yield(self, winner: str, amount: int) -> dict:
+        import asyncio
         contract = self._get_contract("LidoTreasury")
         if not contract:
             return {"tx_hash": None}
 
-        receipt = self._send_tx(contract, "distributeYield", winner, amount)
+        receipt = await asyncio.to_thread(self._send_tx, contract, "distributeYield", winner, amount)
         return {"tx_hash": receipt.transactionHash.hex()}
 
 
