@@ -15,7 +15,7 @@ export const ETH_MAINNET = {
   wstETH: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
   lidoDAO: "0x2e59A20f205bB85a89C53f1936454680651E618e", // Aragon Voting
   withdrawalQueue: "0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1",
-  rpc: "https://eth.llamarpc.com",
+  rpc: "https://ethereum-rpc.publicnode.com",
 };
 
 // --- Holesky Testnet (staking + governance testing) ---

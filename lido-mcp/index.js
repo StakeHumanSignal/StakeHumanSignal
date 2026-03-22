@@ -126,14 +126,49 @@ try {
 
 const TOOLS = [
   {
-    name: "lido_stake",
+    name: "lido_stake_eth",
     description:
-      "Stake USDC into the LidoTreasury contract. Principal is locked forever, only yield is distributable. Supports dry_run for simulation.",
+      "Stake ETH with Lido on Ethereum mainnet. Calls stETH.submit() — you send ETH, you receive stETH (rebasing). This is REAL Lido staking, not a wrapper. Supports dry_run.",
     inputSchema: {
       type: "object",
       properties: {
-        amount_usdc: { type: "number", description: "USDC amount to stake" },
-        wallet: { type: "string", description: "Wallet address staking" },
+        amount_eth: {
+          type: "string",
+          description: "Amount of ETH to stake (e.g. '1.0' or '0.1')",
+        },
+        dry_run: {
+          type: "boolean",
+          description: "If true, simulate without sending tx. Reads real exchange rate from Ethereum mainnet.",
+          default: true,
+        },
+      },
+      required: ["amount_eth"],
+    },
+  },
+  {
+    name: "lido_balance",
+    description:
+      "Check stETH and wstETH balances for any wallet on Ethereum mainnet. Reads real on-chain balances — not cached, not estimated.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        wallet: {
+          type: "string",
+          description: "Ethereum wallet address to check (e.g. '0x...')",
+        },
+      },
+      required: ["wallet"],
+    },
+  },
+  {
+    name: "lido_treasury_deposit",
+    description:
+      "Deposit into the StakeHumanSignal LidoTreasury on Base Sepolia. Principal locked forever — only yield is distributable to review winners. This is NOT Lido staking — it funds the review marketplace yield pool.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        amount_usdc: { type: "number", description: "USDC amount to deposit" },
+        wallet: { type: "string", description: "Wallet address depositing" },
         dry_run: {
           type: "boolean",
           description: "If true, simulate without sending tx",
@@ -146,13 +181,13 @@ const TOOLS = [
   {
     name: "lido_get_yield_balance",
     description:
-      "Query wstETH yield balance for the LidoTreasury. Shows available yield, principal locked, and total balance.",
+      "Query wstETH yield balance for the StakeHumanSignal LidoTreasury on Base Sepolia. Shows available yield, principal locked, and total balance. For Lido mainnet balances, use lido_balance instead.",
     inputSchema: {
       type: "object",
       properties: {
         wallet: {
           type: "string",
-          description: "Wallet address to check deposits for (optional)",
+          description: "Wallet address to check treasury deposits for (optional)",
         },
       },
     },
@@ -184,7 +219,7 @@ const TOOLS = [
   {
     name: "lido_get_vault_health",
     description:
-      "Check Lido vault position health. Returns current APY estimate, principal, yield distributed, and alerts if yield is below benchmark.",
+      "Check StakeHumanSignal treasury vault health on Base Sepolia. Returns cumulative yield ratio (not annualized APY), principal locked, yield distributed, and alerts if below configured benchmark.",
     inputSchema: {
       type: "object",
       properties: {},
@@ -214,7 +249,7 @@ const TOOLS = [
   {
     name: "lido_unstake",
     description:
-      "Request withdrawal of stETH. Creates a withdrawal NFT that can be claimed after the queue processes. Supports dry_run.",
+      "Request withdrawal of stETH on Ethereum mainnet. Creates a withdrawal NFT (ERC-721) in Lido's withdrawal queue. dry_run queries real queue state from mainnet.",
     inputSchema: {
       type: "object",
       properties: {
@@ -306,6 +341,128 @@ const STATUS_MAP = {
 };
 
 // --- Tool Handlers ---
+
+async function handleStakeEth(args) {
+  const { amount_eth, dry_run = true } = args;
+
+  if (!stETHContract || !ethProvider) {
+    return {
+      content: [{
+        type: "text",
+        text: JSON.stringify({
+          error: "Ethereum mainnet provider not configured",
+          note: "Set ETH_RPC_URL to connect to Ethereum mainnet for Lido staking",
+        }, null, 2),
+      }],
+      isError: true,
+    };
+  }
+
+  const amountWei = ethers.parseEther(amount_eth.toString());
+
+  if (dry_run) {
+    // Read real exchange rate from mainnet wstETH contract
+    const wstethPerSteth = await wstETHContract.getWstETHByStETH(amountWei);
+    const ethBalance = ethSigner
+      ? await ethProvider.getBalance(await ethSigner.getAddress())
+      : null;
+
+    return {
+      content: [{
+        type: "text",
+        text: JSON.stringify({
+          dry_run: true,
+          action: "lido_stake_eth",
+          amount_eth,
+          you_will_receive: ethers.formatEther(amountWei) + " stETH (1:1 on deposit)",
+          if_wrapped: ethers.formatEther(wstethPerSteth) + " wstETH",
+          exchange_rate_source: "on-chain wstETH.getWstETHByStETH() on Ethereum mainnet",
+          network: LIDO_NETWORK,
+          steth_contract: LIDO_CONTRACTS.stETH,
+          wallet_eth_balance: ethBalance ? ethers.formatEther(ethBalance) + " ETH" : "no signer configured",
+          note: "Simulation — no ETH sent. Set dry_run=false to stake real ETH with Lido.",
+        }, null, 2),
+      }],
+    };
+  }
+
+  if (!ethSigner) {
+    return {
+      content: [{
+        type: "text",
+        text: JSON.stringify({
+          error: "No private key configured for signing",
+          note: "Set PRIVATE_KEY to execute real transactions",
+        }, null, 2),
+      }],
+      isError: true,
+    };
+  }
+
+  // Real Lido staking: stETH.submit{value: amountWei}(address(0))
+  const tx = await stETHContract.submit(ethers.ZeroAddress, { value: amountWei });
+  const receipt = await tx.wait();
+
+  return {
+    content: [{
+      type: "text",
+      text: JSON.stringify({
+        dry_run: false,
+        action: "lido_stake_eth",
+        tx_hash: receipt.hash,
+        amount_eth,
+        steth_received: amount_eth + " stETH",
+        block: receipt.blockNumber,
+        network: LIDO_NETWORK,
+        explorer: `https://etherscan.io/tx/${receipt.hash}`,
+      }, null, 2),
+    }],
+  };
+}
+
+async function handleBalance(args) {
+  const { wallet } = args;
+
+  if (!stETHContract || !wstETHContract || !ethProvider) {
+    return {
+      content: [{
+        type: "text",
+        text: JSON.stringify({
+          error: "Ethereum mainnet provider not configured",
+          note: "Set ETH_RPC_URL to read Lido balances on Ethereum mainnet",
+        }, null, 2),
+      }],
+      isError: true,
+    };
+  }
+
+  const [stethBalance, wstethBalance, ethBalance, wstethRate] = await Promise.all([
+    stETHContract.balanceOf(wallet),
+    wstETHContract.balanceOf(wallet),
+    ethProvider.getBalance(wallet),
+    wstETHContract.getStETHByWstETH(ethers.parseEther("1.0")),
+  ]);
+
+  const wstethInSteth = parseFloat(ethers.formatEther(wstethBalance)) *
+    parseFloat(ethers.formatEther(wstethRate));
+
+  return {
+    content: [{
+      type: "text",
+      text: JSON.stringify({
+        wallet,
+        network: LIDO_NETWORK,
+        eth_balance: ethers.formatEther(ethBalance) + " ETH",
+        steth_balance: ethers.formatEther(stethBalance) + " stETH",
+        wsteth_balance: ethers.formatEther(wstethBalance) + " wstETH",
+        wsteth_in_steth: wstethInSteth.toFixed(6) + " stETH equivalent",
+        total_lido_position: (parseFloat(ethers.formatEther(stethBalance)) + wstethInSteth).toFixed(6) + " stETH",
+        wsteth_rate: ethers.formatEther(wstethRate) + " stETH per wstETH",
+        rate_source: "on-chain wstETH.getStETHByWstETH() on Ethereum mainnet",
+      }, null, 2),
+    }],
+  };
+}
 
 async function handleStake(args) {
   const { amount_usdc, wallet, dry_run = true } = args;
@@ -596,8 +753,8 @@ async function handleGetVaultHealth() {
         type: "text",
         text: JSON.stringify(
           {
-            current_apy: `${currentApy.toFixed(1)}%`,
-            current_apy_source: "on-chain: availableYield / totalPrincipal",
+            cumulative_yield_ratio: `${currentApy.toFixed(1)}%`,
+            cumulative_yield_ratio_source: "on-chain: availableYield / totalPrincipal (not annualized)",
             benchmark_apy: `${benchmarkApy}%`,
             benchmark_source: "configurable via LIDO_BENCHMARK_APY env var (default: Lido historical ~3.5%)",
             below_benchmark: belowBenchmark,
@@ -698,6 +855,17 @@ async function handleUnstake(args) {
 
   if (dry_run) {
     const stethFormatted = ethers.formatUnits(amount_steth, 18);
+    // Query real withdrawal queue state from Ethereum mainnet
+    let queueInfo = {};
+    try {
+      const lastFinalized = await withdrawalQueueContract.getLastFinalizedRequestId();
+      queueInfo = {
+        last_finalized_request_id: lastFinalized.toString(),
+        queue_source: "on-chain withdrawalQueue.getLastFinalizedRequestId() on Ethereum mainnet",
+      };
+    } catch (e) {
+      queueInfo = { queue_error: e.message?.slice(0, 100) };
+    }
     return {
       content: [
         {
@@ -706,8 +874,11 @@ async function handleUnstake(args) {
             {
               dry_run: true,
               amount_steth: stethFormatted + " stETH",
-              estimated_wait: "1-5 days",
-              note: "Simulation — no transaction sent. Set dry_run=false to execute.",
+              estimated_wait: "1-5 days (depends on queue depth and validator exits)",
+              network: LIDO_NETWORK,
+              withdrawal_queue_contract: LIDO_CONTRACTS.withdrawalQueue,
+              ...queueInfo,
+              note: "Simulation — no withdrawal requested. Set dry_run=false to submit to Lido withdrawal queue.",
             },
             null,
             2
@@ -999,6 +1170,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   const { name, arguments: args } = request.params;
 
   switch (name) {
+    case "lido_stake_eth":
+      return handleStakeEth(args);
+    case "lido_balance":
+      return handleBalance(args);
+    case "lido_treasury_deposit":
     case "lido_stake":
       return handleStake(args);
     case "lido_get_yield_balance":
