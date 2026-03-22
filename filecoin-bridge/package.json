@@ -1,19 +1,16 @@
 {
   "name": "stakehumansignal-filecoin-bridge",
   "version": "1.0.0",
-  "description": "Filecoin FOC storage bridge + x402 gateway for StakeHumanSignal",
+  "type": "module",
+  "description": "Filecoin FOC storage bridge for StakeHumanSignal",
   "scripts": {
     "start": "node index.js",
-    "x402": "node x402-server.js"
+    "test": "node filecoin-bridge.test.js"
   },
   "dependencies": {
     "express": "^4.21.0",
     "dotenv": "^16.4.5",
-    "@x402/express": "^0.1.0",
-    "@x402/evm": "^0.1.0",
-    "@x402/core": "^0.1.0"
-  },
-  "optionalDependencies": {
-    "@filoz/synapse-sdk": "*"
+    "@filoz/synapse-sdk": "^0.40.0",
+    "viem": "^2.47.5"
   }
 }
