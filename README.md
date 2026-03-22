@@ -2,52 +2,51 @@
 
 **A staked human feedback marketplace where humans bet real money on AI evaluation quality, agents pay to access trusted verdicts, and winners earn yield.**
 
-**Live demo:** [stakehumansignal.vercel.app](https://stakehumansignal.vercel.app) | **API:** [stakesignal-api-production.up.railway.app](https://stakesignal-api-production.up.railway.app/reviews) | Built for [Synthesis Hackathon](https://synthesis.md) — March 2026
+**Live:** [stakehumansignal.vercel.app](https://stakehumansignal.vercel.app) | **API:** [stakesignal-api-production.up.railway.app](https://stakesignal-api-production.up.railway.app/health) | **GitHub:** [StakeHumanSignal/StakeHumanSignal](https://github.com/StakeHumanSignal/StakeHumanSignal)
+
+Built for [Synthesis Hackathon](https://synthesis.md) — March 2026.
 
 ---
 
-## Problem Statement
+## Problem
 
-<!-- Submission field: problemStatement -->
+AI agents can execute tools, call APIs, and choose between models — but they have no trustworthy way to learn which option actually works for a given user and task.
 
-AI agents can now execute tools, call APIs, and choose between models — but they have no trustworthy way to learn which option actually works for a given user and task. The same API or prompt produces dramatically different results depending on context: what the user is trying to achieve, their quality bar, cost sensitivity, and acceptable error rate.
+The ecosystem is stuck between two extremes: passive signals (clicks, usage volume) scale but are too noisy, while active evaluation (structured reviews, expert judgments) is high-quality but too expensive to collect at scale.
 
-The current ecosystem is stuck between two extremes. Passive signals (clicks, usage volume) scale but are too noisy — they don't tell an agent whether a policy was actually better for a specific situation. Active evaluation (structured reviews, expert judgments) is high-quality but too expensive to collect at scale — if every user must formally review before the system works, adoption collapses.
+The result: every agent re-learns the same expensive lessons independently. Human judgment about what works stays trapped inside one-off interactions. There is no shared, incentive-aligned infrastructure for agents to learn from prior human preference.
 
-The result: every agent independently re-learns the same expensive lessons. Useful human judgment stays trapped inside one-off interactions. There is no shared, incentive-aligned infrastructure for agents to learn from prior human preference about what actually works in practice.
+## Solution
 
-## What StakeHumanSignal Does
+StakeHumanSignal turns human preference into a reusable policy-ranking layer for AI agents.
 
-<!-- Submission field: description -->
+Humans compare two AI outputs side by side, pick the winner, and optionally stake real USDC on their choice. AI buyer agents pay via x402 micropayments to access these ranked, staked verdicts — because skin in the game means signal they can trust. Winners earn Lido wstETH yield. Every outcome is permanently recorded as an ERC-8004 receipt on Base and stored on Filecoin Onchain Cloud.
 
-StakeHumanSignal turns human preference into a reusable policy-ranking layer for AI agents. Humans compare two AI outputs side by side and pick the winner. If they have conviction, they stake real USDC on their choice. AI buyer agents pay via x402 micropayments to access these ranked, staked verdicts — because skin in the game means signal they can trust. Winners earn Lido wstETH yield. Every outcome is permanently recorded as an ERC-8004 receipt on Base and stored on Filecoin.
+**Two-layer signal model:**
 
-The system works through two layers:
+- **Passive layer** — users pick the better output in a blind A/B comparison. No stake required. 0.3x yield multiplier. Low barrier for adoption.
+- **Active layer** — high-conviction users stake USDC with reasoning. 0.7x weight, sqrt-scaled to prevent whale farming. Durable signal for agents.
 
-* **Passive layer** — users simply pick the better output in a blind A/B comparison. No stake required. Contributes a 0.3x yield multiplier. This keeps the barrier low enough for real adoption.
-* **Active layer** — high-conviction users stake USDC behind their selection with reasoning. 0.7x weight, sqrt-scaled to prevent whale farming. This produces the durable signal agents can rely on.
-
-Over time, isolated human preferences compound into a shared intelligence layer that makes every agent's policy selection better.
-
-### What is actually built and deployed
+## What's Built and Deployed
 
 | Layer | Implementation | Status |
 |-------|---------------|--------|
-| Policy staking | `StakeHumanSignalJob.sol` — ERC-8183 job lifecycle on Base Sepolia | Deployed |
+| Policy staking | `StakeHumanSignalJob.sol` — ERC-8183 job lifecycle | Deployed on Base Sepolia |
 | Blind A/B compare | `SessionEscrow.sol` + `/validate` page | Deployed |
-| Passive selection | `POST /sessions/{id}/settle` — no-stake preference recording | Live |
-| Active staking | `POST /reviews` with `stake_amount` + `stake_tx_hash` | Live |
-| x402 agent payments | x402 gate on `/reviews/top` (0.001 USDC, Base Sepolia) | Live |
-| On-chain receipts | `ReceiptRegistry.sol` — ERC-8004 with 3 registries (identity, reputation, validation) | Deployed |
-| Yield distribution | `LidoTreasury.sol` — wstETH principal locked, yield-only payouts | Deployed |
-| Permanent storage | `filecoin-bridge/` — every review stored with Filecoin CID | Live |
-| Autonomous agent | `buyer_agent.py` — fetch, score, independence check, complete, mint, distribute | 123+ log entries |
-| MCP integration | `lido-mcp/` (9 tools) + `stakesignal-mcp/` (5 tools) | Live |
-| Frontend | 7-page Next.js dashboard with wallet connect, live feed, leaderboard | [Live](https://stakehumansignal.vercel.app) |
+| Passive selection | `POST /sessions/{id}/settle` | Live on Railway |
+| Active staking | `POST /reviews` with stake + reasoning | Live — stored on Filecoin |
+| x402 payment gate | 402 challenge on `/reviews/top` (0.001 USDC) | Live |
+| On-chain receipts | `ReceiptRegistry.sol` — ERC-8004, 3 registries | Deployed |
+| Yield distribution | `LidoTreasury.sol` — wstETH principal locked, yield-only | Deployed + TX proven |
+| Filecoin storage | `filecoin-bridge/` — Filecoin Onchain Cloud (Synapse SDK) + Lighthouse | Real PieceCID + real Qm CIDs |
+| Autonomous agent | `buyer_agent.py` — fetch → score → independence check → complete → mint | 131+ log entries |
+| Lido MCP | `lido-mcp/` — 11 tools, real Ethereum mainnet reads | 11/11 live test passing |
+| StakeSignal MCP | `stakesignal-mcp/` — 5 tools, real API calls | 5/5 live test passing |
+| Frontend | 7-page Next.js dashboard | [Live](https://stakehumansignal.vercel.app) |
 
 ---
 
-## How it works
+## How It Works
 
 ```mermaid
 graph TD
@@ -87,77 +86,20 @@ graph TD
     style M fill:#1a1a2e,stroke:#666,color:#999
 ```
 
-## Sponsor track integration
-
-```mermaid
-graph TD
-    A[Human A stakes + submits] --> B[Review stored]
-    B -->|Filecoin| B1[CID on Lighthouse/IPFS]
-    B --> C[ERC-8183 job opens]
-    C -->|Virtuals| C1[Job lifecycle contract]
-    C --> D[Agent pays, scores, completes]
-    D -->|Base x402| D1[Payment gate — no browser]
-    D --> E[ERC-8004 receipt minted]
-    E -->|Protocol Labs| E1[Identity + receipt on-chain]
-    E --> F[Lido yield distributed]
-    F -->|Lido| F1[wstETH yield-only payout]
-    F --> G[Reputation recalculated]
-    G -->|Protocol Labs| G1[agentToOwner + score avg]
-
-    style A fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-    style B fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-    style C fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-    style D fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-    style E fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-    style F fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-    style G fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-    style B1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
-    style C1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
-    style D1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
-    style E1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
-    style F1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
-    style G1 fill:#0e0e0e,stroke:#ac89ff,color:#ac89ff
-```
-
-## Human reputation system
-
-```mermaid
-graph TD
-    H[Human wallet — owner] -->|owns| A1[Agent A — 8/10 wins = 80%]
-    H -->|owns| A2[Agent B — 3/10 wins = 30%]
-    H -->|owns| A3[Agent C — 7/10 wins = 70%]
-    A1 --> R[getHumanReputationScore]
-    A2 --> R
-    A3 --> R
-    R --> S["(80 + 30 + 70) / 3 = 60% human score"]
-    S --> E[ERC-8004 reputation registry — on-chain]
-
-    style H fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-    style A1 fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-    style A2 fill:#1a1a2e,stroke:#ac89ff,color:#fff
-    style A3 fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-    style R fill:#1a1a2e,stroke:#ac89ff,color:#fff
-    style S fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-    style E fill:#1a1a2e,stroke:#8ff5ff,color:#fff
-```
-
----
-
 ## For Judges — Track Navigation
 
-Each track maps to specific folders. Click through for architecture, deployed addresses, and test instructions.
+| Track | Sponsor | Start Here |
+|-------|---------|------------|
+| ERC-8183 Open Build | Virtuals | [`contracts/`](contracts/) — `StakeHumanSignalJob.sol` |
+| Agents With Receipts (ERC-8004) | Protocol Labs | [`contracts/`](contracts/) — `ReceiptRegistry.sol` (3 registries) |
+| stETH Agent Treasury | Lido | [`contracts/`](contracts/) — `LidoTreasury.sol` + [`lido-mcp/`](lido-mcp/) |
+| Lido MCP Server | Lido | [`lido-mcp/`](lido-mcp/) — 11 tools, real Ethereum mainnet |
+| Mechanism Design | Octant | [`api/`](api/) — conviction-weighted staking + scorer |
+| Data Collection | Octant | [`api/`](api/) — autonomous review collection + Filecoin |
+| Agentic Storage | Filecoin | [`filecoin-bridge/`](filecoin-bridge/) — FOC Synapse SDK |
+| Open Track | Synthesis | Full repo — [`frontend/`](frontend/) |
 
-| Track | Sponsor | Prize | Start Here |
-|-------|---------|-------|------------|
-| ERC-8183 Open Build | Virtuals | $2,000 | [`contracts/`](contracts/) — `StakeHumanSignalJob.sol` |
-| Agents With Receipts (ERC-8004) | Protocol Labs | $4,000 | [`contracts/`](contracts/) — `ReceiptRegistry.sol` (3 registries) |
-| Let the Agent Cook | Protocol Labs | $4,000 | [`api/`](api/) — `agent/buyer_agent.py` + [`agent_log.json`](agent_log.json) |
-| stETH Agent Treasury | Lido | $3,000 | [`contracts/`](contracts/) — `LidoTreasury.sol` + [`lido-mcp/`](lido-mcp/) |
-| Lido MCP Server | Lido | $5,000 | [`lido-mcp/`](lido-mcp/) — 9 tools, dry_run, Sepolia contracts |
-| Mechanism Design | Octant | $1,000 | [`api/`](api/) — conviction-weighted staking + scorer |
-| Data Collection | Octant | $1,000 | [`api/`](api/) — autonomous review collection + Filecoin |
-| Agentic Storage | Filecoin | $2,000 | [`filecoin-bridge/`](filecoin-bridge/) — Lighthouse SDK bridge |
-| Open Track | Synthesis | $28,000+ | Full repo — [`frontend/`](frontend/) for live demo |
+Each folder has a `README.md` and a `*.skill.md` for agent consumption.
 
 ---
 
@@ -166,90 +108,127 @@ Each track maps to specific folders. Click through for architecture, deployed ad
 | Contract | Address | Basescan |
 |----------|---------|----------|
 | StakeHumanSignalJob (ERC-8183) | `0xE99027DDdF153Ac6305950cD3D58C25D17E39902` | [View](https://sepolia.basescan.org/address/0xE99027DDdF153Ac6305950cD3D58C25D17E39902) |
-| LidoTreasury | `0x8E29D161477D9BB00351eA2f69702451443d7bf5` | [View](https://sepolia.basescan.org/address/0x8E29D161477D9BB00351eA2f69702451443d7bf5) |
+| LidoTreasury (yield-only) | `0x639bBbE3D9624b96a7b6aC9a0A95493642bf2b72` | [View](https://sepolia.basescan.org/address/0x639bBbE3D9624b96a7b6aC9a0A95493642bf2b72) |
 | ReceiptRegistry (ERC-8004) | `0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332` | [View](https://sepolia.basescan.org/address/0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332) |
 | SessionEscrow | `0xe817C338aD7612184CFB59AeA7962905b920e2e9` | [View](https://sepolia.basescan.org/address/0xe817C338aD7612184CFB59AeA7962905b920e2e9) |
 
-## ERC standards
+**ERC standards:** ERC-8183 (Agentic Commerce), ERC-8004 (Agent Identity & Receipts), ERC-7857 (Private AI Agent Metadata)
 
-- **ERC-8183** — Agentic Commerce: every review is a Job with Client/Provider/Evaluator lifecycle
-- **ERC-8004** — Agent Identity & Receipts: 3 registries (identity, reputation, validation)
-- **ERC-7857** — Private AI Agent Metadata: structured claim metadata architecture
+## Use From Your Agent
 
-## Use from your agent
+**Via MCP** — install the skill file and connect:
 
-Connect via MCP or paste `stakesignal-mcp/stakesignal.skill.md` into your CLAUDE.md:
-
-```bash
-curl https://stakesignal-api-production.up.railway.app/reviews/top?dryRun=true
+```json
+{
+  "mcpServers": {
+    "stakesignal": {
+      "command": "node",
+      "args": ["stakesignal-mcp/index.js"]
+    },
+    "lido": {
+      "command": "node",
+      "args": ["lido-mcp/index.js"]
+    }
+  }
+}
 ```
 
-## Running locally
+**Via REST** — call the API directly:
+
+```bash
+# Ranked reviews (x402 gated)
+curl -H "x-402-payment: agent" https://stakesignal-api-production.up.railway.app/reviews/top
+
+# All reviews (public)
+curl https://stakesignal-api-production.up.railway.app/reviews
+
+# Leaderboard
+curl https://stakesignal-api-production.up.railway.app/leaderboard
+```
+
+Skill files with full agent mental models: [`stakesignal-mcp/stakesignal.skill.md`](stakesignal-mcp/stakesignal.skill.md) | [`lido-mcp/lido.skill.md`](lido-mcp/lido.skill.md) | [`contracts/contracts.skill.md`](contracts/contracts.skill.md)
+
+## Running Locally
 
 ```bash
 git clone https://github.com/StakeHumanSignal/StakeHumanSignal
 cd StakeHumanSignal && cp .env.example .env
 
 bun install && pip install -r requirements.txt
-npx hardhat test                    # 91 Solidity tests
-python -m pytest test/ -v           # 71 Python tests
-cd frontend && bun install && bun run test  # 5 nav consistency tests
+npx hardhat test                         # 91 Solidity tests
+python -m pytest test/ -v                # 71 Python tests
+cd frontend && bun install && bun run test  # 5 nav tests
 
 # Start services
-uvicorn api.main:app --port 8000
-cd filecoin-bridge && node index.js
-cd frontend && bun dev
+uvicorn api.main:app --port 8000         # API
+cd filecoin-bridge && node index.js      # FOC bridge
+cd lido-mcp && node index.js             # Lido MCP (11 tools)
+cd frontend && bun dev                   # Frontend
 
 # Run buyer agent
 python -m api.agent.buyer_agent --once
+
+# Live integration tests
+cd lido-mcp && node live-test.js         # 11/11 tools
+cd stakesignal-mcp && node live-test.js  # 5/5 tools
 ```
 
-## Project structure
+## Project Structure
 
 ```
-contracts/                        # 4 Solidity contracts on Base Sepolia
-├── StakeHumanSignalJob.sol       # ERC-8183 jobs + independence check
-├── LidoTreasury.sol              # wstETH yield-only treasury
-├── ReceiptRegistry.sol           # ERC-8004 receipts + ownership + reputation
-└── SessionEscrow.sol             # Blind A/B compare escrow
+contracts/          4 Solidity contracts on Base Sepolia
+├── StakeHumanSignalJob.sol    ERC-8183 jobs + independence check
+├── LidoTreasury.sol           wstETH yield-only treasury
+├── ReceiptRegistry.sol        ERC-8004 receipts + 3 registries
+├── SessionEscrow.sol          Blind A/B compare escrow
+└── contracts.skill.md         Agent skill file
 
-api/                              # Python FastAPI backend
-├── routes/                       # reviews, jobs, outcomes, sessions, agent, leaderboard
-├── services/                     # scorer, scorer_local, filecoin, web3
-└── agent/                        # buyer_agent (autonomous loop)
+api/                Python FastAPI backend
+├── routes/         reviews, jobs, outcomes, sessions, agent, leaderboard
+├── services/       scorer, filecoin, web3_client
+├── agent/          buyer_agent.py (autonomous loop)
+└── api.skill.md    Agent skill file
 
-frontend/                         # Next.js 16 + Tailwind 4 + RainbowKit
-├── src/app/                      # 7 pages: landing, marketplace, submit,
-│                                 #   agent-feed, leaderboard, validate, town-square
-└── src/components/               # TopBar, SideNav, WalletDisplay, Providers
+frontend/           Next.js 16 + Tailwind 4 + RainbowKit
+├── src/app/        7 pages: landing, marketplace, submit,
+│                     agent-feed, leaderboard, validate, town-square
+└── src/lib/        Shared nav routes, API client, wagmi config
 
-lido-mcp/                         # MCP server for Lido stETH operations
-├── index.js                      # 9 tools with dry_run support
-└── vault-monitor.js              # APY monitoring + alerts
+lido-mcp/           MCP server — 11 Lido tools
+├── index.js        Dual-provider: Ethereum mainnet + Base Sepolia
+├── contracts.js    Verified addresses from docs.lido.fi
+├── lido.skill.md   Agent mental model (rebasing, wstETH vs stETH)
+└── live-test.js    11/11 tools verified against real RPCs
 
-stakesignal-mcp/                  # MCP server for StakeHumanSignal operations
-└── index.js                      # 5 tools (get_ranked, submit_passive, stake_on, etc.)
+stakesignal-mcp/    MCP server — 5 marketplace tools
+├── index.js        All tools hit live Railway API
+├── stakesignal.skill.md  Agent workflow guide
+└── live-test.js    5/5 tools verified
 
-filecoin-bridge/                  # Filecoin storage bridge
-└── index.js                      # Synapse SDK + local CID fallback
+filecoin-bridge/    Filecoin Onchain Cloud storage
+├── index.js        @filoz/synapse-sdk v0.40.0 (ESM)
+├── filecoin.skill.md  FOC setup guide + USDFC instructions
+└── filecoin-bridge.test.js  6 integration tests
 
-agent/                            # Agent configuration & skill docs
-├── skills/                       # Project-specific agent skill files (.md)
-└── CLAUDE.md                     # Agent instructions
-
-skills/                           # Claude Code plugin skills (gstack ecosystem)
-└── */                            # Installed skill plugins
+agent/              Project docs + skill files
+├── CLAUDE.md       Security rules, sprint state, commands
+├── skills/         Track-specific skill docs
+└── memory.md       Full project decision log
 ```
 
-## Test coverage
+## Test Coverage
 
-| Suite | Tests | Covers |
-|-------|-------|--------|
-| Solidity (Hardhat) | 91 passing | Job lifecycle, receipts, treasury, escrow, independence checks |
-| Python (pytest) | 71 passing | Scorer, schema validation, task intent, two-layer payout |
-| Frontend (vitest) | 5 passing | Nav route consistency |
-| MCP (Node assert) | 13 passing | Tool registration, response shapes, error handling |
-| CI | GitHub Actions | 4 jobs: solidity, python, frontend, security scan |
+| Suite | Tests | What's Verified |
+|-------|-------|-----------------|
+| Solidity (Hardhat) | 91 | Job lifecycle, receipts, treasury yield, escrow, independence |
+| Python (pytest) | 71 | Scorer, schema, task intent, two-layer payout, filecoin |
+| Frontend (vitest) | 5 | Nav route consistency across TopBar + SideNav |
+| Lido MCP | 12 | Tool defs, ABIs, mainnet addresses, live rate read |
+| StakeSignal MCP | 6 | Tool shapes, API calls, error handling |
+| Filecoin FOC | 6 | SDK connect, balances, costs, proof CID |
+| Lido live test | 11/11 | Every tool against real Ethereum mainnet |
+| StakeSignal live test | 5/5 | Every tool against live Railway API |
+| CI | 4 jobs | GitHub Actions: solidity, python, frontend, security |
 
 ## License
 
