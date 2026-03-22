@@ -22,10 +22,11 @@
 Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 
 ### Current Sprint Goal
-**Phase 2: Fix 2 audit failures before submission**
-1. /reviews/top returns 200 (x402 gate not active on Railway)
-2. agent.json not served by Vercel (needs to be in frontend/public/)
-Deadline: March 22, 2026 11:59 PM PT / March 23, 2026 2:59 PM MYT
+**Phase 2: COMPLETE**
+1. /reviews/top now returns 402 (x402 inline gate in FastAPI) -- FIXED
+2. agent.json served by Vercel at /agent.json with CORS headers -- FIXED
+3. StakeHumanSignal MCP server (5 tools) -- BUILT
+4. /sessions/passive endpoint for passive preference signals -- ADDED
 
 ### Tracks (7 + Open)
 1. Virtuals ERC-8183 (90% weight — core product)
@@ -49,6 +50,7 @@ Deadline: March 22, 2026 11:59 PM PT / March 23, 2026 2:59 PM MYT
 - Frontend: `cd frontend && bun dev`
 - Filecoin bridge: `cd filecoin-bridge && node index.js`
 - Lido MCP: `cd lido-mcp && node index.js`
+- StakeSignal MCP: `cd stakesignal-mcp && node index.js`
 
 ### Architecture
 - `contracts/` — 4 Solidity contracts (ERC-8183 Job, Lido Treasury, ERC-8004 Registry, SessionEscrow)
@@ -59,6 +61,7 @@ Deadline: March 22, 2026 11:59 PM PT / March 23, 2026 2:59 PM MYT
 - `x402-server/` — Express x402 payment gateway (manual 402 gate)
 - `filecoin-bridge/` — Filecoin storage bridge + x402 gateway
 - `lido-mcp/` — MCP server with 9 Lido tools + vault monitor
+- `stakesignal-mcp/` — MCP server with 5 StakeHumanSignal tools
 - `openserv-worker/` — OpenServ agent worker (4 capabilities)
 - `scripts/` — deploy, wire, e2e test, seed, verify
 - `agent/` — project docs (CLAUDE.md, memory.md, files.md, tools.md, skills/)

@@ -117,6 +117,30 @@ async def get_session(session_id: str):
     return s
 
 
+class PassiveSelectionRequest(BaseModel):
+    preferred_review_id: str
+    context: str
+
+
+passive_signals: list = []
+
+
+@router.post("/passive")
+async def submit_passive_selection(req: PassiveSelectionRequest):
+    """Record passive preference signal. No stake required."""
+    passive_signals.append({
+        "preferred_review_id": req.preferred_review_id,
+        "context": req.context,
+        "timestamp": time.time(),
+    })
+    return {
+        "recorded": True,
+        "preferred_review_id": req.preferred_review_id,
+        "passive_signal_count": len(passive_signals),
+        "message": "Passive selection recorded. No stake required.",
+    }
+
+
 @router.get("")
 async def list_sessions():
     return {"sessions": list(sessions_db.values()), "count": len(sessions_db)}

@@ -2,94 +2,138 @@
 
 ## Root Config
 
-| File | Purpose | Details |
-|------|---------|---------|
-| `package.json` | JS dependencies + scripts | Hardhat, OpenZeppelin, x402, ethers, express. Scripts: compile, test, deploy:base, deploy:testnet, x402 |
-| `hardhat.config.js` | Solidity compiler + network config | Solidity 0.8.28, Cancun EVM, Base Mainnet (8453) + Base Sepolia (84532). Reads PRIVATE_KEY, BASE_RPC_URL, BASESCAN_API_KEY from .env |
-| `requirements.txt` | Python deps | fastapi, uvicorn, httpx, web3, eth-account, pydantic, x402, python-dotenv |
-| `.env.example` | Env var template | 9 vars: PRIVATE_KEY, BASE_RPC_URL, FILECOIN_PRIVATE_KEY, VENICE_API_KEY, CDP_API_KEY_ID, CDP_API_KEY_SECRET, RECEIVER_ADDRESS, SYNTHESIS_API_KEY, BASESCAN_API_KEY |
-| `.gitignore` | Git exclusions | docs/, node_modules/, bun.lockb, .env, __pycache__, artifacts/, cache/ |
-| `agent.json` | Agent identity manifest | Required by Protocol Labs track. Name, capabilities, standards, endpoints, on-chain contract addresses. Has FILL_AFTER_DEPLOY placeholders |
-| `AGENTS.md` | Agent interface docs | Endpoint list, on-chain addresses, ERC standards, safety guardrails. Has FILL_AFTER_DEPLOY placeholders |
-| `README.md` | Repo README | Architecture diagram, tech stack, quick start. Still references npm (should update to bun) |
-| `addresses.json` | (generated) | Created by deploy script. Contains deployed contract addresses, deployer, token addresses |
+| File | Purpose |
+|------|---------|
+| package.json | JS deps (Hardhat, OpenZeppelin, x402, ethers) |
+| hardhat.config.js | Solidity 0.8.28, Cancun EVM, Base Sepolia + Mainnet |
+| requirements.txt | Python deps (fastapi, uvicorn, httpx, web3, lighthouseweb3) |
+| .env.example | All env vars template |
+| .gitignore | Exclusions (docs/, .env, node_modules, api/data/*) |
+| .dockerignore | Docker build exclusions (frontend, contracts, tests) |
+| Dockerfile | python:3.11-slim for Railway deploy |
+| railway.toml | Railway build config (dockerfile builder) |
+| agent.json | Agent identity manifest (v2.0, real addresses) |
+| agent_log.json | Agent decision log (76+ entries) |
+| AGENTS.md | Agent interface docs (endpoints, contracts, safety) |
+| README.md | Repo README with Mermaid diagrams |
 
-## Smart Contracts (`contracts/`)
-
-| File | Purpose | Key Functions | Depends On |
-|------|---------|---------------|------------|
-| `StakeHumanSignalJob.sol` | ERC-8183 job lifecycle | `createJob(spec)`, `fund(jobId, amount)`, `submit(jobId, hash)`, `complete(jobId)`, `reject(jobId)` | IERC8183, IERC20 (USDC), Ownable, ReentrancyGuard |
-| `LidoTreasury.sol` | wstETH yield treasury | `depositPrincipal(amount)`, `distributeYield(winner, amount)`, `receiveStake(reviewer, amount)`, `availableYield()` | IERC20 (wstETH, USDC), Ownable, ReentrancyGuard |
-| `ReceiptRegistry.sol` | ERC-8004 receipt NFTs | `mintReceipt(jobId, winner, apiUrl, outcome, cid)`, `getReceipt(tokenId)`, `totalReceipts()` | ERC721, Ownable |
-| `interfaces/IERC8183.sol` | ERC-8183 interface | JobStatus enum, 5 events, 6 functions | — |
-| `interfaces/IWstETH.sol` | Lido wstETH interface | wrap, unwrap, rate conversion | IERC20 |
-| `mocks/MockERC20.sol` | Test mock ERC-20 token | Mint/transfer for Hardhat tests | ERC20 |
-
-**Contract wiring (done in deploy.js):**
-- StakeHumanSignalJob → sets LidoTreasury + ReceiptRegistry addresses
-- LidoTreasury → whitelists StakeHumanSignalJob + deployer
-- ReceiptRegistry → grants minter role to StakeHumanSignalJob + deployer
-
-## Deploy Scripts (`scripts/`)
-
-| File | Purpose | Details |
-|------|---------|---------|
-| `deploy.js` | Deploy all 3 contracts + wire them | Deploys to Base Mainnet using USDC (0x8335...) and wstETH (0xc1CB...). Saves addresses.json. 8 transactions total (3 deploys + 5 config calls) |
-| `deploy-sepolia.js` | Deploy all 3 contracts to Base Sepolia | Same as deploy.js but with Sepolia USDC. Saves addresses-sepolia.json |
-| `wire-sepolia.js` | Wire contracts on Sepolia | Sets treasury, registry, whitelists, minter roles for Sepolia deployment |
-| `e2e-test-sepolia.js` | End-to-end test on Sepolia | Creates job, mints receipt, verifies receipt on-chain |
-
-## Python API (`api/`)
-
-| File | Purpose | Endpoints / Exports |
-|------|---------|---------------------|
-| `main.py` | FastAPI app entry | Mounts /reviews, /jobs, /outcomes routers. GET /, GET /health |
-| `routes/reviews.py` | Review CRUD + ranking | POST /reviews, GET /reviews, GET /reviews/top, GET /reviews/{id}. In-memory `reviews_db` dict |
-| `routes/jobs.py` | ERC-8183 job management | POST /jobs, GET /jobs, GET /jobs/{id}. Calls web3_client. In-memory `jobs_db` dict |
-| `routes/outcomes.py` | Winner signaling | POST /outcomes. Triggers: complete_job → mint_receipt → store_on_filecoin. Imports from web3_client, venice, reviews |
-| `services/web3_client.py` | Base Mainnet contract calls | `Web3Service` class: create_job, complete_job, mint_receipt, distribute_yield. Reads addresses.json + Hardhat artifacts for ABIs. Singleton via `get_web3_service()` |
-| `services/venice.py` | Private LLM scoring | `score_review_privately(review_text, api_output)` → {score: 0-100, reasoning}. Calls Venice llama-3.3-70b. Needs VENICE_API_KEY |
-| `services/filecoin.py` | Filecoin FOC bridge client | `store_on_filecoin(data)` → CID, `retrieve_from_filecoin(cid)` → data. Calls Node.js bridge on FILECOIN_BRIDGE_URL (:3001) |
-| `services/scorer.py` | Review ranking algorithm | `rank_reviews(reviews)` → sorted by weighted rubric or flat score. `compute_weighted_rubric_score()`. `get_independence_score()` |
-| `services/bankr.py` | Bankr LLM ensemble scoring | Multi-LLM scoring via Bankr Gateway (OpenAI/Anthropic/Google). Returns score + reasoning |
-| `services/self_verify.py` | Self Protocol identity (DEFERRED) | ZK identity verification via Self Agent ID. Not active — kept for future reference |
-| `agent/buyer_agent.py` | Autonomous buyer loop | 60s cycles: fetch_top_reviews → score_with_venice → complete_and_reward. Writes agent_log.json. Reads API_BASE_URL env |
-| `agent/verifier_agent.py` | Autonomous verifier agent | Independent review validation via Venice + Bankr ensemble. Auto-completes/rejects ERC-8183 jobs |
-
-## x402 Gateway (`x402-server/`)
-
-| File | Purpose | Details |
-|------|---------|---------|
-| `index.js` | Express payment proxy | Port 3000 (X402_PORT). GET /reviews/top returns 402 without payment header. ?dryRun=true bypasses. All other routes proxy to FastAPI (API_BACKEND, default :8000) |
-| `package.json` | x402 server deps | express, http-proxy-middleware |
-
-## Additional Directories
-
-| Directory | Purpose | Status |
-|-----------|---------|--------|
-| `filecoin-bridge/` | Node.js Filecoin Synapse SDK bridge (port 3001) | Scaffolded, not yet built |
-| `olas/` | Olas Pearl marketplace integration | Scaffolded |
-| `lido-mcp/` | MCP server for Lido stETH staking | Empty, Phase 2 target |
-
-## Documentation (`docs/` — gitignored)
+## Smart Contracts (contracts/)
 
 | File | Purpose |
 |------|---------|
-| `STAKEHUMANSIGNAL_PROJECT.md` | Master project spec. Prize tracks, tech stack, build order, submission checklist, all reference links |
-| `claim-schema.md` | Structured claim schema definition. Rubric dimensions, policy objects, examples per task_type |
-| `design.md` | Frontend UI/UX design spec. Dark crypto aesthetic, 7+ page layouts, component library |
-| `bankr.md` | Bankr LLM Gateway integration spec |
-| `filecoin.md` | Filecoin FOC Synapse SDK integration spec |
-| `lido-mcp.md` | Lido MCP server spec |
-| `olas.md` | Olas mechs marketplace integration spec |
-| `self.md` | Self Protocol ZK identity spec (DEFERRED) |
-| `verifier-agent.md` | Auto-Verifier agent implementation spec |
+| StakeHumanSignalJob.sol | ERC-8183 job lifecycle + independence check |
+| LidoTreasury.sol | wstETH yield-only treasury (principal locked forever) |
+| ReceiptRegistry.sol | ERC-8004 receipts + ownership mapping + reputation + independence score |
+| SessionEscrow.sol | Blind A/B compare escrow (USDC, 7-day expiry, 10% fee) |
+| interfaces/IERC8183.sol | ERC-8183 interface |
+| interfaces/IWstETH.sol | Lido wstETH interface |
+| mocks/MockERC20.sol | Test mock token |
 
-## Generated at Runtime
+## Deploy Scripts (scripts/)
 
-| File | Created By | Purpose |
-|------|-----------|---------|
-| `addresses.json` | deploy.js | Deployed contract addresses |
-| `agent_log.json` | buyer_agent.py | Agent decision log (required for submission) |
-| `artifacts/` | hardhat compile | Contract ABIs (read by web3_client.py) |
-| `cache/` | hardhat compile | Solidity compiler cache |
+| File | Purpose |
+|------|---------|
+| deploy.js | Deploy 3 contracts to Base Mainnet |
+| deploy-sepolia.js | Deploy 3 contracts to Base Sepolia |
+| deploy-escrow-sepolia.js | Deploy SessionEscrow to Base Sepolia |
+| deploy-and-e2e-sepolia.js | Fresh deploy + full E2E test |
+| finish-e2e-sepolia.js | Finish E2E after partial deploy |
+| wire-sepolia.js | Wire contracts on Sepolia |
+| e2e-test-sepolia.js | End-to-end test |
+| seed.py | POST 5 reviews to API for demo data |
+| seed_file.py | Generate seed JSON file directly |
+| verify_keys.py | Test API keys (Bankr, Locus, OpenServ, Lighthouse) |
+| locus_register.py | Register agent with Locus |
+| olas_batch.py | Send 12 Olas mech requests |
+
+## Python API (api/)
+
+| File | Purpose |
+|------|---------|
+| main.py | FastAPI app (6 routers: reviews, jobs, outcomes, sessions, agent, leaderboard) |
+| routes/reviews.py | Review CRUD + structured claims + Filecoin storage + JSON persistence |
+| routes/jobs.py | ERC-8183 job management |
+| routes/outcomes.py | Winner signaling + yield distribution + Locus payment |
+| routes/sessions.py | Blind A/B compare sessions (open, outputs, settle) |
+| routes/agent.py | GET /agent/log (serves agent_log.json) |
+| routes/leaderboard.py | GET /leaderboard (aggregates reviewer stats) |
+| services/web3_client.py | Base contract calls via web3.py |
+| services/scorer.py | Retrieval score + payout score + independence + rank |
+| services/scorer_local.py | Heuristic 5-dim rubric scorer (replaced Venice) |
+| services/filecoin.py | Lighthouse SDK (real CIDs) + bridge fallback |
+| services/bankr.py | Bankr LLM Gateway ensemble scoring |
+| services/locus.py | Locus payment infrastructure (balance, send) |
+| services/olas.py | Olas mech-client wrapper (demo/live modes) |
+| agent/buyer_agent.py | Autonomous loop: fetch → score → bankr → olas → complete/reject → pin |
+| data/reviews.json | Persisted review data (survives restarts) |
+
+## Frontend (frontend/)
+
+| File | Purpose |
+|------|---------|
+| src/app/page.tsx | Landing — hero, stats, ticker, protocol architecture |
+| src/app/marketplace/page.tsx | Review cards, confidence bars, filter, live feed |
+| src/app/submit/page.tsx | Rubric sliders, wallet connect, structured reasoning |
+| src/app/agent-feed/page.tsx | Terminal-style agent decision log |
+| src/app/leaderboard/page.tsx | Validator table, holographic profile |
+| src/app/validate/page.tsx | Blind A/B compare for Human B |
+| src/app/town-square/page.tsx | Town square visualization |
+| src/app/layout.tsx | Obsidian Architect layout (sidebar, topbar, terminal bar) |
+| src/app/globals.css | Design system (colors, glass effects, animations) |
+| src/lib/api.ts | API client (Railway URL fallback) |
+| src/lib/wagmi.ts | RainbowKit + wagmi config (Base Sepolia) |
+| src/components/Providers.tsx | WagmiProvider + RainbowKit wrapper |
+| src/components/TopBar.tsx | Navbar with wallet connect |
+| src/components/SideNav.tsx | Collapsible sidebar |
+| src/components/WalletDisplay.tsx | Connect wallet button |
+
+## Node Services
+
+| File | Purpose |
+|------|---------|
+| x402-server/index.js | Express x402 gateway (SDK + manual fallback, port 3000) |
+| filecoin-bridge/index.js | Filecoin storage bridge (port 3001) |
+| filecoin-bridge/x402-server.js | x402 manual gate (port 3002) |
+| lido-mcp/index.js | MCP server (9 Lido tools) |
+| lido-mcp/contracts.js | Contract addresses + ABIs |
+| lido-mcp/vault-monitor.js | APY monitoring + alerts |
+| lido-mcp/lido.skill.md | Agent-consumable skill file |
+| stakesignal-mcp/index.js | MCP server (5 StakeHumanSignal tools) |
+| stakesignal-mcp/stakesignal.skill.md | Agent-consumable skill file |
+| openserv-worker/index.js | OpenServ agent (4 capabilities) |
+
+## Tests (test/)
+
+| File | Tests |
+|------|-------|
+| StakeHumanSignalJob.test.js | 26 tests |
+| LidoTreasury.test.js | 20 tests |
+| ReceiptRegistry.test.js | 17 tests |
+| ReceiptRegistry.independence.test.js | 15 tests |
+| SessionEscrow.test.js | 13 tests |
+| test_review_schema.py | 20 tests |
+| test_task_intent.py | 16 tests |
+| test_filecoin.py | 7 tests |
+| test_buyer_agent.py | 7 tests |
+| test_scorer.py | 9 tests |
+| test_integration.py | 8 tests |
+| **Total** | **158 tests (91 Solidity + 67 Python)** |
+
+## Deployments (deployments/)
+
+| File | Purpose |
+|------|---------|
+| sepolia.json | 4 contract addresses on Base Sepolia |
+| sepolia-e2e-proof.json | E2E proof with 8 tx hashes |
+
+## Agent Docs (agent/)
+
+| File | Purpose |
+|------|---------|
+| CLAUDE.md | Project brief + sprint goal + architecture |
+| memory.md | Decision log across all phases |
+| files.md | This file — codebase map |
+| tools.md | External tools + services reference |
+| commands.md | Shell commands for every task |
+| DESIGN.md | Obsidian Architect design system |
+| skills/ | Track-specific skill files (8 files) |
