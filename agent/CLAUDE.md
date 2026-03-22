@@ -22,11 +22,12 @@
 Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 
 ### Current Sprint Goal
-**Phase 2: COMPLETE**
-1. /reviews/top now returns 402 (x402 inline gate in FastAPI) -- FIXED
-2. agent.json served by Vercel at /agent.json with CORS headers -- FIXED
-3. StakeHumanSignal MCP server (5 tools) -- BUILT
-4. /sessions/passive endpoint for passive preference signals -- ADDED
+**Phase 5: Fix 3 integration failures**
+1. Force Railway redeploy (x402 gate + /sessions/passive not live)
+2. Set LIGHTHOUSE_API_KEY on Railway (Filecoin CIDs returning None)
+3. Add distribution_model to OutcomeResponse
+3. README updated with Two-Layer Human Signal section
+4. 162 tests passing (91 Solidity + 71 Python)
 
 ### Tracks (7 + Open)
 1. Virtuals ERC-8183 (90% weight — core product)
@@ -43,7 +44,7 @@ Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 
 ### Key Commands
 - Compile: `npx hardhat compile`
-- Test: `npx hardhat test` (91 passing) + `python -m pytest test/ -v` (67 passing)
+- Test: `npx hardhat test` (91 passing) + `python -m pytest test/ -v` (71 passing)
 - Deploy Sepolia: `npx hardhat run scripts/deploy-sepolia.js --network base-sepolia`
 - API: `uvicorn api.main:app --reload --port 8000`
 - Agent: `python -m api.agent.buyer_agent --once`
