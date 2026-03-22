@@ -35,7 +35,7 @@ export const BASE = {
 
 // --- StakeHumanSignal contracts (Base Sepolia) ---
 export const CONTRACTS = {
-  lidoTreasury: process.env.LIDO_TREASURY_ADDRESS || "0x8E29D161477D9BB00351eA2f69702451443d7bf5",
+  lidoTreasury: process.env.LIDO_TREASURY_ADDRESS || "0x639bBbE3D9624b96a7b6aC9a0A95493642bf2b72",
   stakeSignalJob: process.env.STAKE_SIGNAL_JOB_ADDRESS || "0xE99027DDdF153Ac6305950cD3D58C25D17E39902",
   receiptRegistry: process.env.RECEIPT_REGISTRY_ADDRESS || "0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332",
 };
