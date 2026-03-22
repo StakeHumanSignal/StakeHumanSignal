@@ -1791,5 +1791,80 @@
     "iso": "2026-03-22T23:41:40Z",
     "message": "Fetch error: Connection refused",
     "action": "error"
+  },
+  {
+    "timestamp": 1774196962.377864,
+    "iso": "2026-03-23T00:29:22Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774196962.384855,
+    "iso": "2026-03-23T00:29:22Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774200072.0316522,
+    "iso": "2026-03-23T01:21:12Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774200072.040169,
+    "iso": "2026-03-23T01:21:12Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774200796.948443,
+    "iso": "2026-03-23T01:33:16Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774200796.9567418,
+    "iso": "2026-03-23T01:33:16Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774201498.543177,
+    "iso": "2026-03-23T01:44:58Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774201498.550378,
+    "iso": "2026-03-23T01:44:58Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774203191.1158242,
+    "iso": "2026-03-23T02:13:11Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774203191.1229491,
+    "iso": "2026-03-23T02:13:11Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
   }
 ]

@@ -44,3 +44,9 @@ htmlcov/
 
 # Screenshots
 *.png
+
+# Bun lockfiles (use npm for root, bun for frontend)
+bun.lock
+
+# Claude Code plugin skills (local, not project code)
+skills/

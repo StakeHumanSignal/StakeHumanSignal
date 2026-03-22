@@ -37,7 +37,7 @@ Over time, isolated human preferences compound into a shared intelligence layer 
 | Blind A/B compare | `SessionEscrow.sol` + `/validate` page | Deployed |
 | Passive selection | `POST /sessions/{id}/settle` — no-stake preference recording | Live |
 | Active staking | `POST /reviews` with `stake_amount` + `stake_tx_hash` | Live |
-| x402 agent payments | `x402-server/` — 0.001 USDC per ranked review access | Live |
+| x402 agent payments | x402 gate on `/reviews/top` (0.001 USDC, Base Sepolia) | Live |
 | On-chain receipts | `ReceiptRegistry.sol` — ERC-8004 with 3 registries (identity, reputation, validation) | Deployed |
 | Yield distribution | `LidoTreasury.sol` — wstETH principal locked, yield-only payouts | Deployed |
 | Permanent storage | `filecoin-bridge/` — every review stored with Filecoin CID | Live |
@@ -154,7 +154,6 @@ Each track maps to specific folders. Click through for architecture, deployed ad
 | Let the Agent Cook | Protocol Labs | $4,000 | [`api/`](api/) — `agent/buyer_agent.py` + [`agent_log.json`](agent_log.json) |
 | stETH Agent Treasury | Lido | $3,000 | [`contracts/`](contracts/) — `LidoTreasury.sol` + [`lido-mcp/`](lido-mcp/) |
 | Lido MCP Server | Lido | $5,000 | [`lido-mcp/`](lido-mcp/) — 9 tools, dry_run, Sepolia contracts |
-| Agent Services on Base | Base | $5,000 | [`x402-server/`](x402-server/) — x402 micropayment gate |
 | Mechanism Design | Octant | $1,000 | [`api/`](api/) — conviction-weighted staking + scorer |
 | Data Collection | Octant | $1,000 | [`api/`](api/) — autonomous review collection + Filecoin |
 | Agentic Storage | Filecoin | $2,000 | [`filecoin-bridge/`](filecoin-bridge/) — Lighthouse SDK bridge |
@@ -233,9 +232,6 @@ stakesignal-mcp/                  # MCP server for StakeHumanSignal operations
 
 filecoin-bridge/                  # Filecoin storage bridge
 └── index.js                      # Synapse SDK + local CID fallback
-
-x402-server/                      # x402 payment gateway
-└── index.js                      # 402 micropayment gate for /reviews/top
 
 agent/                            # Agent configuration & skill docs
 ├── skills/                       # Project-specific agent skill files (.md)

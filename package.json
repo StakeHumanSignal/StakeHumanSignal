@@ -8,19 +8,13 @@
     "test:coverage": "hardhat coverage",
     "deploy:base": "hardhat run scripts/deploy.js --network base",
     "deploy:sepolia": "hardhat run scripts/deploy-sepolia.js --network base-sepolia",
-    "x402": "node x402-server/index.js",
     "test:frontend": "cd frontend && bun run test",
     "test:all": "npx hardhat test && python -m pytest test/ -v && cd frontend && bun run test"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.1.0",
-    "@x402/core": "^2.7.0",
-    "@x402/evm": "^2.7.0",
-    "@x402/express": "^2.7.0",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.0",
-    "express": "^4.21.0",
-    "http-proxy-middleware": "^3.0.5",
     "viem": "^2.47.5"
   },
   "devDependencies": {
