@@ -184,6 +184,25 @@ async def run_cycle(cycle: int) -> bool:
     # 2b. Ensemble scoring via Bankr LLM Gateway (if configured)
     scored = await score_with_bankr_ensemble(scored)
 
+    # 2c. Query Olas mech for external intelligence (if configured)
+    try:
+        from api.services.olas import query_olas_mech
+        if os.getenv("OLAS_MECH_ADDRESS"):
+            for review in scored[:3]:  # top 3 reviews only
+                olas_result = await query_olas_mech(
+                    f"Evaluate review quality: {review.get('task_intent', '')}",
+                    tool="prediction-online"
+                )
+                log(
+                    f"Olas mech: {review.get('id', '?')} mode={olas_result.get('mode')}",
+                    action="olas_query",
+                    claim_id=review.get("id"),
+                    olas_mode=olas_result.get("mode"),
+                    olas_tool=olas_result.get("tool"),
+                )
+    except Exception as e:
+        pass  # Olas is supplementary
+
     # 3. Process each scored review: complete or reject
     for review in scored:
         verdict = review.get("verdict", "rejected")
