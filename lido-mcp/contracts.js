@@ -9,6 +9,7 @@ export const CONTRACTS = {
   stETH_mainnet: "0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84",
   wstETH_mainnet: "0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0",
   lidoDAO_mainnet: "0xb8FFC3Cd6e7Cf5a098A1c92F48009765B24088Dc",
+  withdrawalQueue_mainnet: "0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1",
 
   // StakeHumanSignal contract addresses (fill after deploy)
   lidoTreasury: process.env.LIDO_TREASURY_ADDRESS || "",
@@ -40,4 +41,22 @@ export const ERC20_ABI = [
   "function decimals() view returns (uint8)",
   "function symbol() view returns (string)",
   "function approve(address spender, uint256 amount) returns (bool)",
+];
+
+export const WSTETH_ABI = [
+  "function wrap(uint256 stETHAmount) returns (uint256)",
+  "function unwrap(uint256 wstETHAmount) returns (uint256)",
+  "function getStETHByWstETH(uint256 wstETHAmount) view returns (uint256)",
+  "function getWstETHByStETH(uint256 stETHAmount) view returns (uint256)",
+  "function balanceOf(address) view returns (uint256)",
+];
+
+export const LIDO_DAO_ABI = [
+  "function vote(uint256 voteId, bool supports, bool executesIfDecided)",
+  "function getVote(uint256 voteId) view returns (bool open, bool executed, uint64 startDate, uint64 snapshotBlock, uint64 supportRequired, uint64 minQuorum, uint256 yea, uint256 nay, uint256 votingPower, bytes script)",
+];
+
+export const WITHDRAWAL_QUEUE_ABI = [
+  "function requestWithdrawals(uint256[] amounts, address owner) returns (uint256[] requestIds)",
+  "function getWithdrawalStatus(uint256[] requestIds) view returns (tuple(uint256 amountOfStETH, uint256 amountOfShares, address owner, uint256 timestamp, bool isFinalized, bool isClaimed)[])",
 ];

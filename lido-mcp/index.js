@@ -20,6 +20,9 @@ import {
   LIDO_TREASURY_ABI,
   STAKE_SIGNAL_JOB_ABI,
   ERC20_ABI,
+  WSTETH_ABI,
+  LIDO_DAO_ABI,
+  WITHDRAWAL_QUEUE_ABI,
 } from "./contracts.js";
 
 // --- Setup ---
@@ -32,6 +35,9 @@ let signer = null;
 let treasuryContract = null;
 let jobContract = null;
 let wstETH = null;
+let wstETHContract = null;
+let withdrawalQueueContract = null;
+let lidoDAOContract = null;
 let mockMode = true;
 
 try {
@@ -59,6 +65,27 @@ try {
   }
 
   wstETH = new ethers.Contract(CONTRACTS.wstETH_base, ERC20_ABI, provider);
+
+  // wstETH wrap/unwrap contract (mainnet)
+  wstETHContract = new ethers.Contract(
+    CONTRACTS.wstETH_mainnet,
+    WSTETH_ABI,
+    signer || provider
+  );
+
+  // Withdrawal queue contract (mainnet)
+  withdrawalQueueContract = new ethers.Contract(
+    CONTRACTS.withdrawalQueue_mainnet,
+    WITHDRAWAL_QUEUE_ABI,
+    signer || provider
+  );
+
+  // Lido DAO voting contract (mainnet)
+  lidoDAOContract = new ethers.Contract(
+    CONTRACTS.lidoDAO_mainnet,
+    LIDO_DAO_ABI,
+    signer || provider
+  );
 } catch (err) {
   console.error("[Lido MCP] Setup error:", err.message);
 }
@@ -150,6 +177,90 @@ const TOOLS = [
           default: 20,
         },
       },
+    },
+  },
+  {
+    name: "lido_unstake",
+    description:
+      "Request withdrawal of stETH. Creates a withdrawal NFT that can be claimed after the queue processes. Supports dry_run.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        amount_steth: {
+          type: "string",
+          description: "Amount of stETH to withdraw (in wei)",
+        },
+        dry_run: {
+          type: "boolean",
+          description: "Simulate without sending tx",
+          default: true,
+        },
+      },
+      required: ["amount_steth"],
+    },
+  },
+  {
+    name: "lido_wrap",
+    description:
+      "Wrap stETH into wstETH. wstETH is the non-rebasing version suitable for DeFi and L2 bridges. Supports dry_run.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        amount_steth: {
+          type: "string",
+          description: "Amount of stETH to wrap (in wei)",
+        },
+        dry_run: {
+          type: "boolean",
+          description: "Simulate without sending tx",
+          default: true,
+        },
+      },
+      required: ["amount_steth"],
+    },
+  },
+  {
+    name: "lido_unwrap",
+    description:
+      "Unwrap wstETH back to stETH. Converts non-rebasing wstETH to rebasing stETH. Supports dry_run.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        amount_wsteth: {
+          type: "string",
+          description: "Amount of wstETH to unwrap (in wei)",
+        },
+        dry_run: {
+          type: "boolean",
+          description: "Simulate without sending tx",
+          default: true,
+        },
+      },
+      required: ["amount_wsteth"],
+    },
+  },
+  {
+    name: "lido_vote",
+    description:
+      "Vote on a Lido DAO governance proposal. Requires Ethereum mainnet connection. Supports dry_run.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        vote_id: {
+          type: "number",
+          description: "Lido DAO proposal ID to vote on",
+        },
+        supports: {
+          type: "boolean",
+          description: "true = vote FOR, false = vote AGAINST",
+        },
+        dry_run: {
+          type: "boolean",
+          description: "Simulate without sending tx",
+          default: true,
+        },
+      },
+      required: ["vote_id", "supports"],
     },
   },
 ];
@@ -502,6 +613,320 @@ async function handleListJobs(args) {
   };
 }
 
+async function handleUnstake(args) {
+  const { amount_steth, dry_run = true } = args;
+
+  if (mockMode) {
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              mode: "mock",
+              tx_hash: null,
+              amount_steth,
+              request_ids: [42],
+              estimated_wait: "1-5 days",
+              dry_run: true,
+              note: "Mock mode — set LIDO_TREASURY_ADDRESS to use real withdrawal queue",
+            },
+            null,
+            2
+          ),
+        },
+      ],
+    };
+  }
+
+  if (dry_run) {
+    const stethFormatted = ethers.formatUnits(amount_steth, 18);
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              dry_run: true,
+              amount_steth: stethFormatted + " stETH",
+              estimated_wait: "1-5 days",
+              note: "Simulation — no transaction sent. Set dry_run=false to execute.",
+            },
+            null,
+            2
+          ),
+        },
+      ],
+    };
+  }
+
+  const signerAddress = await signer.getAddress();
+  const tx = await withdrawalQueueContract.requestWithdrawals(
+    [amount_steth],
+    signerAddress
+  );
+  const receipt = await tx.wait();
+
+  return {
+    content: [
+      {
+        type: "text",
+        text: JSON.stringify(
+          {
+            dry_run: false,
+            tx_hash: receipt.hash,
+            amount_steth,
+            block: receipt.blockNumber,
+            note: "Withdrawal request submitted. Claim after queue processes.",
+          },
+          null,
+          2
+        ),
+      },
+    ],
+  };
+}
+
+async function handleWrap(args) {
+  const { amount_steth, dry_run = true } = args;
+
+  if (mockMode) {
+    // Estimate: wstETH ~ stETH * 0.87 (approximate rate)
+    const stethFloat = parseFloat(ethers.formatUnits(amount_steth, 18));
+    const estimatedWsteth = (stethFloat * 0.87).toFixed(6);
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              mode: "mock",
+              tx_hash: null,
+              amount_steth,
+              estimated_wsteth: estimatedWsteth,
+              dry_run: true,
+              note: "Mock mode — set LIDO_TREASURY_ADDRESS to use real wstETH contract",
+            },
+            null,
+            2
+          ),
+        },
+      ],
+    };
+  }
+
+  if (dry_run) {
+    const estimatedWsteth = await wstETHContract.getWstETHByStETH(amount_steth);
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              dry_run: true,
+              amount_steth: ethers.formatUnits(amount_steth, 18) + " stETH",
+              estimated_wsteth: ethers.formatUnits(estimatedWsteth, 18) + " wstETH",
+              note: "Simulation — no transaction sent. Set dry_run=false to execute.",
+            },
+            null,
+            2
+          ),
+        },
+      ],
+    };
+  }
+
+  const tx = await wstETHContract.wrap(amount_steth);
+  const receipt = await tx.wait();
+
+  return {
+    content: [
+      {
+        type: "text",
+        text: JSON.stringify(
+          {
+            dry_run: false,
+            tx_hash: receipt.hash,
+            amount_steth,
+            block: receipt.blockNumber,
+          },
+          null,
+          2
+        ),
+      },
+    ],
+  };
+}
+
+async function handleUnwrap(args) {
+  const { amount_wsteth, dry_run = true } = args;
+
+  if (mockMode) {
+    // Estimate: stETH ~ wstETH * 1.15 (approximate rate)
+    const wstethFloat = parseFloat(ethers.formatUnits(amount_wsteth, 18));
+    const estimatedSteth = (wstethFloat * 1.15).toFixed(6);
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              mode: "mock",
+              tx_hash: null,
+              amount_wsteth,
+              estimated_steth: estimatedSteth,
+              dry_run: true,
+              note: "Mock mode — set LIDO_TREASURY_ADDRESS to use real wstETH contract",
+            },
+            null,
+            2
+          ),
+        },
+      ],
+    };
+  }
+
+  if (dry_run) {
+    const estimatedSteth = await wstETHContract.getStETHByWstETH(amount_wsteth);
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              dry_run: true,
+              amount_wsteth: ethers.formatUnits(amount_wsteth, 18) + " wstETH",
+              estimated_steth: ethers.formatUnits(estimatedSteth, 18) + " stETH",
+              note: "Simulation — no transaction sent. Set dry_run=false to execute.",
+            },
+            null,
+            2
+          ),
+        },
+      ],
+    };
+  }
+
+  const tx = await wstETHContract.unwrap(amount_wsteth);
+  const receipt = await tx.wait();
+
+  return {
+    content: [
+      {
+        type: "text",
+        text: JSON.stringify(
+          {
+            dry_run: false,
+            tx_hash: receipt.hash,
+            amount_wsteth,
+            block: receipt.blockNumber,
+          },
+          null,
+          2
+        ),
+      },
+    ],
+  };
+}
+
+async function handleVote(args) {
+  const { vote_id, supports, dry_run = true } = args;
+
+  if (mockMode) {
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(
+            {
+              mode: "mock",
+              tx_hash: null,
+              vote_id,
+              supports,
+              vote_direction: supports ? "FOR" : "AGAINST",
+              dry_run: true,
+              note: "Mock mode — set LIDO_TREASURY_ADDRESS and Ethereum mainnet RPC to vote",
+            },
+            null,
+            2
+          ),
+        },
+      ],
+    };
+  }
+
+  if (dry_run) {
+    try {
+      const voteInfo = await lidoDAOContract.getVote(vote_id);
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                dry_run: true,
+                vote_id,
+                supports,
+                vote_direction: supports ? "FOR" : "AGAINST",
+                proposal_open: voteInfo.open,
+                proposal_executed: voteInfo.executed,
+                current_yea: voteInfo.yea.toString(),
+                current_nay: voteInfo.nay.toString(),
+                note: "Simulation — no transaction sent. Set dry_run=false to execute.",
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    } catch (err) {
+      return {
+        content: [
+          {
+            type: "text",
+            text: JSON.stringify(
+              {
+                dry_run: true,
+                vote_id,
+                supports,
+                vote_direction: supports ? "FOR" : "AGAINST",
+                error: err.message,
+                note: "Could not fetch vote info — ensure Ethereum mainnet RPC is configured.",
+              },
+              null,
+              2
+            ),
+          },
+        ],
+      };
+    }
+  }
+
+  const tx = await lidoDAOContract.vote(vote_id, supports, false);
+  const receipt = await tx.wait();
+
+  return {
+    content: [
+      {
+        type: "text",
+        text: JSON.stringify(
+          {
+            dry_run: false,
+            tx_hash: receipt.hash,
+            vote_id,
+            supports,
+            vote_direction: supports ? "FOR" : "AGAINST",
+            block: receipt.blockNumber,
+          },
+          null,
+          2
+        ),
+      },
+    ],
+  };
+}
+
 // --- MCP Server ---
 
 const server = new Server(
@@ -527,6 +952,14 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       return handleGetVaultHealth();
     case "lido_list_jobs":
       return handleListJobs(args);
+    case "lido_unstake":
+      return handleUnstake(args);
+    case "lido_wrap":
+      return handleWrap(args);
+    case "lido_unwrap":
+      return handleUnwrap(args);
+    case "lido_vote":
+      return handleVote(args);
     default:
       return {
         content: [{ type: "text", text: `Unknown tool: ${name}` }],
