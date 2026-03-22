@@ -3,154 +3,173 @@
 ## Setup
 
 ```bash
-# Clone and enter repo
-git clone https://github.com/LingSiewWin/StakeHumanSignal.git
+git clone https://github.com/StakeHumanSignal/StakeHumanSignal
 cd StakeHumanSignal
-
-# Install JS dependencies (bun, NOT npm)
 bun install
-
-# Install x402-server dependencies
-cd x402-server && bun install && cd ..
-
-# Install Python dependencies
+cd filecoin-bridge && bun install && cd ..
+cd lido-mcp && bun install && cd ..
+cd frontend && bun install && cd ..
 pip install -r requirements.txt
-
-# Create .env from template
 cp .env.example .env
-# Fill in: PRIVATE_KEY, VENICE_API_KEY, CDP_API_KEY_ID, CDP_API_KEY_SECRET,
-#          RECEIVER_ADDRESS, FILECOIN_PRIVATE_KEY, SYNTHESIS_API_KEY, BASESCAN_API_KEY
+# Fill: PRIVATE_KEY, BASE_SEPOLIA_PRIVATE_KEY, RECEIVER_ADDRESS, LIGHTHOUSE_API_KEY
 ```
 
 ## Smart Contracts
 
 ```bash
-# Compile (MUST use npx, not bun — Hardhat native module issue)
-npx hardhat compile
-# Output: "Compiled 28 Solidity files successfully (evm target: cancun)"
+npx hardhat compile                    # Compile (MUST use npx, not bun)
+npx hardhat test                       # Run all 91 Solidity tests
+npx hardhat test test/SessionEscrow.test.js  # Run specific test file
 
-# Deploy to Base Mainnet
-# Requires: PRIVATE_KEY, BASE_RPC_URL in .env
-# Wallet needs ~0.01 ETH on Base for gas
-npx hardhat run scripts/deploy.js --network base
-# Output: 3 contract addresses + addresses.json created
+# Deploy to Base Sepolia
+npx hardhat run scripts/deploy-sepolia.js --network base-sepolia
+npx hardhat run scripts/deploy-escrow-sepolia.js --network base-sepolia
 
-# Deploy to Base Sepolia (testnet)
-npx hardhat run scripts/deploy.js --network baseSepolia
-
-# Verify contracts on Basescan
-# Requires: BASESCAN_API_KEY in .env
-npx hardhat verify --network base <StakeHumanSignalJob_ADDRESS> "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" "<DEPLOYER_ADDRESS>"
-npx hardhat verify --network base <LidoTreasury_ADDRESS> "0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452" "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913"
-npx hardhat verify --network base <ReceiptRegistry_ADDRESS>
-
-# Run contract tests
-npx hardhat test
+# E2E test on Sepolia
+npx hardhat run scripts/deploy-and-e2e-sepolia.js --network base-sepolia
 ```
 
-## API Server (Python FastAPI)
+## Python API
 
 ```bash
-# Start with hot-reload (development)
-uvicorn api.main:app --reload --port 8000
-# Output: "Uvicorn running on http://127.0.0.1:8000"
+uvicorn api.main:app --reload --port 8000    # Start with hot-reload
+python -m pytest test/ -v                     # Run all 67 Python tests
+python -m pytest test/test_integration.py -v  # Integration tests only
 
-# Start production
-uvicorn api.main:app --host 0.0.0.0 --port 8000
-
-# Health check
-curl http://localhost:8000/health
-# Output: {"status":"ok"}
-
-# Test endpoints
-curl http://localhost:8000/reviews          # List reviews (free)
-curl http://localhost:8000/reviews/top      # Ranked reviews (x402-gated via proxy)
-curl http://localhost:8000/jobs             # List jobs
+# Verify imports
+python3 -c "from api.main import app; print('OK')"
 ```
 
-## x402 Payment Gateway (Node/Express)
+## Services (4 terminals)
 
 ```bash
-# Start gateway (proxies to FastAPI on :8000)
-# Requires: RECEIVER_ADDRESS, X402_PORT (default 3000), API_BACKEND (default http://localhost:8000)
-bun run x402-server/index.js
-# Output: "[x402] Payment gateway on port 3000"
+# Terminal 1: API
+uvicorn api.main:app --port 8000
 
-# Or via npm script from root
-node x402-server/index.js
+# Terminal 2: Filecoin bridge (mock mode)
+cd filecoin-bridge && node index.js
 
-# Test x402 gate
-curl http://localhost:3000/reviews/top
-# Output: 402 Payment Required (without payment header)
+# Terminal 3: x402 gateway
+cd filecoin-bridge && node x402-server.js
 
-curl "http://localhost:3000/reviews/top?dryRun=true"
-# Output: ranked reviews (bypasses payment for testing)
+# Terminal 4: Frontend
+cd frontend && NEXT_PUBLIC_API_URL=http://localhost:8000 bun dev
 ```
 
 ## Buyer Agent
 
 ```bash
-# Run autonomous agent loop
-# Requires: API server running on :8000, VENICE_API_KEY in .env
-python -m api.agent.buyer_agent
-# Output: "[AGENT] Agent starting autonomous loop"
-# Cycles every 60s: fetch → score → select → complete
-
-# Env vars:
-#   API_BASE_URL=http://localhost:8000  (default)
-#   VENICE_API_KEY=<required for scoring>
+python -m api.agent.buyer_agent --once    # Single cycle
+python -m api.agent.buyer_agent           # Continuous (60s loop)
 ```
 
-## Filecoin Bridge (NOT YET IMPLEMENTED)
+## Seed Data
 
 ```bash
-# Will run on port 3001
-# Requires: FILECOIN_PRIVATE_KEY, @filecoin-synapse/sdk
-# bun run filecoin-bridge/index.js
-# Python service expects bridge at FILECOIN_BRIDGE_URL=http://localhost:3001
+python3 scripts/seed.py                   # POST 5 reviews to running API
+python3 scripts/seed_file.py              # Generate seed JSON directly
+```
+
+## Verify API Keys
+
+```bash
+python3 scripts/verify_keys.py            # Test Bankr, Locus, OpenServ, Lighthouse
+```
+
+## Lido MCP Server
+
+```bash
+cd lido-mcp && node index.js              # Start MCP server (mock mode)
+cd lido-mcp && node vault-monitor.js      # Start vault monitor (5 min polls)
+cd lido-mcp && node vault-monitor.js --interval 60  # 60s polls
+```
+
+## OpenServ Worker
+
+```bash
+cd openserv-worker && node index.js       # Start OpenServ agent
+```
+
+## Frontend
+
+```bash
+cd frontend && bun dev                    # Dev server (localhost:3000)
+cd frontend && bun run build              # Production build
+cd frontend && vercel --prod --yes        # Deploy to Vercel
+```
+
+## Railway Deploy
+
+```bash
+railway whoami                            # Check login
+railway link -p b71f5989-6886-48d9-bdde-b4ebeb611182  # Link project
+railway up --detach                       # Deploy
+railway deployment list                   # Check status
+railway logs                              # View logs
+railway vars --set "KEY=VALUE"            # Set env var
+railway domain                            # Get/create domain
 ```
 
 ## Git
 
 ```bash
-# Push to private repo
-git add <files>
-git commit -m "short clear message"
-git push origin main
-
-# Before submission: make repo public
-# GitHub Settings → Danger Zone → Change visibility → Public
+git push org main                         # Push to org repo (Railway watches this)
+# origin = personal repo (read-only mirror, do not use)
 ```
 
-## Synthesis Hackathon API
+## Filecoin (Lighthouse)
 
 ```bash
-# Check team status
+# Generate API key via wallet signature
+python3 -c "
+from eth_account import Account
+from eth_account.messages import encode_defunct
+import httpx, os
+from dotenv import load_dotenv
+from pathlib import Path
+load_dotenv(Path('.env'))
+pk = os.getenv('PRIVATE_KEY') or os.getenv('BASE_SEPOLIA_PRIVATE_KEY')
+account = Account.from_key(pk if pk.startswith('0x') else '0x'+pk)
+r = httpx.get(f'https://api.lighthouse.storage/api/auth/get_message?publicKey={account.address}')
+signed = account.sign_message(encode_defunct(text=str(r.json())))
+r2 = httpx.post('https://api.lighthouse.storage/api/auth/create_api_key', json={
+    'publicKey': account.address, 'signedMessage': '0x'+signed.signature.hex(), 'keyName': 'stakesignal'
+})
+print('Key:', r2.json())
+"
+
+# Test real upload
+python3 -c "
+import io, os
+from lighthouseweb3 import Lighthouse
+from dotenv import load_dotenv
+from pathlib import Path
+load_dotenv(Path('.env'))
+lh = Lighthouse(token=os.getenv('LIGHTHOUSE_API_KEY'))
+r = lh.uploadBlob(io.BytesIO(b'{\"test\":true}'), 'test.json')
+print('CID:', r['data']['Hash'])
+"
+```
+
+## Smoke Tests (live services)
+
+```bash
+curl -s https://stakesignal-api-production.up.railway.app/health
+curl -s https://stakesignal-api-production.up.railway.app/reviews | python3 -c "import sys,json; d=json.load(sys.stdin); print(f'{d.get(\"count\",0)} reviews')"
+curl -s https://stakesignal-api-production.up.railway.app/agent/log | python3 -c "import sys,json; print(f'{len(json.load(sys.stdin))} entries')"
+curl -s -o /dev/null -w "%{http_code}" https://stakehumansignal.vercel.app
+```
+
+## Hackathon Submission
+
+```bash
+# Check team
 curl -s "https://synthesis.devfolio.co/teams/baacd78ca8d44b7b97e48ed8bdc1b9db" \
   -H "Authorization: Bearer $SYNTHESIS_API_KEY"
 
-# Create draft project
-curl -s -X POST "https://synthesis.devfolio.co/projects" \
-  -H "Authorization: Bearer $SYNTHESIS_API_KEY" \
+# Post on Moltbook
+curl -X POST https://www.moltbook.com/api/v1/posts \
+  -H "Authorization: Bearer $MOLTBOOK_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"teamUUID":"baacd78ca8d44b7b97e48ed8bdc1b9db","name":"StakeHumanSignal",...}'
-
-# Browse tracks
-curl -s "https://synthesis.devfolio.co/catalog?page=1&limit=50"
-```
-
-## Full Stack (run all services)
-
-```bash
-# Terminal 1: API
-uvicorn api.main:app --reload --port 8000
-
-# Terminal 2: x402 gateway
-bun run x402-server/index.js
-
-# Terminal 3: Buyer agent
-python -m api.agent.buyer_agent
-
-# Terminal 4: Frontend (when built)
-# cd frontend && bun run dev
+  -d '{"submolt_name":"general","title":"StakeHumanSignal","content":"..."}'
 ```
