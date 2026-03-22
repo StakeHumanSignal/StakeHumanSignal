@@ -8,7 +8,9 @@
     "test:coverage": "hardhat coverage",
     "deploy:base": "hardhat run scripts/deploy.js --network base",
     "deploy:sepolia": "hardhat run scripts/deploy-sepolia.js --network base-sepolia",
-    "x402": "node x402-server/index.js"
+    "x402": "node x402-server/index.js",
+    "test:frontend": "cd frontend && bun run test",
+    "test:all": "npx hardhat test && python -m pytest test/ -v && cd frontend && bun run test"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.1.0",

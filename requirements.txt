@@ -6,3 +6,5 @@ python-dotenv==1.0.1
 eth-account>=0.13.7
 pydantic==2.9.0
 lighthouseweb3==0.1.6
+pytest>=8.0.0
+pytest-cov>=5.0.0

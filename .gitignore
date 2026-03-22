@@ -37,3 +37,10 @@ api/data/*
 # Deployment
 deployments/localhost/
 .env
+
+# Coverage
+.coverage
+htmlcov/
+
+# Screenshots
+*.png

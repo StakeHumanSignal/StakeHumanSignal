@@ -1,4 +1,4 @@
-"""Web3 service — contract interactions on Base Mainnet."""
+"""Web3 service — contract interactions on Base Sepolia / Mainnet."""
 
 import json
 import os
@@ -8,26 +8,72 @@ from eth_account import Account
 
 _service = None
 
+# Minimal ABIs for the contract functions we call from Python.
+# Web3.py requires JSON ABI format (not ethers human-readable strings).
+MINIMAL_ABIS = {
+    "StakeHumanSignalJob": [
+        {"type": "function", "name": "createJob", "inputs": [{"name": "spec", "type": "string"}], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "nonpayable"},
+        {"type": "function", "name": "complete", "inputs": [{"name": "jobId", "type": "uint256"}], "outputs": [], "stateMutability": "nonpayable"},
+        {"type": "function", "name": "reject", "inputs": [{"name": "jobId", "type": "uint256"}], "outputs": [], "stateMutability": "nonpayable"},
+        {"type": "function", "name": "getJob", "inputs": [{"name": "jobId", "type": "uint256"}], "outputs": [{"name": "client", "type": "address"}, {"name": "provider", "type": "address"}, {"name": "budget", "type": "uint256"}, {"name": "status", "type": "uint8"}, {"name": "deliverableHash", "type": "bytes32"}], "stateMutability": "view"},
+        {"type": "function", "name": "getJobCount", "inputs": [], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "view"},
+        {"type": "event", "name": "JobCreated", "inputs": [{"name": "jobId", "type": "uint256", "indexed": True}, {"name": "client", "type": "address", "indexed": True}, {"name": "spec", "type": "string", "indexed": False}]},
+    ],
+    "LidoTreasury": [
+        {"type": "function", "name": "totalPrincipal", "inputs": [], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "view"},
+        {"type": "function", "name": "totalYieldDistributed", "inputs": [], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "view"},
+        {"type": "function", "name": "availableYield", "inputs": [], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "view"},
+        {"type": "function", "name": "totalBalance", "inputs": [], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "view"},
+        {"type": "function", "name": "deposits", "inputs": [{"name": "", "type": "address"}], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "view"},
+        {"type": "function", "name": "depositPrincipal", "inputs": [{"name": "amount", "type": "uint256"}], "outputs": [], "stateMutability": "nonpayable"},
+        {"type": "function", "name": "distributeYield", "inputs": [{"name": "winner", "type": "address"}, {"name": "amount", "type": "uint256"}], "outputs": [], "stateMutability": "nonpayable"},
+        {"type": "function", "name": "receiveStake", "inputs": [{"name": "reviewer", "type": "address"}, {"name": "usdcAmount", "type": "uint256"}], "outputs": [], "stateMutability": "nonpayable"},
+    ],
+    "ReceiptRegistry": [
+        {"type": "function", "name": "mintReceipt", "inputs": [{"name": "jobId", "type": "uint256"}, {"name": "winner", "type": "address"}, {"name": "apiUrl", "type": "string"}, {"name": "outcome", "type": "string"}, {"name": "filecoinCID", "type": "string"}], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "nonpayable"},
+        {"type": "function", "name": "getIndependenceScore", "inputs": [{"name": "reviewer", "type": "address"}, {"name": "agentOwner", "type": "address"}], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "view"},
+        {"type": "function", "name": "getHumanReputationScore", "inputs": [{"name": "human", "type": "address"}], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "view"},
+        {"type": "function", "name": "agentToOwner", "inputs": [{"name": "", "type": "address"}], "outputs": [{"name": "", "type": "address"}], "stateMutability": "view"},
+        {"type": "function", "name": "agentWins", "inputs": [{"name": "", "type": "address"}], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "view"},
+        {"type": "function", "name": "agentJobs", "inputs": [{"name": "", "type": "address"}], "outputs": [{"name": "", "type": "uint256"}], "stateMutability": "view"},
+        {"type": "event", "name": "ReceiptMinted", "inputs": [{"name": "tokenId", "type": "uint256", "indexed": True}, {"name": "jobId", "type": "uint256", "indexed": True}, {"name": "winner", "type": "address", "indexed": True}]},
+    ],
+}
+
 
 class Web3Service:
     def __init__(self):
-        self.rpc_url = os.getenv("BASE_RPC_URL", "https://mainnet.base.org")
+        # Use Sepolia by default for hackathon; override with BASE_RPC_URL for mainnet
+        self.rpc_url = os.getenv(
+            "BASE_RPC_URL",
+            os.getenv("BASE_SEPOLIA_RPC_URL", "https://sepolia.base.org"),
+        )
         self.w3 = Web3(Web3.HTTPProvider(self.rpc_url))
-        self.account = Account.from_key(os.getenv("PRIVATE_KEY", "0x" + "0" * 64))
-
-        # Load deployed addresses
-        addr_file = Path("addresses.json")
-        if addr_file.exists():
-            self.addresses = json.loads(addr_file.read_text())["contracts"]
+        pk = os.getenv("PRIVATE_KEY") or os.getenv("BASE_SEPOLIA_PRIVATE_KEY")
+        if pk:
+            self.account = Account.from_key(pk)
         else:
-            self.addresses = {}
+            self.account = None
 
-        # Load ABIs from Hardhat artifacts
-        self.abis = {}
-        for name in ["StakeHumanSignalJob", "LidoTreasury", "ReceiptRegistry"]:
-            abi_file = Path(f"artifacts/contracts/{name}.sol/{name}.json")
-            if abi_file.exists():
-                self.abis[name] = json.loads(abi_file.read_text())["abi"]
+        # Load deployed addresses from deployments/sepolia.json (canonical source)
+        self.addresses = {}
+        for candidate in [
+            Path("deployments/sepolia.json"),
+            Path("addresses.json"),  # legacy fallback
+        ]:
+            if candidate.exists():
+                try:
+                    data = json.loads(candidate.read_text())
+                    self.addresses = data.get("contracts", data)
+                    break
+                except Exception:
+                    pass
+
+        # Use minimal human-readable ABIs (no Hardhat artifact dependency)
+        self.abis = MINIMAL_ABIS
+
+        # Expose receipt_registry contract for independence checks
+        self.receipt_registry = self._get_contract("ReceiptRegistry")
 
     def _get_contract(self, name: str):
         key_map = {
@@ -42,6 +88,8 @@ class Web3Service:
         return self.w3.eth.contract(address=addr, abi=abi)
 
     def _send_tx(self, contract, fn_name: str, *args):
+        if not self.account:
+            raise RuntimeError("PRIVATE_KEY or BASE_SEPOLIA_PRIVATE_KEY required for transactions")
         fn = getattr(contract.functions, fn_name)(*args)
         tx = fn.build_transaction({
             "from": self.account.address,

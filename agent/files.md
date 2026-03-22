@@ -53,12 +53,12 @@
 | main.py | FastAPI app (6 routers: reviews, jobs, outcomes, sessions, agent, leaderboard) |
 | routes/reviews.py | Review CRUD + structured claims + Filecoin storage + JSON persistence |
 | routes/jobs.py | ERC-8183 job management |
-| routes/outcomes.py | Winner signaling + yield distribution + Locus payment |
+| routes/outcomes.py | Winner signaling + yield distribution + two-layer calc + Locus payment |
 | routes/sessions.py | Blind A/B compare sessions (open, outputs, settle) |
 | routes/agent.py | GET /agent/log (serves agent_log.json) |
 | routes/leaderboard.py | GET /leaderboard (aggregates reviewer stats) |
 | services/web3_client.py | Base contract calls via web3.py |
-| services/scorer.py | Retrieval score + payout score + independence + rank |
+| services/scorer.py | Retrieval score + payout score + two-layer yield + independence + rank |
 | services/scorer_local.py | Heuristic 5-dim rubric scorer (replaced Venice) |
 | services/filecoin.py | Lighthouse SDK (real CIDs) + bridge fallback |
 | services/bankr.py | Bankr LLM Gateway ensemble scoring |
@@ -115,9 +115,9 @@
 | test_task_intent.py | 16 tests |
 | test_filecoin.py | 7 tests |
 | test_buyer_agent.py | 7 tests |
-| test_scorer.py | 9 tests |
+| test_scorer.py | 13 tests |
 | test_integration.py | 8 tests |
-| **Total** | **158 tests (91 Solidity + 67 Python)** |
+| **Total** | **162 tests (91 Solidity + 71 Python)** |
 
 ## Deployments (deployments/)
 

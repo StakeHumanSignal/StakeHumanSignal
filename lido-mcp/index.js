@@ -27,8 +27,8 @@ import {
 
 // --- Setup ---
 
-const RPC_URL = process.env.BASE_RPC_URL || "https://mainnet.base.org";
-const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const RPC_URL = process.env.BASE_RPC_URL || process.env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org";
+const PRIVATE_KEY = process.env.PRIVATE_KEY || process.env.BASE_SEPOLIA_PRIVATE_KEY;
 
 let provider = null;
 let signer = null;

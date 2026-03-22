@@ -3,15 +3,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { WalletDisplay } from './WalletDisplay'
-
-const TOP_NAV = [
-  { href: '/marketplace', label: 'Marketplace' },
-  { href: '/submit', label: 'Submission' },
-  { href: '/leaderboard', label: 'Leaderboard' },
-  { href: '/agent-feed', label: 'Agent Feed' },
-  { href: '/town-square', label: 'Town Square' },
-  { href: '/validate', label: 'Validate' },
-]
+import { NAV_ROUTES } from '@/lib/nav-routes'
 
 export function TopBar() {
   const pathname = usePathname()
@@ -26,7 +18,7 @@ export function TopBar() {
             StakeHumanSignal
           </Link>
           <div className="hidden md:flex items-center gap-6 font-[family-name:var(--font-headline)] tracking-tight text-sm uppercase">
-            {TOP_NAV.map((n) => (
+            {NAV_ROUTES.map((n) => (
               <Link
                 key={n.href}
                 href={n.href}
@@ -66,7 +58,7 @@ export function TopBar() {
       {/* Mobile dropdown */}
       {mobileOpen && (
         <div className="md:hidden fixed top-16 left-0 w-full z-40 bg-[#131313] border-b border-white/10 py-4 px-6 space-y-2">
-          {TOP_NAV.map((n) => (
+          {NAV_ROUTES.map((n) => (
             <Link
               key={n.href}
               href={n.href}

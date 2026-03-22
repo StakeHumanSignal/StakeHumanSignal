@@ -1,15 +1,16 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { NAV_ROUTES } from '@/lib/nav-routes'
 
-const NAV_ITEMS = [
-  { href: "/", icon: "grid_view", label: "Marketplace" },
-  { href: "/submit", icon: "work_outline", label: "Evaluator Jobs" },
-  { href: "/leaderboard", icon: "leaderboard", label: "Leaderboard" },
-  { href: "/agent-feed", icon: "terminal", label: "Agent Feed" },
-  { href: "/town-square", icon: "hub", label: "Town Square" },
-  { href: "/validate", icon: "verified_user", label: "Validate" },
-]
+const ROUTE_ICONS: Record<string, string> = {
+  "/marketplace": "grid_view",
+  "/submit": "work_outline",
+  "/leaderboard": "leaderboard",
+  "/agent-feed": "terminal",
+  "/town-square": "hub",
+  "/validate": "verified_user",
+}
 
 const ICONS: Record<string, React.ReactNode> = {
   grid_view: (
@@ -71,8 +72,9 @@ export function SideNav() {
       </div>
 
       <nav className="flex-1 px-4 space-y-2">
-        {NAV_ITEMS.map((item) => {
+        {NAV_ROUTES.map((item) => {
           const active = isActive(item.href)
+          const iconKey = ROUTE_ICONS[item.href]
           return (
             <Link
               key={item.href}
@@ -83,7 +85,7 @@ export function SideNav() {
                   : "text-white/40 hover:text-white/80 hover:bg-white/5"
               }`}
             >
-              {ICONS[item.icon] || <span className="w-5 h-5 shrink-0" />}
+              {(iconKey && ICONS[iconKey]) || <span className="w-5 h-5 shrink-0" />}
               <span className="opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                 {item.label}
               </span>

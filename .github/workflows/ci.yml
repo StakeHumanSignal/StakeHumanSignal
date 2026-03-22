@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  solidity-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - run: npm install
+      - run: npx hardhat test
+
+  python-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r requirements.txt pytest pytest-cov
+      - run: python -m pytest test/ -v
+
+  frontend-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+      - run: cd frontend && bun install
+      - run: cd frontend && bun run test
+
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scan for hardcoded secrets in source files
+        run: |
+          MATCHES=$(git grep -rn 'private\|PRIVATE_KEY\|mnemonic' --include='*.ts' --include='*.js' --include='*.py' -- . ':!.env.example' ':!CLAUDE.md' ':!*.test.*' ':!*.config.*' ':!node_modules' ':!*.md' ':!contracts.js' ':!web3_client.py' ':!x402-server/index.js' ':!lido-mcp/index.js' ':!stakesignal-mcp/index.js' ':!frontend/src/lib/wagmi.ts' | grep -viE '(process\.env|os\.environ|getenv|private_key.*=.*""|PRIVATE_KEY.*\|\||private_key.*or |# |// |/\*|description|schema|label|comment|interface|type )' || true)
+          if [ -n "$MATCHES" ]; then
+            echo "::error::Potential hardcoded secrets found:"
+            echo "$MATCHES"
+            exit 1
+          fi
+          echo "No hardcoded secrets detected."

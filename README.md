@@ -201,6 +201,27 @@ graph TD
 
 ---
 
+## For Judges — Track Navigation
+
+Each track maps to specific folders in this monorepo. Click through to each folder's README for architecture, deployed addresses, and test instructions.
+
+| Track | Sponsor | Prize | Start Here |
+|-------|---------|-------|------------|
+| ERC-8183 Open Build | Virtuals | $2,000 | [`contracts/`](contracts/) — `StakeHumanSignalJob.sol` |
+| Agents With Receipts (ERC-8004) | Protocol Labs | $4,000 | [`contracts/`](contracts/) — `ReceiptRegistry.sol` (3 registries) |
+| Let the Agent Cook | Protocol Labs | $4,000 | [`api/`](api/) — `agent/buyer_agent.py` + [`agent_log.json`](agent_log.json) |
+| stETH Agent Treasury | Lido | $3,000 | [`contracts/`](contracts/) — `LidoTreasury.sol` + [`lido-mcp/`](lido-mcp/) |
+| Lido MCP Server | Lido | $5,000 | [`lido-mcp/`](lido-mcp/) — 9 tools, dry_run, Sepolia contracts |
+| Agent Services on Base | Base | $5,000 | [`x402-server/`](x402-server/) — x402 micropayment gate |
+| Mechanism Design | Octant | $1,000 | [`api/`](api/) — conviction-weighted staking + scorer |
+| Data Collection | Octant | $1,000 | [`api/`](api/) — autonomous review collection + Filecoin |
+| Agentic Storage | Filecoin | $2,000 | [`filecoin-bridge/`](filecoin-bridge/) — Lighthouse SDK bridge |
+| Open Track | Synthesis | $28,000+ | Full repo — [`frontend/`](frontend/) for live demo |
+
+**Live demo:** [stakehumansignal.vercel.app](https://stakehumansignal.vercel.app) | **Live API:** [stakesignal-api-production.up.railway.app](https://stakesignal-api-production.up.railway.app/health)
+
+---
+
 ## Two-Layer Human Signal
 
 StakeHumanSignal uses a two-layer model for human feedback:
@@ -269,7 +290,7 @@ api/                              # Python FastAPI backend
 ├── services/                     # scorer, scorer_local, filecoin, web3
 └── agent/                        # buyer_agent (autonomous loop)
 
-frontend/                         # Next.js + Tailwind + RainbowKit
+frontend/                         # Next.js 16 + Tailwind 4 + RainbowKit
 ├── src/app/                      # 7 pages: landing, marketplace, submit,
 │                                 #   agent-feed, leaderboard, validate, town-square
 └── src/components/               # TopBar, SideNav, WalletDisplay, Providers
@@ -281,9 +302,18 @@ lido-mcp/                         # MCP server for Lido stETH operations
 stakesignal-mcp/                  # MCP server for StakeHumanSignal operations
 └── index.js                      # 5 tools (get_ranked, submit_passive, stake_on, etc.)
 
-filecoin-bridge/                  # Filecoin storage + x402 gateway
-├── index.js                      # Lighthouse SDK bridge
-└── x402-server.js                # Manual 402 payment gate
+filecoin-bridge/                  # Filecoin storage bridge
+└── index.js                      # Synapse SDK + local CID fallback
+
+x402-server/                      # x402 payment gateway
+└── index.js                      # 402 micropayment gate for /reviews/top
+
+agent/                            # Agent configuration & skill docs
+├── skills/                       # Project-specific agent skill files (.md)
+└── CLAUDE.md                     # Agent instructions
+
+skills/                           # Claude Code plugin skills (gstack ecosystem)
+└── */                            # Installed skill plugins
 ```
 
 ## License

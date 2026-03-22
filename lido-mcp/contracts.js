@@ -11,10 +11,11 @@ export const CONTRACTS = {
   lidoDAO_mainnet: "0xb8FFC3Cd6e7Cf5a098A1c92F48009765B24088Dc",
   withdrawalQueue_mainnet: "0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1",
 
-  // StakeHumanSignal contract addresses (fill after deploy)
-  lidoTreasury: process.env.LIDO_TREASURY_ADDRESS || "",
-  stakeSignalJob: process.env.STAKE_SIGNAL_JOB_ADDRESS || "",
-  receiptRegistry: process.env.RECEIPT_REGISTRY_ADDRESS || "",
+  // StakeHumanSignal deployed contract addresses (Base Sepolia)
+  // Env vars override, otherwise use deployed addresses from sepolia.json
+  lidoTreasury: process.env.LIDO_TREASURY_ADDRESS || "0x8E29D161477D9BB00351eA2f69702451443d7bf5",
+  stakeSignalJob: process.env.STAKE_SIGNAL_JOB_ADDRESS || "0xE99027DDdF153Ac6305950cD3D58C25D17E39902",
+  receiptRegistry: process.env.RECEIPT_REGISTRY_ADDRESS || "0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332",
 };
 
 // Minimal ABIs for the functions we call

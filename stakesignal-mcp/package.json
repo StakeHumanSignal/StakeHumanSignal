@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "bin": { "stakesignal-mcp": "./index.js" },
-  "scripts": { "start": "node index.js" },
+  "scripts": { "start": "node index.js", "test": "node stakesignal-mcp.test.js" },
   "dependencies": {
     "@modelcontextprotocol/sdk": "latest"
   }

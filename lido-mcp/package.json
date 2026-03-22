@@ -5,7 +5,8 @@
   "bin": { "lido-mcp": "./index.js" },
   "scripts": {
     "start": "node index.js",
-    "monitor": "node vault-monitor.js"
+    "monitor": "node vault-monitor.js",
+    "test": "node lido-mcp.test.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "latest",

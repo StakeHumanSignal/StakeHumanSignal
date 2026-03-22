@@ -326,5 +326,738 @@
     "iso": "2026-03-21T17:52:19Z",
     "message": "Fetch error: Connection refused",
     "action": "error"
+  },
+  {
+    "timestamp": 1774086889.43636,
+    "iso": "2026-03-21T17:54:49Z",
+    "message": "Fetched reviews via x402 gateway (dryRun)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0.001 USDC",
+    "network": "base-sepolia",
+    "mode": "dryRun"
+  },
+  {
+    "timestamp": 1774086889.439275,
+    "iso": "2026-03-21T17:54:49Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774086918.519992,
+    "iso": "2026-03-21T17:55:18Z",
+    "message": "Fetched reviews via x402 gateway (dryRun)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0.001 USDC",
+    "network": "base-sepolia",
+    "mode": "dryRun"
+  },
+  {
+    "timestamp": 1774086918.522932,
+    "iso": "2026-03-21T17:55:18Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774087769.737226,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Agent starting autonomous loop",
+    "action": "start"
+  },
+  {
+    "timestamp": 1774087769.738786,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Cycle 1 starting",
+    "action": "cycle_start"
+  },
+  {
+    "timestamp": 1774087769.804141,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774087769.804823,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Fetched 5 reviews",
+    "action": "fetch",
+    "count": 5
+  },
+  {
+    "timestamp": 1774087769.805778,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Scored 5 reviews with heuristic scorer",
+    "action": "score"
+  },
+  {
+    "timestamp": 1774087769.80613,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Heuristic: c132408c verdict=rejected confidence=0.38",
+    "action": "heuristic_score",
+    "claim_id": "c132408c",
+    "task_intent": "compare trading strategy analysis for BTC/USD volatility",
+    "verdict": "rejected",
+    "confidence": 0.38
+  },
+  {
+    "timestamp": 1774087769.806478,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Rejected review c132408c: verdict=rejected, confidence=0.38",
+    "action": "reject",
+    "claim_id": "c132408c"
+  },
+  {
+    "timestamp": 1774087769.807241,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Heuristic: e0d20c71 verdict=rejected confidence=0.38",
+    "action": "heuristic_score",
+    "claim_id": "e0d20c71",
+    "task_intent": "extract structured data from unstructured medical notes",
+    "verdict": "rejected",
+    "confidence": 0.38
+  },
+  {
+    "timestamp": 1774087769.807629,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Rejected review e0d20c71: verdict=rejected, confidence=0.38",
+    "action": "reject",
+    "claim_id": "e0d20c71"
+  },
+  {
+    "timestamp": 1774087769.808001,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Heuristic: 1e41c962 verdict=rejected confidence=0.38",
+    "action": "heuristic_score",
+    "claim_id": "1e41c962",
+    "task_intent": "evaluate Python async error handling across two LLM policies",
+    "verdict": "rejected",
+    "confidence": 0.38
+  },
+  {
+    "timestamp": 1774087769.808361,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Rejected review 1e41c962: verdict=rejected, confidence=0.38",
+    "action": "reject",
+    "claim_id": "1e41c962"
+  },
+  {
+    "timestamp": 1774087769.808724,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Heuristic: 6de8a8fe verdict=rejected confidence=0.38",
+    "action": "heuristic_score",
+    "claim_id": "6de8a8fe",
+    "task_intent": "generate creative marketing copy for Web3 developer tools",
+    "verdict": "rejected",
+    "confidence": 0.38
+  },
+  {
+    "timestamp": 1774087769.809102,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Rejected review 6de8a8fe: verdict=rejected, confidence=0.38",
+    "action": "reject",
+    "claim_id": "6de8a8fe"
+  },
+  {
+    "timestamp": 1774087769.809485,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Heuristic: 6b0f72a9 verdict=rejected confidence=0.38",
+    "action": "heuristic_score",
+    "claim_id": "6b0f72a9",
+    "task_intent": "assess customer support response tone for fintech users",
+    "verdict": "rejected",
+    "confidence": 0.38
+  },
+  {
+    "timestamp": 1774087769.809872,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Rejected review 6b0f72a9: verdict=rejected, confidence=0.38",
+    "action": "reject",
+    "claim_id": "6b0f72a9"
+  },
+  {
+    "timestamp": 1774087769.818453,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Agent log pinned to Filecoin: bafylocale484c9197b9ec2f6c8daf845b7e1e0001e8a5953a28fd566",
+    "action": "pin",
+    "logCID": "bafylocale484c9197b9ec2f6c8daf845b7e1e0001e8a5953a28fd566"
+  },
+  {
+    "timestamp": 1774087769.818943,
+    "iso": "2026-03-21T18:09:29Z",
+    "message": "Single cycle complete (--once mode)",
+    "action": "stop"
+  },
+  {
+    "timestamp": 1774087860.1904728,
+    "iso": "2026-03-21T18:11:00Z",
+    "message": "Fetched reviews via x402 gateway (dryRun)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0.001 USDC",
+    "network": "base-sepolia",
+    "mode": "dryRun"
+  },
+  {
+    "timestamp": 1774087860.193246,
+    "iso": "2026-03-21T18:11:00Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774095272.883548,
+    "iso": "2026-03-21T20:14:32Z",
+    "message": "Fetched reviews via x402 gateway (dryRun)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0.001 USDC",
+    "network": "base-sepolia",
+    "mode": "dryRun"
+  },
+  {
+    "timestamp": 1774095272.886493,
+    "iso": "2026-03-21T20:14:32Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774103580.8510022,
+    "iso": "2026-03-21T22:33:00Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774103580.853729,
+    "iso": "2026-03-21T22:33:00Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774105543.56544,
+    "iso": "2026-03-21T23:05:43Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774105543.568099,
+    "iso": "2026-03-21T23:05:43Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774105808.911985,
+    "iso": "2026-03-21T23:10:08Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774105808.9146152,
+    "iso": "2026-03-21T23:10:08Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774106474.1786299,
+    "iso": "2026-03-21T23:21:14Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774106474.181375,
+    "iso": "2026-03-21T23:21:14Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774106605.633431,
+    "iso": "2026-03-21T23:23:25Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774106605.63601,
+    "iso": "2026-03-21T23:23:25Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774107265.863381,
+    "iso": "2026-03-21T23:34:25Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774107265.866406,
+    "iso": "2026-03-21T23:34:25Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774108162.456156,
+    "iso": "2026-03-21T23:49:22Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774108162.4587789,
+    "iso": "2026-03-21T23:49:22Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774155030.094709,
+    "iso": "2026-03-22T12:50:30Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774155030.0979772,
+    "iso": "2026-03-22T12:50:30Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774156598.761781,
+    "iso": "2026-03-22T13:16:38Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774156598.764752,
+    "iso": "2026-03-22T13:16:38Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774163347.1664078,
+    "iso": "2026-03-22T15:09:07Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774163347.170201,
+    "iso": "2026-03-22T15:09:07Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774165500.427348,
+    "iso": "2026-03-22T15:45:00Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774165500.4310348,
+    "iso": "2026-03-22T15:45:00Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774166062.333764,
+    "iso": "2026-03-22T15:54:22Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774166062.339156,
+    "iso": "2026-03-22T15:54:22Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774166209.479997,
+    "iso": "2026-03-22T15:56:49Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774166209.482508,
+    "iso": "2026-03-22T15:56:49Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774166765.375007,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Agent starting autonomous loop",
+    "action": "start"
+  },
+  {
+    "timestamp": 1774166765.376298,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Cycle 1 starting",
+    "action": "cycle_start"
+  },
+  {
+    "timestamp": 1774166765.499329,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774166765.501879,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Fetched 10 reviews",
+    "action": "fetch",
+    "count": 10
+  },
+  {
+    "timestamp": 1774166765.503314,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Scored 10 reviews with heuristic scorer",
+    "action": "score"
+  },
+  {
+    "timestamp": 1774166765.50458,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Heuristic: 2fb10aa1 verdict=validated confidence=0.88",
+    "action": "heuristic_score",
+    "claim_id": "2fb10aa1",
+    "task_intent": "extract structured data from unstructured medical notes",
+    "verdict": "validated",
+    "confidence": 0.88
+  },
+  {
+    "timestamp": 1774166765.5753899,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774166765.5761359,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Heuristic: e0d20c71 verdict=validated confidence=0.88",
+    "action": "heuristic_score",
+    "claim_id": "e0d20c71",
+    "task_intent": "extract structured data from unstructured medical notes",
+    "verdict": "validated",
+    "confidence": 0.88
+  },
+  {
+    "timestamp": 1774166765.6440861,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774166765.645097,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Heuristic: 2a2c3de4 verdict=validated confidence=0.87",
+    "action": "heuristic_score",
+    "claim_id": "2a2c3de4",
+    "task_intent": "evaluate Python async error handling across two LLM policies",
+    "verdict": "validated",
+    "confidence": 0.87
+  },
+  {
+    "timestamp": 1774166765.719331,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774166765.7202392,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Heuristic: 1e41c962 verdict=validated confidence=0.87",
+    "action": "heuristic_score",
+    "claim_id": "1e41c962",
+    "task_intent": "evaluate Python async error handling across two LLM policies",
+    "verdict": "validated",
+    "confidence": 0.87
+  },
+  {
+    "timestamp": 1774166765.882356,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774166765.883544,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Heuristic: 05ee3131 verdict=validated confidence=0.85",
+    "action": "heuristic_score",
+    "claim_id": "05ee3131",
+    "task_intent": "compare trading strategy analysis for BTC/USD volatility",
+    "verdict": "validated",
+    "confidence": 0.85
+  },
+  {
+    "timestamp": 1774166765.95649,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774166765.957598,
+    "iso": "2026-03-22T16:06:05Z",
+    "message": "Heuristic: c132408c verdict=validated confidence=0.85",
+    "action": "heuristic_score",
+    "claim_id": "c132408c",
+    "task_intent": "compare trading strategy analysis for BTC/USD volatility",
+    "verdict": "validated",
+    "confidence": 0.85
+  },
+  {
+    "timestamp": 1774166766.039684,
+    "iso": "2026-03-22T16:06:06Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774166766.04052,
+    "iso": "2026-03-22T16:06:06Z",
+    "message": "Heuristic: 59c39a58 verdict=validated confidence=0.82",
+    "action": "heuristic_score",
+    "claim_id": "59c39a58",
+    "task_intent": "generate creative marketing copy for Web3 developer tools",
+    "verdict": "validated",
+    "confidence": 0.82
+  },
+  {
+    "timestamp": 1774166766.105997,
+    "iso": "2026-03-22T16:06:06Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774166766.106835,
+    "iso": "2026-03-22T16:06:06Z",
+    "message": "Heuristic: 6de8a8fe verdict=validated confidence=0.82",
+    "action": "heuristic_score",
+    "claim_id": "6de8a8fe",
+    "task_intent": "generate creative marketing copy for Web3 developer tools",
+    "verdict": "validated",
+    "confidence": 0.82
+  },
+  {
+    "timestamp": 1774166766.177919,
+    "iso": "2026-03-22T16:06:06Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774166766.178752,
+    "iso": "2026-03-22T16:06:06Z",
+    "message": "Heuristic: b145842a verdict=validated confidence=0.82",
+    "action": "heuristic_score",
+    "claim_id": "b145842a",
+    "task_intent": "Generate structured JSON from unstructured text",
+    "verdict": "validated",
+    "confidence": 0.82
+  },
+  {
+    "timestamp": 1774166766.337502,
+    "iso": "2026-03-22T16:06:06Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774166766.338582,
+    "iso": "2026-03-22T16:06:06Z",
+    "message": "Heuristic: 554c0e9a verdict=validated confidence=0.81",
+    "action": "heuristic_score",
+    "claim_id": "554c0e9a",
+    "task_intent": "assess customer support response tone for fintech users",
+    "verdict": "validated",
+    "confidence": 0.81
+  },
+  {
+    "timestamp": 1774166766.408094,
+    "iso": "2026-03-22T16:06:06Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774166766.541884,
+    "iso": "2026-03-22T16:06:06Z",
+    "message": "Agent log pinned to Filecoin: bafylocal1b8b3a31a4325b2d26460e042e62a8323fd15cfa5562368e",
+    "action": "pin",
+    "logCID": "bafylocal1b8b3a31a4325b2d26460e042e62a8323fd15cfa5562368e"
+  },
+  {
+    "timestamp": 1774166766.543069,
+    "iso": "2026-03-22T16:06:06Z",
+    "message": "Single cycle complete (--once mode)",
+    "action": "stop"
+  },
+  {
+    "timestamp": 1774167228.710567,
+    "iso": "2026-03-22T16:13:48Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774167228.713732,
+    "iso": "2026-03-22T16:13:48Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774169368.79841,
+    "iso": "2026-03-22T16:49:28Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774169368.80146,
+    "iso": "2026-03-22T16:49:28Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774170501.5616279,
+    "iso": "2026-03-22T17:08:21Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774170501.574482,
+    "iso": "2026-03-22T17:08:21Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774176177.101938,
+    "iso": "2026-03-22T18:42:57Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774176177.104747,
+    "iso": "2026-03-22T18:42:57Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774177741.8500109,
+    "iso": "2026-03-22T19:09:01Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774177741.855338,
+    "iso": "2026-03-22T19:09:01Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774177756.4628649,
+    "iso": "2026-03-22T19:09:16Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774177756.468365,
+    "iso": "2026-03-22T19:09:16Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774177916.579,
+    "iso": "2026-03-22T19:11:56Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774177916.584237,
+    "iso": "2026-03-22T19:11:56Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
   }
 ]
