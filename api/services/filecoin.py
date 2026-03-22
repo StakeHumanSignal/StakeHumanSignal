@@ -87,13 +87,15 @@ async def health() -> dict:
 async def _store_lighthouse(data: dict) -> str | None:
     """Store via Lighthouse SDK (real Filecoin/IPFS)."""
     try:
+        import io
         import lighthouseweb3
         lh = lighthouseweb3.Lighthouse(token=LIGHTHOUSE_API_KEY)
         content = json.dumps(data, indent=2)
-        response = lh.uploadText(content)
+        response = lh.uploadBlob(io.BytesIO(content.encode()), "data.json")
         cid = response.get("data", {}).get("Hash", "")
         if cid:
             print(f"[Filecoin] Stored on Lighthouse: {cid}")
+            print(f"[Filecoin] URL: https://gateway.lighthouse.storage/ipfs/{cid}")
             return cid
     except Exception as e:
         print(f"[Filecoin] Lighthouse failed: {e}")
