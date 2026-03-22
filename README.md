@@ -10,9 +10,7 @@ Built for [Synthesis Hackathon](https://synthesis.md) — March 2026.
 
 ---
 
-# StakeHumanSignal
-
-StakeHumanSignal is a policy ranking and validation layer for AI agents.
+StakeHumanSignal is a policy ranking and human review/validation layer for AI agents.
 
 As agents gain the ability to choose APIs, models, prompts, tools, and execution strategies on behalf of users, the most important problem is no longer just generation. It is selection.
 
