@@ -82,3 +82,49 @@ class TestComputePayoutScore:
         big = compute_payout_score(100.0, 1.0)    # sqrt(100) = 10
         # 100x more stake only gives 10x more payout
         assert big / small == 10.0
+
+
+class TestTwoLayerPayout:
+    """compute_two_layer_payout: passive + active yield distribution."""
+
+    def test_passive_only(self):
+        from api.services.scorer import compute_two_layer_payout
+        candidates = [
+            {"review_id": "a", "passive_selection_count": 3, "active_stake_amount": 0},
+            {"review_id": "b", "passive_selection_count": 0, "active_stake_amount": 0},
+        ]
+        result = compute_two_layer_payout(10.0, candidates)
+        assert result[0]["review_id"] == "a"
+        assert result[0]["payout_amount"] == 10.0
+        assert result[1]["payout_amount"] == 0.0
+
+    def test_active_only(self):
+        from api.services.scorer import compute_two_layer_payout
+        candidates = [
+            {"review_id": "a", "passive_selection_count": 0, "active_stake_amount": 4.0},
+            {"review_id": "b", "passive_selection_count": 0, "active_stake_amount": 1.0},
+        ]
+        result = compute_two_layer_payout(10.0, candidates)
+        # sqrt(4)=2, sqrt(1)=1. Ratio 2:1. a gets ~6.67, b gets ~3.33
+        assert abs(result[0]["payout_amount"] - 6.666667) < 0.01
+        assert abs(result[1]["payout_amount"] - 3.333333) < 0.01
+
+    def test_mixed_sums_to_yield(self):
+        from api.services.scorer import compute_two_layer_payout
+        candidates = [
+            {"review_id": "a", "passive_selection_count": 2, "active_stake_amount": 1.0},
+            {"review_id": "b", "passive_selection_count": 0, "active_stake_amount": 4.0},
+        ]
+        result = compute_two_layer_payout(10.0, candidates)
+        total = sum(c["payout_amount"] for c in result)
+        assert abs(total - 10.0) < 0.001
+
+    def test_zero_scores_no_division_error(self):
+        from api.services.scorer import compute_two_layer_payout
+        candidates = [
+            {"review_id": "a", "passive_selection_count": 0, "active_stake_amount": 0},
+            {"review_id": "b", "passive_selection_count": 0, "active_stake_amount": 0},
+        ]
+        result = compute_two_layer_payout(10.0, candidates)
+        assert result[0]["payout_amount"] == 0.0
+        assert result[1]["payout_amount"] == 0.0

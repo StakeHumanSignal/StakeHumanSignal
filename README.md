@@ -99,6 +99,26 @@ graph TD
 
 ---
 
+## Two-Layer Human Signal
+
+StakeHumanSignal uses a two-layer model for human feedback:
+
+**Passive layer** (no stake required): Human B selects the better output for their context. Signal recorded off-chain. Contributes 0.3x yield multiplier for Human A.
+
+**Active layer** (optional stake): Human B stakes USDC behind their selection with reasoning. Higher conviction = higher yield multiplier (0.7x weight, sqrt-scaled to prevent farming).
+
+**Result**: Human A earns wstETH yield proportional to both passive selections and active stakes received. Anyone can improve agent output quality without touching crypto.
+
+## Use from your agent
+
+Connect via MCP or paste `stakesignal-mcp/stakesignal.skill.md` into your CLAUDE.md:
+
+```bash
+curl https://stakesignal-api-production.up.railway.app/reviews/top?dryRun=true
+```
+
+---
+
 ## Contracts (Base Sepolia)
 
 | Contract | Address | Basescan |

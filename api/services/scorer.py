@@ -5,6 +5,7 @@ Payout score: sqrt(stake) × settlement_result (prevents stake farming).
 """
 
 import math
+import os
 import time
 
 # Rubric dimension weights (must sum to 1.0)
@@ -135,6 +136,31 @@ def update_claim_score(source_claim_id: str, outcome_validated: bool, rubric_sco
 
     total = claim["wins"] + claim["losses"]
     claim["downstream_accuracy"] = claim["wins"] / total if total > 0 else 0.0
+
+
+def compute_two_layer_payout(available_yield: float, candidates: list[dict]) -> list[dict]:
+    """Two-layer yield distribution: passive selections + active stakes.
+
+    Each candidate has: review_id, stake_amount, passive_selection_count, active_stake_amount.
+    Yield distributed proportionally by: passive_weight + active_weight.
+    """
+    PASSIVE_MULT = float(os.getenv("PASSIVE_MULTIPLIER", "0.3"))
+    ACTIVE_MULT = float(os.getenv("ACTIVE_MULTIPLIER", "0.7"))
+
+    for c in candidates:
+        passive_w = c.get("passive_selection_count", 0) * PASSIVE_MULT
+        active_w = math.sqrt(c.get("active_stake_amount", 0)) * ACTIVE_MULT
+        c["yield_score"] = passive_w + active_w
+
+    total_score = sum(c["yield_score"] for c in candidates)
+
+    for c in candidates:
+        if total_score > 0:
+            c["payout_amount"] = round(available_yield * (c["yield_score"] / total_score), 6)
+        else:
+            c["payout_amount"] = 0.0
+
+    return sorted(candidates, key=lambda x: x["payout_amount"], reverse=True)
 
 
 def get_independence_score(reviewer_address: str, agent_owner_address: str) -> float:

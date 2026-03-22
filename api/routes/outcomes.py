@@ -102,6 +102,26 @@ async def signal_outcome(outcome: OutcomeSignal):
     except Exception as e:
         print(f"[Locus] Payment skipped: {e}")
 
+    # 6. Two-layer yield calculation (log only — distribution via Lido MCP)
+    try:
+        from api.services.scorer import compute_two_layer_payout
+        from api.routes.sessions import passive_signals
+
+        # Count passive selections for this review
+        passive_count = sum(1 for s in passive_signals if s.get("preferred_review_id") == outcome.review_id)
+
+        two_layer = compute_two_layer_payout(
+            available_yield=0.01,  # placeholder — real yield from contract
+            candidates=[{
+                "review_id": outcome.review_id,
+                "passive_selection_count": passive_count,
+                "active_stake_amount": outcome.score,  # using score as proxy
+            }]
+        )
+        print(f"[Yield] Two-layer: {two_layer}")
+    except Exception as e:
+        print(f"[Yield] Two-layer calc skipped: {e}")
+
     # Downstream validation: update source claim if referenced
     if outcome.source_claim_id and outcome.outcome_validated is not None:
         update_claim_score(
