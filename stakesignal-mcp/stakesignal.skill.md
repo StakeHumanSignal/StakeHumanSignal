@@ -45,4 +45,4 @@ See recent autonomous agent decisions — which reviews were completed or reject
 - ERC-8004: Receipt registry with rubric scores and independence verification
 - Lido Treasury: wstETH yield-only distribution (principal locked)
 - x402: Payment gate for ranked review access (0.001 USDC)
-- Filecoin: Permanent storage of review outcomes via Lighthouse
+- Filecoin: Permanent storage via Filecoin Onchain Cloud (Synapse SDK) + Lighthouse

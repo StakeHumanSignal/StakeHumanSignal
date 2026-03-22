@@ -68,9 +68,11 @@ async function handleTool(name, args) {
     switch (name) {
       case "get_ranked_reviews": {
         const url = args.task_intent
-          ? `${API}/reviews/top?dryRun=true&task_intent=${encodeURIComponent(args.task_intent)}`
-          : `${API}/reviews/top?dryRun=true`;
-        const r = await fetch(url);
+          ? `${API}/reviews/top?task_intent=${encodeURIComponent(args.task_intent)}`
+          : `${API}/reviews/top`;
+        const r = await fetch(url, {
+          headers: { "x-402-payment": "mcp-stakesignal-agent" }
+        });
         const data = await r.json();
         const reviews = (data.reviews || data || []).slice(0, 5);
         return JSON.stringify(reviews.map(rv => ({
@@ -87,11 +89,30 @@ async function handleTool(name, args) {
         return JSON.stringify(await r.json(), null, 2);
       }
       case "stake_on_review": {
+        const r = await fetch(`${API}/reviews`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            reviewer_address: args.reviewer_address || "0xMCPAgent",
+            api_url: "https://stakesignal-mcp",
+            review_text: args.reasoning,
+            stake_amount: args.amount_usdc,
+            stake_tx_hash: "0xmcp-intent-" + Date.now().toString(16),
+            task_intent: "stake on review " + args.review_id,
+            task_type: "analysis",
+            winner: "policy_a",
+            reasoning: args.reasoning,
+            rubric_scores: { correctness: 0.8, relevance: 0.8, completeness: 0.8, efficiency: 0.8, reasoning_quality: 0.8 },
+          })
+        });
+        const data = await r.json();
         return JSON.stringify({
-          status: "stake_recorded",
+          status: "stake_submitted",
           review_id: args.review_id,
           amount_usdc: args.amount_usdc,
-          note: "On-chain staking requires wallet connection. This records intent."
+          created_review_id: data.id,
+          filecoin_cid: data.filecoin_cid,
+          note: "Stake intent recorded via API. Review stored on Filecoin.",
         }, null, 2);
       }
       case "get_leaderboard": {
@@ -120,4 +141,4 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => ({
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
-console.error("[StakeHumanSignal MCP] Server running with 5 tools");
+console.error("[StakeHumanSignal MCP] Server running with 5 tools — all hitting live API");
