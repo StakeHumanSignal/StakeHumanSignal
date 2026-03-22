@@ -19,7 +19,6 @@ agent/
 .next/
 artifacts/
 cache/
-deployments/
 __pycache__/
 *.pyc
 *.pyo
@@ -30,5 +29,3 @@ __pycache__/
 Procfile
 nixpacks.toml
 runtime.txt
-x402-server/
-olas/
