@@ -97,6 +97,13 @@ Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 - distributeYield: 0x30ad2db8... (block 39211827)
 - FOC deposit: 0x244c2a1d... (Filecoin calibration block 3562333)
 
+### On-chain TX logging rule
+When any script or command produces a successful on-chain transaction:
+1. Add the TX hash + description + block number to the "Proof-of-Work Transactions" table in `README.md`
+2. Add the TX hash to the "On-Chain Proof TXs" list in this file (`agent/CLAUDE.md`)
+3. If it produces a CID, add it to the Filecoin evidence section in `README.md`
+4. Update `deployments/sepolia-e2e-proof.json` or `deployments/treasury-yield-proof.json` as appropriate
+
 ### DO NOT touch
 - contracts/ (deployed on Sepolia — any change requires redeploy)
 - deployments/ (evidence for judges)
