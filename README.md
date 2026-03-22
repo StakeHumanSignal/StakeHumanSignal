@@ -19,8 +19,8 @@ If the user prefers the output generated under a given policy, the staker behind
 
 This creates a two-layer system:
 
-a passive selection layer, where users improve output quality just by choosing the better result
-an active validation layer, where users can optionally reinforce strong policies through staking
+- a passive selection layer, where users improve output quality just by choosing the better result
+- an active validation layer, where users can optionally reinforce strong policies through staking
 
 ## What it does and why it matters
 
@@ -37,12 +37,12 @@ The systems that win will be the ones that can repeatedly choose the right polic
 
 The same API or prompt bundle can perform very differently depending on:
 
-user intent
-task type
-quality requirements
-latency and cost constraints
-domain context
-output preferences
+- user intent
+- task type
+- quality requirements
+- latency and cost constraints
+- domain context
+- output preferences
 
 But existing signals fail in opposite ways.
 
