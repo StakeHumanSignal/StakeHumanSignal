@@ -1,116 +1,205 @@
 ---
 name: lido-mcp
-description: MCP server for Lido stETH yield treasury operations on Base. Stake USDC, query yield balance, distribute yield to winners, monitor vault health, list ERC-8183 jobs. All write operations support dry_run simulation. Works in mock mode without contract addresses.
+description: Reference MCP server for Lido — 9 tools for stETH staking, wstETH wrap/unwrap, yield management, withdrawal queue, and DAO governance. Reads real Ethereum mainnet Lido contracts. All write ops support dry_run. Pairs with StakeHumanSignal yield treasury on Base.
 ---
 
 # Lido MCP Server
 
-MCP server exposing Lido wstETH yield treasury operations for AI agents. Part of the StakeHumanSignal staked feedback marketplace.
+Reference MCP server that makes stETH staking, position management, and governance natively callable by any AI agent. Built for the Synthesis Hackathon Lido MCP track ($5,000).
+
+## The Lido Mental Model — Read This First
+
+### stETH vs wstETH
+
+**stETH** (rebasing): When you stake ETH with Lido, you get stETH. Your stETH balance increases daily as staking rewards accrue. This is called "rebasing" — the token supply grows to reflect earned yield. However, many DeFi protocols and L2 bridges don't handle rebasing tokens well.
+
+**wstETH** (non-rebasing wrapper): wstETH wraps stETH at a fixed exchange rate. Your wstETH balance stays constant, but each wstETH becomes worth more stETH over time. This is the preferred format for DeFi, bridges, and agent treasuries because the balance doesn't unexpectedly change.
+
+**Current rate (live from Ethereum mainnet):** 1 stETH ≈ 0.813 wstETH (or 1 wstETH ≈ 1.23 stETH)
+
+### Safe Staking Patterns for Agents
+
+1. **Always use wstETH for storage** — stETH rebasing can cause rounding drift in accounting
+2. **Always dry_run first** — simulate before sending real transactions
+3. **Check withdrawal queue** before requesting unstake — finalization takes 1-5 days
+4. **Never assume 1:1 ETH:stETH** — there's a slight discount on the open market
+5. **Governance votes are irreversible** — verify vote ID and direction in dry_run
+
+### Rebasing Drift (Critical for Integration)
+
+If your contract holds stETH directly, the balance will change between transactions due to rebasing. This can cause:
+- Accounting mismatches in `balanceOf` checks
+- Unexpected reverts if you try to transfer the "full balance" (it may have increased by 1 wei since you last checked)
+- Share rounding issues on transfers
+
+**Solution:** Hold wstETH. The StakeHumanSignal LidoTreasury does this correctly — it locks wstETH principal and distributes wstETH yield.
 
 ## Setup
 
 ```bash
-cd lido-mcp && bun install && node index.js
+cd lido-mcp && npm install && node index.js
 ```
 
-## Tools
+Claude Desktop config:
+```json
+{
+  "mcpServers": {
+    "lido": {
+      "command": "node",
+      "args": ["/path/to/lido-mcp/index.js"]
+    }
+  }
+}
+```
+
+## All 9 Tools
 
 ### lido_stake
-Stake USDC into LidoTreasury. Principal locked forever.
+Deposit into StakeHumanSignal LidoTreasury. Principal locked forever — only yield is distributable.
 
 ```json
-{
-  "amount_usdc": 10.0,
-  "wallet": "0x557E...",
-  "dry_run": true
-}
+{ "amount_usdc": 10.0, "wallet": "0x...", "dry_run": true }
 ```
 
-Returns: `{ tx_hash, amount_usdc, wsteth_estimated, dry_run }`
+Returns: estimated wstETH from on-chain `getWstETHByStETH()` rate (not hardcoded).
+
+### lido_unstake
+Request stETH withdrawal from Lido. Uses the Ethereum mainnet withdrawal queue (ERC-721).
+
+```json
+{ "amount_steth": "1.0", "dry_run": true }
+```
+
+Returns: estimated wait time, queue position. Finalization takes 1-5 days.
+
+### lido_wrap
+Wrap stETH → wstETH on Ethereum mainnet. Rate fetched live from `wstETH.getWstETHByStETH()`.
+
+```json
+{ "amount_steth": "1.0", "dry_run": true }
+```
+
+Returns: exact wstETH amount from on-chain contract call.
+
+### lido_unwrap
+Unwrap wstETH → stETH on Ethereum mainnet. Rate fetched live from `wstETH.getStETHByWstETH()`.
+
+```json
+{ "amount_wsteth": "1.0", "dry_run": true }
+```
+
+Returns: exact stETH amount from on-chain contract call.
 
 ### lido_get_yield_balance
-Query wstETH yield available in treasury. Read-only.
+Query wstETH yield available in StakeHumanSignal treasury. Read-only, hits Base Sepolia.
 
 ```json
-{
-  "wallet": "0x557E..."
-}
+{ "wallet": "0x..." }
 ```
 
-Returns: `{ yield_wsteth, yield_usd_estimate, principal_locked, total_balance, wallet_deposits }`
+Returns: `{ yield_wsteth, principal_locked, total_balance, total_yield_distributed }` — all from real contract reads.
 
 ### lido_distribute_yield
-Distribute wstETH yield to winning reviewer. Whitelisted callers only.
+Distribute wstETH yield to winning reviewer. Whitelisted callers only. Hits Base Sepolia.
 
 ```json
-{
-  "winner_wallet": "0xABC...",
-  "amount_wsteth": "1000000000000000",
-  "dry_run": true
-}
+{ "winner_wallet": "0x...", "amount_wsteth": "1000000000000000", "dry_run": true }
 ```
 
-Returns: `{ tx_hash, amount_wsteth, recipient, yield_available, can_distribute, dry_run }`
-
 ### lido_get_vault_health
-Check vault position vs Lido benchmark APY. Returns alerts if below.
+Check vault position vs Lido benchmark APY. Current APY computed from on-chain `availableYield / totalPrincipal`. Benchmark configurable via `LIDO_BENCHMARK_APY` env var (default: Lido historical ~3.5%).
 
 ```json
 {}
 ```
 
-Returns: `{ current_apy, benchmark_apy, below_benchmark, total_staked, yield_available, alert }`
-
-Alert example: `"Yield 2.1% below 7-day benchmark (2.1% vs 3.5%)"`
+Returns: `{ current_apy, benchmark_apy, below_benchmark, alert }` with `current_apy_source: "on-chain"`.
 
 ### lido_list_jobs
-List ERC-8183 jobs from StakeHumanSignalJob contract.
+List ERC-8183 jobs from StakeHumanSignalJob contract on Base Sepolia.
 
 ```json
-{
-  "status": "funded",
-  "limit": 10
-}
+{ "status": "funded", "limit": 10 }
 ```
 
-Returns: `{ jobs: [{ job_id, status, stake, reviewer }], total, filter }`
+### lido_vote
+Vote on Lido DAO governance proposal via Aragon Voting on Ethereum mainnet.
+
+```json
+{ "vote_id": 199, "supports": true, "dry_run": true }
+```
+
+dry_run fetches real vote data (open/executed, yea/nay counts, quorum) from mainnet.
+
+## Network Architecture
+
+```
+┌─ Ethereum Mainnet ─────────────────────────┐
+│  stETH  → stake, balance                   │
+│  wstETH → wrap, unwrap, rate queries       │
+│  Aragon → governance votes                 │
+│  Withdrawal Queue → unstake requests       │
+└────────────────────────────────────────────┘
+          ↕ separate RPC provider
+┌─ Base Sepolia ─────────────────────────────┐
+│  LidoTreasury → yield balance, distribute  │
+│  StakeHumanSignalJob → list jobs           │
+│  wstETH (Base) → balance reads             │
+└────────────────────────────────────────────┘
+```
+
+Each network has its own `ethers.JsonRpcProvider`. Mainnet contracts are NOT called through the Sepolia provider.
 
 ## dry_run Pattern
 
-All write operations (`stake`, `distribute_yield`) default to `dry_run: true`.
+All write operations default to `dry_run: true`.
 
-- `dry_run: true` — simulate the operation, return estimated values, no transaction sent
-- `dry_run: false` — execute the real transaction on-chain
+- `dry_run: true` — reads real chain state, computes estimates, no transaction sent
+- `dry_run: false` — executes real on-chain transaction, returns TX hash + receipt
 
-Always dry_run first, then execute.
+The dry_run path for wrap/unwrap calls the real `wstETH.getWstETHByStETH()` contract on Ethereum mainnet — not a hardcoded ratio.
 
-## Vault Monitor
+## Environment Variables
 
-Separate process that polls vault health:
-
-```bash
-node vault-monitor.js                # every 5 min
-node vault-monitor.js --interval 60  # every 60s
 ```
+# Base (StakeHumanSignal contracts)
+BASE_RPC_URL=https://sepolia.base.org
+LIDO_TREASURY_ADDRESS=0x8E29D161477D9BB00351eA2f69702451443d7bf5
+STAKE_SIGNAL_JOB_ADDRESS=0xE99027DDdF153Ac6305950cD3D58C25D17E39902
 
-Logs JSON status to stdout. Prints alerts to stderr when yield drops below benchmark.
+# Ethereum (Lido protocol)
+ETH_RPC_URL=https://eth.llamarpc.com
+LIDO_NETWORK=mainnet  # or "holesky" for testnet
+
+# Signing (required for dry_run=false)
+PRIVATE_KEY=0x...
+
+# Vault health
+LIDO_BENCHMARK_APY=3.5
+```
 
 ## Contract Addresses
 
-| Contract | Address | Network |
-|----------|---------|---------|
-| wstETH | `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452` | Base Mainnet |
-| USDC | `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` | Base Mainnet |
-| LidoTreasury | Set via `LIDO_TREASURY_ADDRESS` env | Base |
-| StakeHumanSignalJob | Set via `STAKE_SIGNAL_JOB_ADDRESS` env | Base |
+### Ethereum Mainnet (source: docs.lido.fi/deployed-contracts)
 
-## Environment
+| Contract | Address |
+|----------|---------|
+| stETH | `0xae7ab96520DE3A18E5e111B5EaAb095312D7fE84` |
+| wstETH | `0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0` |
+| Aragon Voting (DAO) | `0x2e59A20f205bB85a89C53f1936454680651E618e` |
+| Withdrawal Queue | `0x889edC2eDab5f40e902b864aD4d7AdE8E412F9B1` |
 
-```
-BASE_RPC_URL=https://mainnet.base.org
-PRIVATE_KEY=your_wallet_key
-LIDO_TREASURY_ADDRESS=0x...
-STAKE_SIGNAL_JOB_ADDRESS=0x...
-```
+### Holesky Testnet (source: docs.lido.fi/deployed-contracts/holesky)
 
-If `LIDO_TREASURY_ADDRESS` is not set, all tools run in mock mode with simulated responses.
+| Contract | Address |
+|----------|---------|
+| stETH | `0x3F1c547b21f65e10480dE3ad8E19fAAC46C95034` |
+| wstETH | `0x8d09a4502Cc8Cf1547aD300E066060D043f6982D` |
+| Aragon Voting (DAO) | `0xdA7d2573Df555002503F29aA4003e398d28cc00f` |
+| Withdrawal Queue | `0xc7cc160b58F8Bb0baC94b80847E2CF2800565C50` |
+
+### Base (wstETH bridged)
+
+| Contract | Address |
+|----------|---------|
+| wstETH | `0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452` |

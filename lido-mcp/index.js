@@ -17,41 +17,62 @@ import {
 import { ethers } from "ethers";
 import {
   CONTRACTS,
+  ETH_MAINNET,
+  ETH_HOLESKY,
+  BASE,
   LIDO_TREASURY_ABI,
   STAKE_SIGNAL_JOB_ABI,
   ERC20_ABI,
+  STETH_ABI,
   WSTETH_ABI,
   LIDO_DAO_ABI,
   WITHDRAWAL_QUEUE_ABI,
 } from "./contracts.js";
 
-// --- Setup ---
+// --- Setup: three separate providers for three networks ---
 
-const RPC_URL = process.env.BASE_RPC_URL || process.env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org";
+const LIDO_NETWORK = process.env.LIDO_NETWORK || "mainnet"; // "mainnet" or "holesky"
+const BASE_RPC = process.env.BASE_RPC_URL || process.env.BASE_SEPOLIA_RPC_URL || "https://sepolia.base.org";
 const PRIVATE_KEY = process.env.PRIVATE_KEY || process.env.BASE_SEPOLIA_PRIVATE_KEY;
 
-let provider = null;
-let signer = null;
+const LIDO_CONTRACTS = LIDO_NETWORK === "holesky" ? ETH_HOLESKY : ETH_MAINNET;
+const ETH_RPC = process.env.ETH_RPC_URL || LIDO_CONTRACTS.rpc;
+
+let baseProvider = null;     // Base Sepolia — treasury, jobs
+let ethProvider = null;      // Ethereum mainnet/Holesky — staking, governance, wrap/unwrap
+let baseSigner = null;
+let ethSigner = null;
 let treasuryContract = null;
 let jobContract = null;
-let wstETH = null;
-let wstETHContract = null;
+let wstETHBase = null;       // wstETH balance on Base
+let stETHContract = null;    // stETH on Ethereum (for staking)
+let wstETHContract = null;   // wstETH on Ethereum (for wrap/unwrap)
 let withdrawalQueueContract = null;
 let lidoDAOContract = null;
 let mockMode = true;
 
 try {
-  provider = new ethers.JsonRpcProvider(RPC_URL);
-
+  // Provider 1: Base Sepolia (StakeHumanSignal contracts)
+  baseProvider = new ethers.JsonRpcProvider(BASE_RPC);
   if (PRIVATE_KEY) {
-    signer = new ethers.Wallet(PRIVATE_KEY, provider);
+    baseSigner = new ethers.Wallet(PRIVATE_KEY, baseProvider);
   }
 
+  // Provider 2: Ethereum mainnet or Holesky (Lido protocol contracts)
+  ethProvider = new ethers.JsonRpcProvider(ETH_RPC);
+  if (PRIVATE_KEY) {
+    ethSigner = new ethers.Wallet(PRIVATE_KEY, ethProvider);
+  }
+
+  console.log(`[Lido MCP] Base RPC: ${BASE_RPC}`);
+  console.log(`[Lido MCP] Ethereum RPC: ${ETH_RPC} (${LIDO_NETWORK})`);
+
+  // StakeHumanSignal contracts on Base Sepolia
   if (CONTRACTS.lidoTreasury) {
     treasuryContract = new ethers.Contract(
       CONTRACTS.lidoTreasury,
       LIDO_TREASURY_ABI,
-      signer || provider
+      baseSigner || baseProvider
     );
     mockMode = false;
   }
@@ -60,32 +81,43 @@ try {
     jobContract = new ethers.Contract(
       CONTRACTS.stakeSignalJob,
       STAKE_SIGNAL_JOB_ABI,
-      provider
+      baseProvider
     );
   }
 
-  wstETH = new ethers.Contract(CONTRACTS.wstETH_base, ERC20_ABI, provider);
+  // wstETH balance on Base (read-only)
+  wstETHBase = new ethers.Contract(BASE.wstETH, ERC20_ABI, baseProvider);
 
-  // wstETH wrap/unwrap contract (mainnet)
+  // Lido protocol contracts on Ethereum (correct network!)
+  stETHContract = new ethers.Contract(
+    LIDO_CONTRACTS.stETH,
+    STETH_ABI,
+    ethSigner || ethProvider
+  );
+
   wstETHContract = new ethers.Contract(
-    CONTRACTS.wstETH_mainnet,
+    LIDO_CONTRACTS.wstETH,
     WSTETH_ABI,
-    signer || provider
+    ethSigner || ethProvider
   );
 
-  // Withdrawal queue contract (mainnet)
   withdrawalQueueContract = new ethers.Contract(
-    CONTRACTS.withdrawalQueue_mainnet,
+    LIDO_CONTRACTS.withdrawalQueue,
     WITHDRAWAL_QUEUE_ABI,
-    signer || provider
+    ethSigner || ethProvider
   );
 
-  // Lido DAO voting contract (mainnet)
   lidoDAOContract = new ethers.Contract(
-    CONTRACTS.lidoDAO_mainnet,
+    LIDO_CONTRACTS.lidoDAO,
     LIDO_DAO_ABI,
-    signer || provider
+    ethSigner || ethProvider
   );
+
+  console.log(`[Lido MCP] Lido contracts loaded (${LIDO_NETWORK}):`);
+  console.log(`  stETH: ${LIDO_CONTRACTS.stETH}`);
+  console.log(`  wstETH: ${LIDO_CONTRACTS.wstETH}`);
+  console.log(`  DAO Voting: ${LIDO_CONTRACTS.lidoDAO}`);
+  console.log(`  Withdrawal Queue: ${LIDO_CONTRACTS.withdrawalQueue}`);
 } catch (err) {
   console.error("[Lido MCP] Setup error:", err.message);
 }
