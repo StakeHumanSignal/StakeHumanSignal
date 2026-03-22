@@ -64,12 +64,16 @@
 
 ### Lido MCP Server
 - Location: lido-mcp/
-- 9 tools: stake, unstake, wrap, unwrap, get_yield, distribute, vault_health, list_jobs, vote
-- All write ops: dry_run=true default
-- dry_run reads REAL chain state via RPC (no hardcoded ratios)
-- Vault monitor: lido-mcp/vault-monitor.js
-- Skill file: lido-mcp/lido.skill.md
-- Tests: lido-mcp/lido-mcp.test.js (7 passing)
+- 11 tools (was 9): stake_eth, balance, treasury_deposit, get_yield_balance, distribute_yield, get_vault_health, list_jobs, unstake, wrap, unwrap, vote
+- Dual-provider architecture: Ethereum mainnet for Lido + Base Sepolia for treasury
+- lido_stake_eth calls real stETH.submit() on Ethereum mainnet
+- lido_balance reads real stETH + wstETH balances from Ethereum mainnet
+- All dry_run paths read live chain state (no hardcoded ratios)
+- Verified: 1 stETH = 0.813 wstETH, 199 DAO votes, withdrawal #118573
+- Skill file: lido-mcp/lido.skill.md (includes Lido mental model, rebasing explainer)
+- Tests: lido-mcp/lido-mcp.test.js (12 passing, including live mainnet read)
+- Live test: lido-mcp/live-test.js (11/11 tools passing against real RPCs)
+- Fresh treasury: 0x639bBbE3D9624b96a7b6aC9a0A95493642bf2b72 (0.5 principal, 0.2 yield)
 
 ### StakeSignal MCP Server
 - Location: stakesignal-mcp/

@@ -92,15 +92,17 @@
 | File | Purpose |
 |------|---------|
 | x402-server/index.js | Express x402 gateway (SDK + manual fallback, port 3000) |
-| filecoin-bridge/index.js | Filecoin storage bridge (port 3001) |
-| filecoin-bridge/x402-server.js | x402 manual gate (port 3002) |
-| lido-mcp/index.js | MCP server (9 Lido tools) |
-| lido-mcp/contracts.js | Contract addresses + ABIs |
-| lido-mcp/vault-monitor.js | APY monitoring + alerts |
-| lido-mcp/lido.skill.md | Agent-consumable skill file |
+| filecoin-bridge/index.js | Filecoin FOC bridge (Synapse SDK, ESM, port 3001) |
+| filecoin-bridge/filecoin-bridge.test.js | 6 FOC integration tests |
+| lido-mcp/index.js | MCP server (11 Lido tools, dual-provider: Ethereum mainnet + Base Sepolia) |
+| lido-mcp/contracts.js | ETH_MAINNET + ETH_HOLESKY + BASE addresses, verified from docs.lido.fi |
+| lido-mcp/vault-monitor.js | Treasury health monitoring + alerts |
+| lido-mcp/lido.skill.md | Agent skill file with Lido mental model (rebasing, wstETH vs stETH) |
+| lido-mcp/live-test.js | Live integration test — calls all 11 tools with real RPCs |
+| lido-mcp/lido-mcp.test.js | 12 tests including live Ethereum mainnet read |
 | stakesignal-mcp/index.js | MCP server (5 StakeHumanSignal tools) |
 | stakesignal-mcp/stakesignal.skill.md | Agent-consumable skill file |
-| openserv-worker/index.js | OpenServ agent (4 capabilities) |
+| openserv-worker/index.js | OpenServ agent (DROPPED — code kept for reference) |
 
 ## Tests (test/)
 

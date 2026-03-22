@@ -46,11 +46,11 @@ python3 -c "from api.main import app; print('OK')"
 # Terminal 1: API
 uvicorn api.main:app --port 8000
 
-# Terminal 2: Filecoin bridge (mock mode)
+# Terminal 2: Filecoin FOC bridge (real Synapse SDK)
 cd filecoin-bridge && node index.js
 
-# Terminal 3: x402 gateway
-cd filecoin-bridge && node x402-server.js
+# Terminal 3: Lido MCP server (real Ethereum mainnet reads)
+cd lido-mcp && node index.js
 
 # Terminal 4: Frontend
 cd frontend && NEXT_PUBLIC_API_URL=http://localhost:8000 bun dev
@@ -70,24 +70,28 @@ python3 scripts/seed.py                   # POST 5 reviews to running API
 python3 scripts/seed_file.py              # Generate seed JSON directly
 ```
 
-## Verify API Keys
-
-```bash
-python3 scripts/verify_keys.py            # Test Bankr, Locus, OpenServ, Lighthouse
-```
-
 ## Lido MCP Server
 
 ```bash
-cd lido-mcp && node index.js              # Start MCP server (mock mode)
+cd lido-mcp && node index.js              # Start MCP server (11 tools, real Ethereum mainnet)
+cd lido-mcp && node live-test.js          # Run live integration test (11/11 tools)
+cd lido-mcp && npm test                   # Run 12 unit + mainnet tests
 cd lido-mcp && node vault-monitor.js      # Start vault monitor (5 min polls)
-cd lido-mcp && node vault-monitor.js --interval 60  # 60s polls
 ```
 
-## OpenServ Worker
+## Filecoin FOC Bridge
 
 ```bash
-cd openserv-worker && node index.js       # Start OpenServ agent
+cd filecoin-bridge && node index.js       # Start FOC bridge (Synapse SDK, calibration)
+cd filecoin-bridge && npm test            # Run 6 FOC integration tests
+```
+
+## MCP Tests
+
+```bash
+cd lido-mcp && npm test                   # 12 tests (including live mainnet read)
+cd stakesignal-mcp && npm test            # 6 tests
+cd filecoin-bridge && npm test            # 6 tests
 ```
 
 ## Frontend
