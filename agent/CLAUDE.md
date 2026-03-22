@@ -22,7 +22,9 @@
 Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 
 ### Current Sprint Goal
-**Submit to Synthesis hackathon (7 tracks + Open)**
+**Phase 2: Fix 2 audit failures before submission**
+1. /reviews/top returns 200 (x402 gate not active on Railway)
+2. agent.json not served by Vercel (needs to be in frontend/public/)
 Deadline: March 22, 2026 11:59 PM PT / March 23, 2026 2:59 PM MYT
 
 ### Tracks (7 + Open)
