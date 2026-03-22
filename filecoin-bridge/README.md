@@ -1,59 +1,74 @@
-# filecoin-bridge/ — Filecoin Storage Bridge
+# filecoin-bridge/ — Filecoin Onchain Cloud Storage
 
 **Track:** Agentic Storage (Filecoin) | **Sponsor:** Filecoin | **Prize:** $2,000
 
 ## What This Does
 
-Node.js Express service that stores and retrieves review data on Filecoin. The Python API calls this bridge to persist every submitted review as a content-addressable CID. When Synapse SDK is available with a Filecoin private key, data goes to Filecoin FOC mainnet. Otherwise, falls back to local deterministic CID generation for development.
+Express.js bridge that stores review data on **Filecoin Onchain Cloud (FOC)** using the official `@filoz/synapse-sdk` v0.40.0. Every review submitted through the marketplace is permanently stored with PDP (Proof of Data Possession) proofs. Paid with USDFC on Filecoin calibration testnet.
 
-## Architecture
+This is NOT Lighthouse, NOT IPFS pinning, NOT local hashing. This is real Filecoin Onchain Cloud with on-chain payment rails and cryptographic storage proofs.
 
-```
-Human submits review → Python API → POST /store → Filecoin bridge
-                                                  ├── Synapse SDK → Filecoin FOC (mainnet)
-                                                  └── Local fallback → bafylocal{sha256}
-```
+## Proven on Filecoin Calibration
 
-## Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `POST` | `/store` | Store JSON data, returns `{ cid, url, size, storage }` |
-| `GET` | `/retrieve/:cid` | Retrieve stored data by CID |
-| `GET` | `/health` | Health check with storage mode info |
+| Item | Value |
+|------|-------|
+| PieceCID | `bafkzcibcduch6lsgmz3rpfq6uhjibwca2lofa6r43ppgul6gqy7vlut7mxsj4ny` |
+| USDFC deposit TX | `0x244c2a1df2dc9aea...` (block 3562333) |
+| Network | Filecoin Calibration (chain 314159) |
+| SDK | `@filoz/synapse-sdk` v0.40.0 |
+| Payment | USDFC via CDP on Secured Finance (160 tFIL → 204 USDFC) |
 
 ## How to Run
 
 ```bash
 cd filecoin-bridge
-npm install   # or bun install
-node index.js
-# → Filecoin Bridge on port 3001
+npm install
+node index.js                    # Start FOC bridge on port 3001
 ```
-
-## Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `FILECOIN_PRIVATE_KEY` | — | Filecoin key for Synapse SDK (enables real storage) |
-| `FILECOIN_BRIDGE_PORT` | `3001` | Server port |
 
 ## How to Test
 
 ```bash
+npm test                         # 6 FOC integration tests
+
 # Store data
 curl -X POST http://localhost:3001/store \
   -H "Content-Type: application/json" \
-  -d '{"review": "test", "score": 85}'
-
-# Retrieve by CID
-curl http://localhost:3001/retrieve/bafylocal...
+  -d '{"type": "review", "data": {"score": 85}}'
 
 # Health check
 curl http://localhost:3001/health
 ```
 
+## API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/store` | Store JSON on FOC → returns `{ cid, storage: "filecoin-foc" }` |
+| `GET` | `/retrieve/:cid` | Retrieve stored data by PieceCID |
+| `GET` | `/health` | Connection status + SDK version |
+
+## Environment
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `PRIVATE_KEY` | — | Signing key (same wallet as Base Sepolia) |
+| `FILECOIN_NETWORK` | `calibration` | `calibration` or `mainnet` |
+| `FILECOIN_BRIDGE_PORT` | `3001` | Server port |
+
+### Getting USDFC (Required for Storage)
+
+USDFC is a CDP stablecoin — you borrow it by locking tFIL:
+
+1. Get tFIL: https://faucet.calibnet.chainsafe-fil.io
+2. Open Trove: https://stg.usdfc.net — deposit 160 tFIL → borrow 200 USDFC
+3. Minimum: 200 USDFC borrow, 150% collateral ratio in Recovery Mode
+
 ## Key Files
 
-- `index.js` — Express server with Synapse SDK integration and local fallback
-- `x402-server.js` — Manual x402 payment verification (shared with x402-server/)
+| File | Purpose |
+|------|---------|
+| `index.js` | Express server + Synapse SDK integration (ESM) |
+| `filecoin.skill.md` | Agent skill — FOC setup, USDFC guide, dual storage strategy |
+| `filecoin-bridge.test.js` | 6 integration tests (SDK connect, balances, costs, proof CID) |
+| `package.json` | `@filoz/synapse-sdk` v0.40.0 + `viem` |

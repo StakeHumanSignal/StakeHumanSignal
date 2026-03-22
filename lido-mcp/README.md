@@ -4,37 +4,47 @@
 
 ## What This Does
 
-Model Context Protocol (MCP) server exposing 9 tools for interacting with Lido stETH/wstETH operations and the StakeHumanSignal treasury. All write operations default to `dry_run: true` (simulation against real Sepolia contracts, no state changes). Agents connect via MCP to manage staking, yield distribution, and vault monitoring.
+Reference MCP server for Lido — 11 tools that make stETH staking, wstETH wrap/unwrap, yield management, and DAO governance natively callable by any AI agent. Dual-provider architecture: Ethereum mainnet for Lido protocol contracts, Base Sepolia for StakeHumanSignal treasury.
 
-## Tools
+All write operations default to `dry_run: true`. Dry-run reads **real chain state** from Ethereum mainnet — not hardcoded ratios, not mocks.
 
-| Tool | Type | Description |
-|------|------|-------------|
-| `stake_eth` | Write | Stake ETH → receive stETH via Lido |
-| `unstake_steth` | Write | Request stETH withdrawal |
-| `wrap_steth` | Write | Wrap stETH → wstETH |
-| `unwrap_wsteth` | Write | Unwrap wstETH → stETH |
-| `get_yield_info` | Read | Treasury yield stats (principal, available, APY) |
-| `distribute_yield` | Write | Distribute available wstETH yield to winner |
-| `vault_health` | Read | Treasury health check (TVL, utilization, alerts) |
-| `list_jobs` | Read | Active ERC-8183 jobs with status |
-| `vote_on_proposal` | Write | Vote on Lido DAO governance proposals |
+## Tools (11)
 
-## Deployed Contracts (Base Sepolia)
+| Tool | Network | Description |
+|------|---------|-------------|
+| `lido_stake_eth` | Ethereum | Stake ETH with Lido → receive stETH (calls `stETH.submit()`) |
+| `lido_balance` | Ethereum | Read stETH + wstETH balances for any wallet |
+| `lido_wrap` | Ethereum | Wrap stETH → wstETH (live rate from contract) |
+| `lido_unwrap` | Ethereum | Unwrap wstETH → stETH (live rate from contract) |
+| `lido_unstake` | Ethereum | Request stETH withdrawal (queries real queue state) |
+| `lido_vote` | Ethereum | Vote on Lido DAO governance proposals |
+| `lido_treasury_deposit` | Base Sepolia | Deposit into StakeHumanSignal yield treasury |
+| `lido_get_yield_balance` | Base Sepolia | Query treasury yield/principal/balance |
+| `lido_distribute_yield` | Base Sepolia | Distribute wstETH yield to review winner |
+| `lido_get_vault_health` | Base Sepolia | Treasury health with configurable benchmark |
+| `lido_list_jobs` | Base Sepolia | List ERC-8183 jobs |
+
+## Verified on Ethereum Mainnet
 
 ```
-LidoTreasury:       0x8E29D161477D9BB00351eA2f69702451443d7bf5
-StakeHumanSignalJob: 0xE99027DDdF153Ac6305950cD3D58C25D17E39902
+1 stETH = 0.813 wstETH          (live from wstETH.getWstETHByStETH)
+Total DAO votes: 199             (live from lidoDAO.votesLength)
+Last finalized withdrawal: #118573 (live from withdrawalQueue)
 ```
-
-RPC defaults to `https://sepolia.base.org`.
 
 ## How to Run
 
 ```bash
 cd lido-mcp
-bun install
-node index.js
+npm install
+node index.js                    # Start MCP server
+```
+
+## How to Test
+
+```bash
+npm test                         # 12 unit + mainnet tests
+node live-test.js                # 11/11 tools against real RPCs
 ```
 
 ## Claude Desktop Config
@@ -50,18 +60,23 @@ node index.js
 }
 ```
 
-## Environment Variables
+## Environment
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `BASE_RPC_URL` | `https://sepolia.base.org` | RPC endpoint |
-| `PRIVATE_KEY` | — | Signing key (falls back to `BASE_SEPOLIA_PRIVATE_KEY`) |
-| `LIDO_TREASURY_ADDRESS` | `0x8E29D...` | Treasury contract |
-| `STAKE_SIGNAL_JOB_ADDRESS` | `0xE9902...` | Job contract |
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `ETH_RPC_URL` | `https://ethereum-rpc.publicnode.com` | Ethereum mainnet for Lido contracts |
+| `BASE_RPC_URL` | `https://sepolia.base.org` | Base Sepolia for treasury |
+| `LIDO_NETWORK` | `mainnet` | `mainnet` or `holesky` |
+| `PRIVATE_KEY` | — | Required for `dry_run=false` transactions |
+| `LIDO_BENCHMARK_APY` | `3.5` | Configurable vault health benchmark |
 
 ## Key Files
 
-- `index.js` — MCP server with 9 tool definitions, dry_run support, Sepolia defaults
-- `contracts.js` — Contract addresses and ABI definitions
-- `vault-monitor.js` — APY monitoring and alert thresholds
-- `lido.skill.md` — Skill doc for agent consumption
+| File | Purpose |
+|------|---------|
+| `index.js` | MCP server — 11 tools, dual-provider architecture |
+| `contracts.js` | ETH_MAINNET + ETH_HOLESKY + BASE addresses (from docs.lido.fi) |
+| `lido.skill.md` | Agent skill — Lido mental model, rebasing, safe staking patterns |
+| `vault-monitor.js` | Treasury health polling + alerts |
+| `lido-mcp.test.js` | 12 tests including live Ethereum mainnet read |
+| `live-test.js` | Full integration test — calls every tool with real RPCs |
