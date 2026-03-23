@@ -57,6 +57,15 @@ This creates a two-layer system:
 
 Over time, this builds a policy ranking layer that agents can use to make better decisions about which policy to run for which user and task.
 
+### Description
+
+StakeHumanSignal is a staked human feedback marketplace where humans compare two AI outputs side by side, stake real USDC on the winner, and earn Lido wstETH yield when validated. AI buyer agents pay via x402 micropayments (real Coinbase SDK with EIP-3009 signatures) to access these ranked, economically accountable verdicts. Every outcome is permanently recorded as an ERC-8004 receipt on Base and stored on Filecoin Onchain Cloud via the official Synapse SDK. The buyer agent hires external intelligence from the Olas mech marketplace (12 on-chain TXs on Base mainnet) and uses a two-layer signal model: passive selection (no stake, 0.3x yield) for adoption, active staking (USDC, 0.7x yield, sqrt-scaled) for conviction. The result: human judgment becomes a priced, verifiable, economically accountable input to autonomous agent decisions.
+
+### Problem Statement
+
+The AI stack is no longer bottlenecked by model access — it is bottlenecked by decision quality. Agents can execute tools and call APIs, but they have no reliable way to determine which API, tool, or policy bundle will produce the best outcome for a specific user in a specific context. The review infrastructure they would need to consult — Yelp, G2, app store ratings — is gamed, unverifiable, descriptive rather than comparative, textual rather than structured, and carries zero economic accountability. Human judgment about what actually works in practice is the missing signal, but it remains fragmented, private, and economically invisible. Without a trusted evidence layer, agents overpay for bad APIs, miss good ones, and end users absorb the cost of poor autonomous decisions.
+
+---
 
 ## What's Built and Deployed
 
@@ -71,7 +80,8 @@ Over time, this builds a policy ranking layer that agents can use to make better
 | Yield distribution | `LidoTreasury.sol` — wstETH principal locked, yield-only | Deployed + TX proven |
 | Filecoin storage | `filecoin-bridge/` — Filecoin Onchain Cloud (Synapse SDK) + Lighthouse | Real PieceCID + real Qm CIDs |
 | Olas mech scoring | `olas-mech/` — hires external AI mech for supplementary review scoring | 12 live requests on Base mainnet |
-| Autonomous agent | `buyer_agent.py` — fetch → score → mech query → independence check → complete → mint | 131+ log entries |
+| OpenServ agents | `openserv/` — scorer + coordinator agents on OpenServ platform | Registered |
+| Autonomous agent | `buyer_agent.py` — fetch → score → mech query → independence check → complete → mint | 264+ log entries |
 | Lido MCP | `lido-mcp/` — 11 tools, real Ethereum mainnet reads | 11/11 live test passing |
 | StakeSignal MCP | `stakesignal-mcp/` — 5 tools, real API calls | 5/5 live test passing |
 | Frontend | 7-page Next.js dashboard | [Live](https://stakehumansignal.vercel.app) |
@@ -237,9 +247,12 @@ filecoin-bridge/    Filecoin Onchain Cloud storage
 └── filecoin-bridge.test.js  6 integration tests
 
 olas-mech/          Olas mech-client integration (Base mainnet)
-├── README.md       Track info, proof, how to verify
+├── README.md       Track info, 12 on-chain TX proofs
 └── olas.skill.md   Integration guide + gotchas
-                    Code: api/services/olas.py | Proof: deployments/olas-mech-proof.json
+
+openserv/           OpenServ multi-agent (scorer + coordinator)
+├── README.md       Track info, agent registration proof
+└── src/            TypeScript agents with @openserv-labs/sdk
 
 agent/              Project docs + skill files
 ├── CLAUDE.md       Security rules, sprint state, commands
