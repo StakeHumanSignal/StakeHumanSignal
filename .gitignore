@@ -45,6 +45,9 @@ htmlcov/
 # Screenshots
 *.png
 
+# CDP API keys (Coinbase Developer Platform)
+cdp_api_key.json
+
 # Bun lockfiles (use npm for root, bun for frontend)
 bun.lock
 
