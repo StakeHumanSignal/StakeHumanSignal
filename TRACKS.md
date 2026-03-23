@@ -88,7 +88,7 @@ FRONTEND
 - **Agent:** [`api/agent/buyer_agent.py`](api/agent/buyer_agent.py) — autonomous collection loop
 - **5-dimension rubric:** correctness, relevance, completeness, efficiency, reasoning
 - **Storage:** Filecoin (Lighthouse CIDs + FOC PieceCIDs)
-- **Log:** [`agent_log.json`](agent_log.json) — 131+ structured entries
+- **Log:** [`agent_log.json`](agent_log.json) — 264+ structured entries
 
 ### Track 7: Agentic Storage (Filecoin)
 - **Bridge:** [`filecoin-bridge/index.js`](filecoin-bridge/index.js) — `@filoz/synapse-sdk` v0.40.0
@@ -109,7 +109,16 @@ FRONTEND
 - **Facilitator:** `https://x402.org/facilitator` (public testnet)
 - **Discoverable:** [`agent.json`](agent.json), [`AGENTS.md`](AGENTS.md), MCP servers
 
-### Track 10: Open Track (Synthesis)
+### Track 10: Ship Something Real (OpenServ)
+- **Folder:** [`openserv/`](openserv/) — TypeScript agents with `@openserv-labs/sdk` v2
+- **Scorer Agent** (ID: 4045): scores reviews with 5-dimension rubric via webhook
+- **Coordinator Agent** (ID: 4046): orchestrates evaluation pipeline via x402
+- **x402 endpoint:** `https://api.openserv.ai/webhooks/x402/trigger/2dbe17c9...`
+- **Paywall:** `https://platform.openserv.ai/workspace/paywall/2dbe17c9...`
+- **Proof:** [`deployments/openserv-proof.json`](deployments/openserv-proof.json) (agent IDs, workspace IDs, webhooks)
+- **Bonus:** x402-native + ERC-8004 (track gives bonus for both)
+
+### Track 11: Open Track (Synthesis)
 - **Live demo:** [stakehumansignal.vercel.app](https://stakehumansignal.vercel.app)
 - **API:** [stakesignal-api-production.up.railway.app](https://stakesignal-api-production.up.railway.app/health)
 - **Tests:** 91 Solidity + 71 Python + 5 frontend + 12 Lido MCP + 6 StakeSignal MCP + 6 FOC

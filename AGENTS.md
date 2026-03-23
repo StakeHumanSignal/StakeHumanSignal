@@ -54,6 +54,18 @@ Dual-provider: Ethereum mainnet (Lido contracts) + Base Sepolia (treasury)
 ```
 Tools: `get_ranked_reviews`, `submit_passive_selection`, `stake_on_review`, `get_leaderboard`, `check_agent_decisions`
 
+### OpenServ Multi-Agent Pipeline
+Platform: [openserv.ai](https://openserv.ai) | Folder: [`openserv/`](openserv/)
+
+| Agent | ID | Capabilities | Trigger |
+|-------|-----|-------------|---------|
+| Scorer | 4045 | `score_review`, `score_batch` | Webhook |
+| Buyer Coordinator | 4046 | `fetch_reviews`, `signal_outcome`, `evaluate_pipeline` | x402 |
+
+- Scorer webhook: `https://api.openserv.ai/webhooks/trigger/d809ae3b...`
+- Coordinator x402: `https://api.openserv.ai/webhooks/x402/trigger/2dbe17c9...`
+- Proof: [`deployments/openserv-proof.json`](deployments/openserv-proof.json)
+
 ## On-chain (Base Sepolia)
 
 | Contract | Address |
