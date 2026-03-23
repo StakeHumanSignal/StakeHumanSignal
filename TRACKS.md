@@ -12,11 +12,12 @@
 | 3 | stETH Agent Treasury | Lido | [`contracts/`](contracts/) + [`lido-mcp/`](lido-mcp/) | [`lido.skill.md`](lido-mcp/lido.skill.md) | [distributeYield TX](https://sepolia.basescan.org/tx/0x30ad2db8d5047f9296abdf589b8e8108dbdddbaeba529b387b79c010136550ce) |
 | 4 | Lido MCP Server | Lido | [`lido-mcp/`](lido-mcp/) | [`lido.skill.md`](lido-mcp/lido.skill.md) | [11/11 live test](lido-mcp/live-test.js) |
 | 5 | Mechanism Design | Octant | [`api/`](api/) | [`octant.skill.md`](agent/skills/octant.skill.md) | [`scorer.py`](api/services/scorer.py) sqrt staking |
-| 6 | Data Collection | Octant | [`api/`](api/) | [`octant.skill.md`](agent/skills/octant.skill.md) | [agent_log.json](agent_log.json) 131+ entries |
+| 6 | Data Collection | Octant | [`api/`](api/) | [`octant.skill.md`](agent/skills/octant.skill.md) | [agent_log.json](agent_log.json) 264+ entries |
 | 7 | Agentic Storage | Filecoin | [`filecoin-bridge/`](filecoin-bridge/) | [`filecoin.skill.md`](filecoin-bridge/filecoin.skill.md) | [FOC deposit TX](https://filecoin-testnet.blockscout.com/tx/0x244c2a1df2dc9aea6a3b9648cd9a2b3a206017d4f511f1871627f9a72a9a3d2d) |
 | 8 | Hire an Agent | Olas | [`olas-mech/`](olas-mech/) | [`olas.skill.md`](olas-mech/olas.skill.md) | [12 on-chain TXs](deployments/olas-mech-proof.json) |
 | 9 | Agent Services on Base | Base | [`api/`](api/) | [`x402.skill.md`](agent/skills/x402.skill.md) | x402 SDK middleware in [`main.py`](api/main.py) |
-| 10 | Open Track | Synthesis | Full repo | [`README.md`](README.md) | [Live demo](https://stakehumansignal.vercel.app) |
+| 10 | Ship Something Real | OpenServ | [`openserv/`](openserv/) | [`openserv.skill.md`](agent/skills/openserv.skill.md) | [openserv-proof.json](deployments/openserv-proof.json) |
+| 11 | Open Track | Synthesis | Full repo | [`README.md`](README.md) | [Live demo](https://stakehumansignal.vercel.app) |
 
 ## How Each Track Fits the System
 

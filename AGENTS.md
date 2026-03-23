@@ -2,75 +2,84 @@
 
 ## What this agent does
 
-StakeHumanSignal Buyer Agent is a fully autonomous agent that:
-1. Queries staked human reviews via x402 payment (Base Sepolia)
-2. Heuristic-scores each review against claim reasoning
-3. Enforces independence check (ERC-8004 Registry 3)
+StakeHumanSignal is a staked human feedback marketplace. The Buyer Agent autonomously:
+1. Pays 0.001 USDC via x402 (real Coinbase SDK, EIP-3009) to access ranked reviews
+2. Scores each review with 5-dimension rubric + Olas mech external intelligence
+3. Enforces independence check (ERC-8004 on-chain — blocks self-review)
 4. Completes ERC-8183 jobs on-chain
-5. Triggers Lido wstETH yield to winning reviewers
-6. Mints ERC-8004 receipts for every verified outcome
-7. Stores all outcomes on Filecoin FOC (mock mode)
+5. Mints ERC-8004 receipts (3 registries: identity, reputation, validation)
+6. Distributes Lido wstETH yield to winning reviewers
+7. Stores all outcomes on Filecoin Onchain Cloud (real Synapse SDK + Lighthouse)
+8. Hires Olas mechs on Base mainnet for supplementary AI scoring
 
-## Endpoints
+## API Endpoints
 
 | Method | Path | Auth | Description |
 |--------|------|------|-------------|
 | GET | /reviews | none | Public list of all reviews |
-| GET | /reviews/top | x402 0.001 USDC | Ranked reviews (via x402 gateway) |
+| GET | /reviews/top | x402 (0.001 USDC) | Ranked reviews — requires PAYMENT-SIGNATURE header |
 | POST | /reviews | none | Submit a staked review claim |
+| GET | /sessions | none | List blind A/B sessions |
+| POST | /sessions/open | none | Create comparison session |
+| POST | /sessions/{id}/settle | none | Human picks winner |
+| POST | /sessions/passive | none | Record preference signal (no stake) |
 | POST | /outcomes | none | Signal a job outcome |
 | GET | /jobs/{id} | none | ERC-8183 job status |
-| GET | /agent/log | none | Buyer agent decision log |
-| GET | /leaderboard | none | Human reviewer reputation scores |
-| GET | /health | none | API health check |
+| GET | /agent/log | none | Buyer agent decision log (264+ entries) |
+| GET | /leaderboard | none | Reviewer reputation scores |
+| GET | /health | none | `{"status":"ok","x402":"sdk"}` |
 
 ## x402 Payment
 
-- Endpoint: GET /reviews/top
-- Price: 0.001 USDC
-- Network: base-sepolia
-- Facilitator: https://x402.org/facilitator (public, no keys needed)
+- Gate: `GET /reviews/top`
+- SDK: `x402[fastapi]` v2.5.0 (official Coinbase Python SDK)
+- Middleware: `PaymentMiddlewareASGI` in api/main.py
+- Price: $0.001 USDC on Base Sepolia (eip155:84532)
+- Facilitator: https://x402.org/facilitator
+- Payment header: `PAYMENT-SIGNATURE` (EIP-3009 signed payload)
+
+## MCP Servers
+
+### Lido MCP (11 tools)
+```json
+{ "mcpServers": { "lido": { "command": "node", "args": ["lido-mcp/index.js"] } } }
+```
+Tools: `lido_stake_eth`, `lido_balance`, `lido_treasury_deposit`, `lido_get_yield_balance`, `lido_distribute_yield`, `lido_get_vault_health`, `lido_list_jobs`, `lido_unstake`, `lido_wrap`, `lido_unwrap`, `lido_vote`
+
+Dual-provider: Ethereum mainnet (Lido contracts) + Base Sepolia (treasury)
+
+### StakeSignal MCP (5 tools)
+```json
+{ "mcpServers": { "stakesignal": { "command": "node", "args": ["stakesignal-mcp/index.js"] } } }
+```
+Tools: `get_ranked_reviews`, `submit_passive_selection`, `stake_on_review`, `get_leaderboard`, `check_agent_decisions`
 
 ## On-chain (Base Sepolia)
 
-- StakeHumanSignalJob: [`0xE99027DDdF153Ac6305950cD3D58C25D17E39902`](https://sepolia.basescan.org/address/0xE99027DDdF153Ac6305950cD3D58C25D17E39902) (ERC-8183)
-- LidoTreasury: [`0x8E29D161477D9BB00351eA2f69702451443d7bf5`](https://sepolia.basescan.org/address/0x8E29D161477D9BB00351eA2f69702451443d7bf5) (yield-only)
-- ReceiptRegistry: [`0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332`](https://sepolia.basescan.org/address/0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332) (ERC-8004)
-- Agent ERC-8004 identity: [`0xcd3eb6...`](https://basescan.org/tx/0xcd3eb6582b19a2fad433a24396c0f55e78bf1ccdaea082ee9738fec26eacc1d0)
+| Contract | Address |
+|----------|---------|
+| StakeHumanSignalJob (ERC-8183) | [`0xE99027DDdF153Ac6305950cD3D58C25D17E39902`](https://sepolia.basescan.org/address/0xE99027DDdF153Ac6305950cD3D58C25D17E39902) |
+| LidoTreasury (yield-only) | [`0x639bBbE3D9624b96a7b6aC9a0A95493642bf2b72`](https://sepolia.basescan.org/address/0x639bBbE3D9624b96a7b6aC9a0A95493642bf2b72) |
+| ReceiptRegistry (ERC-8004) | [`0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332`](https://sepolia.basescan.org/address/0xa39c7b475b0708a9854052Fb3Fbc93ccBf656332) |
+| SessionEscrow | [`0xe817C338aD7612184CFB59AeA7962905b920e2e9`](https://sepolia.basescan.org/address/0xe817C338aD7612184CFB59AeA7962905b920e2e9) |
 
 ## ERC standards
 
-- ERC-8183: Agentic Commerce (job lifecycle)
-- ERC-8004: Agent Identity and Receipts (all 3 registries)
-- ERC-7857: Private AI Agent Metadata
+- **ERC-8183** — Agentic Commerce (job lifecycle)
+- **ERC-8004** — Agent Identity and Receipts (3 registries)
+- **ERC-7857** — Private AI Agent Metadata
 
 ## Safety guardrails
 
-- Rate limit: 3 jobs/minute max
-- Independence check: self-review blocked at contract level
-- Principal protection: enforced in LidoTreasury.sol
-- Budget cap: buyer agent exits after --once flag
-- Dry-run: add ?dryRun=true to Lido MCP tools
+- Independence check: self-review blocked at contract level (`getIndependenceScore`)
+- Principal protection: wstETH locked forever in LidoTreasury
+- sqrt staking: prevents plutocratic capture (`boost = sqrt(stake) * reputation`)
+- Dry-run: all Lido MCP write tools default to `dry_run=true`
+- Budget cap: buyer agent exits after `--once` flag
 
-## Lido MCP Server
+## Live
 
-Located at lido-mcp/. Exposes 5 tools:
-- `lido_stake(amount_usdc, wallet, dry_run)`
-- `lido_get_yield_balance(wallet)`
-- `lido_distribute_yield(winner_wallet, amount_wsteth, dry_run)`
-- `lido_get_vault_health()`
-- `lido_list_jobs(status)`
-
-Skill file: lido-mcp/SKILL.md
-
-## Running the buyer agent
-
-Single cycle (for testing):
-```
-python -m api.agent.buyer_agent --once
-```
-
-Continuous (for judging period):
-```
-python -m api.agent.buyer_agent
-```
+- Frontend: https://stakehumansignal.vercel.app
+- API: https://stakesignal-api-production.up.railway.app
+- Health: https://stakesignal-api-production.up.railway.app/health
+- GitHub: https://github.com/StakeHumanSignal/StakeHumanSignal
