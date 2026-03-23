@@ -94,12 +94,9 @@ export default function Leaderboard() {
                 </div>
               </div>
               <div className="flex gap-4">
-                <button className="bg-surface-container-highest border border-primary/20 hover:border-primary/60 text-primary-fixed px-6 py-2 text-xs font-[family-name:var(--font-headline)] font-bold uppercase tracking-widest transition-all">
-                  View Full On-Chain Reputation
-                </button>
-                <button className="bg-white/5 hover:bg-white/10 text-white/60 px-6 py-2 text-xs font-[family-name:var(--font-headline)] font-bold uppercase tracking-widest transition-all">
-                  Share Profile
-                </button>
+                <a href={`https://sepolia.basescan.org/address/${topValidator?.reviewer_address}`} target="_blank" rel="noreferrer" className="bg-surface-container-highest border border-primary/20 hover:border-primary/60 text-primary-fixed px-6 py-2 text-xs font-[family-name:var(--font-headline)] font-bold uppercase tracking-widest transition-all">
+                  View On-Chain →
+                </a>
               </div>
             </div>
           </div>
@@ -192,9 +189,9 @@ export default function Leaderboard() {
               </div>
             )}
 
-            <button className="w-full py-4 text-xs font-[family-name:var(--font-mono)] text-on-surface-variant hover:text-white transition-colors bg-surface-container-high/50">
-              LOAD_MORE_RECORDS_V1.0
-            </button>
+            <div className="w-full py-4 text-xs font-[family-name:var(--font-mono)] text-on-surface-variant text-center bg-surface-container-high/50">
+              {data.length} validators loaded
+            </div>
           </div>
         </div>
 

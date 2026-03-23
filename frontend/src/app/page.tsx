@@ -222,12 +222,12 @@ export default function Home() {
       {/* Main Footer */}
       <footer className="w-full py-20 px-6 flex flex-col items-center gap-8 bg-[#0e0e0e] border-t border-white/5">
         <div className="flex gap-8 items-center flex-wrap justify-center opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
-          <span className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter">ERC-8004</span>
-          <span className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter">ERC-8183</span>
-          <span className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter">Docs</span>
-          <span className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter">Lido</span>
-          <span className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter">Filecoin</span>
-          <span className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter">Base</span>
+          <a href="https://eips.ethereum.org/EIPS/eip-8004" target="_blank" rel="noreferrer" className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter hover:text-primary transition-colors">ERC-8004</a>
+          <a href="https://eips.ethereum.org/EIPS/eip-8183" target="_blank" rel="noreferrer" className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter hover:text-primary transition-colors">ERC-8183</a>
+          <a href="https://github.com/StakeHumanSignal/StakeHumanSignal" target="_blank" rel="noreferrer" className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter hover:text-primary transition-colors">GitHub</a>
+          <a href="https://docs.lido.fi" target="_blank" rel="noreferrer" className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter hover:text-primary transition-colors">Lido</a>
+          <a href="https://docs.filecoin.cloud" target="_blank" rel="noreferrer" className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter hover:text-primary transition-colors">Filecoin</a>
+          <a href="https://sepolia.basescan.org/address/0xE99027DDdF153Ac6305950cD3D58C25D17E39902" target="_blank" rel="noreferrer" className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-tighter hover:text-primary transition-colors">Basescan</a>
         </div>
         <p className="text-white/40 font-[family-name:var(--font-headline)] text-[10px] uppercase tracking-tighter text-center max-w-2xl leading-relaxed">
           2026 StakeHumanSignal. Decentralized Subjectivity Oracle for Autonomous Agents. Built on frontiers of human-AI economic coordination.

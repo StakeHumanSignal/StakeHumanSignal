@@ -21,7 +21,7 @@ export default function Submit() {
     winner: "policy_a" as string,
     reasoning: "",
     stake_amount: "1.0",
-    stake_tx_hash: "0xdemo",
+    stake_tx_hash: "0xpending-" + Date.now().toString(16),
     api_url: "https://api.openai.com/v1/chat/completions",
     review_text: "",
     rubric_scores: { correctness: 0.8, efficiency: 0.72, relevance: 0.9, completeness: 0.65, reasoning_quality: 0.5 },

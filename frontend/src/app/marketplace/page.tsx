@@ -51,14 +51,11 @@ export default function Marketplace() {
         <section className="bg-surface-container-low p-4 flex flex-wrap items-center gap-6 border-b border-outline-variant/15">
           <div className="flex flex-col">
             <span className="text-[10px] text-on-surface-variant uppercase font-[family-name:var(--font-mono)] tracking-widest mb-1">
-              Model Selection
+              Staked Verdicts
             </span>
-            <select className="bg-surface-container border-none text-xs font-[family-name:var(--font-mono)] text-primary focus:ring-0 rounded-none h-8 px-2">
-              <option>ALL MODELS</option>
-              <option>GPT-4o</option>
-              <option>CLAUDE-3.5</option>
-              <option>LLAMA-3-70B</option>
-            </select>
+            <span className="text-xs font-[family-name:var(--font-mono)] text-primary h-8 flex items-center px-2">
+              {reviews.length} REVIEWS
+            </span>
           </div>
           <div className="flex flex-col">
             <span className="text-[10px] text-on-surface-variant uppercase font-[family-name:var(--font-mono)] tracking-widest mb-1">
@@ -248,12 +245,12 @@ function VerdictRow({ review, expanded, onToggle }: { review: Review; expanded: 
                 </svg>
                 CID: {review.filecoin_cid ? truncate(review.filecoin_cid) : "pending"}
               </span>
-              <span className="flex items-center gap-1 hover:text-secondary cursor-pointer">
+              <a href={`https://sepolia.basescan.org/address/${review.reviewer_address}`} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-secondary">
                 <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.75-3.561a4.5 4.5 0 00-1.242-7.244l-4.5-4.5a4.5 4.5 0 00-6.364 6.364l1.757 1.757" />
                 </svg>
                 Basescan
-              </span>
+              </a>
             </div>
           </div>
         </div>
