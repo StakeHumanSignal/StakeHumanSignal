@@ -1,0 +1,141 @@
+{
+  "timestamp": "2026-03-23T09:06:23Z",
+  "chain": "base",
+  "mech": "",
+  "total_requests": 12,
+  "live_requests": 12,
+  "results": [
+    {
+      "response": "12d7c929c4095bca727cc1f963edc0e082ebc1dd247892b3a6f547c4beb8b0a8",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Rate this AI review quality 1-10: Policy A produced accurate async error handling with proper exception types.",
+      "request_id": "82007913483706906027465998744936858997429325515142232353129488563410613419568",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "0x557E1E07652B75ABaA667223B11704165fC94d09",
+      "is_offchain": true,
+      "timestamp": 1774226901.3287911
+    },
+    {
+      "response": "{'tx_hash': None, 'request_ids': ['0129a21a36400acb7b1726e533eebb195b3ecc3fe3165315ccacc34f46e5da71'], 'delivery_results': {}, 'receipt': None}",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Evaluate which model is better for code review: the one that catches edge cases or the one with cleaner syntax.",
+      "request_id": "",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "",
+      "is_offchain": true,
+      "timestamp": 1774226999.3769732
+    },
+    {
+      "response": "{'tx_hash': None, 'request_ids': ['4510731226eb63ec53222d8645f703abfbe35b0ee9ad2578eae8a0ac06fd96e5'], 'delivery_results': {}, 'receipt': None}",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Score this human feedback: 'Claude gives more structured responses for data extraction tasks than GPT-4o.'",
+      "request_id": "",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "",
+      "is_offchain": true,
+      "timestamp": 1774227097.982762
+    },
+    {
+      "response": "{'tx_hash': None, 'request_ids': ['037279f90106c9ba169734a5d33137d3d487d8b5bf870def500662349cade477'], 'delivery_results': {}, 'receipt': None}",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Assess review credibility: reviewer staked 5 USDC claiming Model A handles JSON parsing better.",
+      "request_id": "",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "",
+      "is_offchain": true,
+      "timestamp": 1774227196.172377
+    },
+    {
+      "response": "{'tx_hash': None, 'request_ids': ['9206b743b89ee55d538ffa2e98226f0dca79c3c50c2bf1792729619b7f8bfc79'], 'delivery_results': {}, 'receipt': None}",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Rate signal quality: 'For customer support tasks, shorter responses with action items outperform detailed explanations.'",
+      "request_id": "",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "",
+      "is_offchain": true,
+      "timestamp": 1774227294.339211
+    },
+    {
+      "response": "{'tx_hash': None, 'request_ids': ['4a95eafd0ccd62f4eb47e4567ef0776986cd7b79776bf4827fd7109d089eca03'], 'delivery_results': {}, 'receipt': None}",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Evaluate claim: 'GPT-4o is 40% faster for summarization but Claude is more accurate for technical content.'",
+      "request_id": "",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "",
+      "is_offchain": true,
+      "timestamp": 1774227392.607088
+    },
+    {
+      "response": "{'tx_hash': None, 'request_ids': ['b2e93c3d5a1e517dcfbf6c9ef7872c320d1b8a0858baa39685789202f83c53bb'], 'delivery_results': {}, 'receipt': None}",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Score this A/B comparison: reviewer picked Policy B for async Python, reasoning: better await patterns.",
+      "request_id": "",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "",
+      "is_offchain": true,
+      "timestamp": 1774227490.9481332
+    },
+    {
+      "response": "{'tx_hash': None, 'request_ids': ['9fc54dd551f551756d006c76039f27f55b9e330e35f480b188ac38abcd397d36'], 'delivery_results': {}, 'receipt': None}",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Assess review: 'The API with structured output mode reduces hallucination by 60% compared to free-form.'",
+      "request_id": "",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "",
+      "is_offchain": true,
+      "timestamp": 1774227589.19327
+    },
+    {
+      "response": "{'tx_hash': None, 'request_ids': ['ee807fe3732528067743fcd4e04f0d911d7f28e1ce8d5e023577e7b25c465f12'], 'delivery_results': {}, 'receipt': None}",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Rate this evaluation: 'For code generation, the model that produces tests alongside code is strictly better.'",
+      "request_id": "",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "",
+      "is_offchain": true,
+      "timestamp": 1774227688.341631
+    },
+    {
+      "response": "{'tx_hash': None, 'request_ids': ['784d3f5337b6cf4fafdd0de10a7dc669e921a9d66c0ab5d2099a1b5e90e9041f'], 'delivery_results': {}, 'receipt': None}",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Evaluate: 'Staked reviewers who specialize in one domain have 3x higher accuracy than generalists.'",
+      "request_id": "",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "",
+      "is_offchain": true,
+      "timestamp": 1774227786.86917
+    },
+    {
+      "response": "{'tx_hash': None, 'request_ids': ['64229c231c1040b9c430691af67fcd1a634a98f1d17880b20d6e1349ad98ae29'], 'delivery_results': {}, 'receipt': None}",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Score this meta-review: 'Reviews with specific examples are 5x more useful than reviews with only ratings.'",
+      "request_id": "",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "",
+      "is_offchain": true,
+      "timestamp": 1774227885.410917
+    },
+    {
+      "response": "{'tx_hash': None, 'request_ids': ['1c62482e0c488a406c15a22f7aefd517b9a92c6ac7237af7b61b96d4f05514ec'], 'delivery_results': {}, 'receipt': None}",
+      "mode": "live",
+      "tool": "short_maker",
+      "prompt": "Assess: 'The two-layer signal model (passive + active) produces more calibrated rankings than pure stake weighting.'",
+      "request_id": "",
+      "mech_address": "0xe535d7acdeed905dddcb5443f41980436833ca2b",
+      "sender": "",
+      "is_offchain": true,
+      "timestamp": 1774227983.9733288
+    }
+  ]
+}

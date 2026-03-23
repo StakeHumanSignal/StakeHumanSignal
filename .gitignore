@@ -51,5 +51,6 @@ cdp_api_key.json
 # Bun lockfiles (use npm for root, bun for frontend)
 bun.lock
 
-# Claude Code plugin skills (local, not project code)
-skills/
+# Claude Code plugin skills (local gstack, not project code)
+/skills/
+ethereum_private_key.txt

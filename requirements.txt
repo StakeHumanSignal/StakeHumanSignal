@@ -9,3 +9,4 @@ lighthouseweb3==0.1.6
 pytest>=8.0.0
 pytest-cov>=5.0.0
 pytest-asyncio>=1.0.0
+mech-client>=0.20.0
