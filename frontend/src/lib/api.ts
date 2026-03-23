@@ -31,4 +31,20 @@ export const api = {
     const r = await fetch(`${API}/sessions`);
     return r.ok ? r.json() : [];
   },
+  getOpenServAgents: async () => {
+    const r = await fetch(`${API}/openserv/agents`);
+    return r.ok ? r.json() : null;
+  },
+  getOpenServStatus: async () => {
+    const r = await fetch(`${API}/openserv/status`);
+    return r.ok ? r.json() : null;
+  },
+  triggerOpenServEvaluation: async (params: { limit?: number; confidence_threshold?: number }) => {
+    const r = await fetch(`${API}/openserv/evaluate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(params),
+    });
+    return r.json();
+  },
 };

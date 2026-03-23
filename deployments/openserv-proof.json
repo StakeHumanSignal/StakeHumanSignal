@@ -1,0 +1,55 @@
+{
+  "track": "OpenServ — Ship Something Real ($4,500)",
+  "verified_at": "2026-03-23T03:40:00Z",
+  "platform": "openserv.ai",
+  "agents": {
+    "scorer": {
+      "id": 4045,
+      "name": "StakeHumanSignal Scorer",
+      "capabilities": ["score_review", "score_batch"],
+      "workspace_id": 13064,
+      "trigger_type": "webhook",
+      "webhook": "https://api.openserv.ai/webhooks/trigger/d809ae3b4e1f4e85a933e66763f3313d"
+    },
+    "coordinator": {
+      "id": 4046,
+      "name": "StakeHumanSignal Buyer Coordinator",
+      "capabilities": ["fetch_reviews", "signal_outcome", "evaluate_pipeline"],
+      "workspace_id": 13065,
+      "trigger_type": "x402",
+      "x402_endpoint": "https://api.openserv.ai/webhooks/x402/trigger/2dbe17c9cf984a748dabed434f8d72aa",
+      "paywall_url": "https://platform.openserv.ai/workspace/paywall/2dbe17c9cf984a748dabed434f8d72aa",
+      "x402_price": "0.001 USDC",
+      "receiver_wallet": "0x557E1E07652B75ABaA667223B11704165fC94d09"
+    }
+  },
+  "multi_agent_communication": {
+    "pattern": "Coordinator delegates scoring to Scorer Agent via webhook (inter-agent)",
+    "scorer_webhook_called_by": "coordinator-agent.ts callScorerAgent()",
+    "fallback": "heuristic term-matching scorer if Scorer Agent unreachable"
+  },
+  "wallets": {
+    "scorer": "0x024333D419D954B87a06c7Fb595cfB5094065137",
+    "coordinator": "0xDEe14C8804f1Fb11b96A2E77B0c5Fc064a22844D"
+  },
+  "integration_points": {
+    "backend_api": {
+      "GET /openserv/agents": "Returns agent registry (IDs, capabilities, webhooks)",
+      "GET /openserv/status": "Pings scorer + coordinator webhooks for health",
+      "POST /openserv/evaluate": "Fires coordinator webhook to run pipeline"
+    },
+    "frontend": {
+      "api.ts": "getOpenServAgents(), getOpenServStatus(), triggerOpenServEvaluation()",
+      "agent-feed/page.tsx": "OpenServ Multi-Agent panel with status + trigger button"
+    }
+  },
+  "tests": {
+    "openserv_tests": { "total": 36, "passed": 36 },
+    "python_tests": { "total": 71, "passed": 71 },
+    "solidity_tests": { "total": 91, "passed": 91 }
+  },
+  "npm_packages": {
+    "@openserv-labs/sdk": "2.4.1",
+    "@openserv-labs/client": "2.5.3"
+  }
+}

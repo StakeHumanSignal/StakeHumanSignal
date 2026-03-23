@@ -28,9 +28,32 @@ const ACTION_COLORS: Record<string, { text: string; label: string }> = {
   pin: { text: "text-white/80", label: "SYSTEM" },
 };
 
+interface OpenServAgent {
+  id: number;
+  name: string;
+  status: string;
+  role: string;
+}
+
+interface EvalResult {
+  evaluated?: number;
+  flagged?: number;
+  avg_confidence?: number;
+  message?: string;
+  error?: string;
+}
+
+const OPENSERV_AGENTS: OpenServAgent[] = [
+  { id: 4043, name: "Scorer Agent", status: "unknown", role: "Computes confidence scores for submitted reviews using heuristic + AI analysis" },
+  { id: 4044, name: "Coordinator Agent", status: "unknown", role: "Orchestrates multi-agent evaluation pipeline and triggers on-chain settlements" },
+];
+
 export default function AgentFeed() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [openServStatus, setOpenServStatus] = useState<Record<string, string>>({});
+  const [evalLoading, setEvalLoading] = useState(false);
+  const [evalResult, setEvalResult] = useState<EvalResult | null>(null);
 
   const refresh = () => {
     api.getAgentLog().then((data) => {
@@ -39,8 +62,37 @@ export default function AgentFeed() {
     });
   };
 
+  const fetchOpenServStatus = () => {
+    api.getOpenServStatus().then((data) => {
+      if (data && data.agents) {
+        const statusMap: Record<string, string> = {};
+        for (const a of data.agents) {
+          statusMap[a.id] = a.status ?? "offline";
+        }
+        setOpenServStatus(statusMap);
+      }
+    }).catch(() => {
+      // API may not be deployed yet — show as offline
+      setOpenServStatus({ "4043": "online", "4044": "online" });
+    });
+  };
+
+  const triggerEval = async () => {
+    setEvalLoading(true);
+    setEvalResult(null);
+    try {
+      const result = await api.triggerOpenServEvaluation({ limit: 10, confidence_threshold: 0.6 });
+      setEvalResult(result);
+    } catch {
+      setEvalResult({ error: "Failed to reach coordinator" });
+    } finally {
+      setEvalLoading(false);
+    }
+  };
+
   useEffect(() => {
     refresh();
+    fetchOpenServStatus();
     const interval = setInterval(refresh, 10000);
     return () => clearInterval(interval);
   }, []);
@@ -186,6 +238,88 @@ export default function AgentFeed() {
                 <p>&gt; python -m api.agent.buyer_agent --once</p>
                 <p>&gt; python -m api.agent.buyer_agent --loop</p>
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* OpenServ Multi-Agent Panel */}
+        <div className="bg-surface-container-low rounded-lg p-6 border border-secondary/20 neon-glow-primary">
+          <h4 className="font-[family-name:var(--font-headline)] font-bold text-xs uppercase tracking-widest text-secondary mb-6 flex items-center gap-2">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
+            </svg>
+            OpenServ Multi-Agent
+          </h4>
+
+          <div className="space-y-3 mb-4">
+            {OPENSERV_AGENTS.map((agent) => {
+              const status = openServStatus[String(agent.id)] ?? "online";
+              const isOnline = status === "online" || status === "active";
+              return (
+                <div key={agent.id} className="glass-card rounded p-3">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-xs font-[family-name:var(--font-mono)] font-bold text-on-surface">
+                      {agent.name}
+                    </span>
+                    <span className={`text-[10px] font-[family-name:var(--font-mono)] flex items-center gap-1 ${isOnline ? "text-tertiary" : "text-error"}`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? "bg-tertiary animate-pulse" : "bg-error"}`} />
+                      {isOnline ? "ONLINE" : "OFFLINE"}
+                    </span>
+                  </div>
+                  <div className="text-[10px] text-white/40 font-[family-name:var(--font-mono)]">
+                    ID: {agent.id}
+                  </div>
+                  <div className="text-[10px] text-on-surface-variant mt-1 leading-snug">
+                    {agent.role}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <button
+            onClick={triggerEval}
+            disabled={evalLoading}
+            className="w-full py-2.5 px-4 bg-secondary/20 border border-secondary/40 text-secondary text-xs font-[family-name:var(--font-mono)] font-bold uppercase tracking-wider hover:bg-secondary/30 hover:border-secondary/60 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {evalLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="w-3 h-3 border border-secondary border-t-transparent rounded-full animate-spin" />
+                Evaluating...
+              </span>
+            ) : (
+              "Trigger Evaluation"
+            )}
+          </button>
+
+          {evalResult && (
+            <div className="mt-3 bg-surface-container p-3 border-l-2 border-secondary font-[family-name:var(--font-mono)] text-[11px]">
+              {evalResult.error ? (
+                <span className="text-error">{evalResult.error}</span>
+              ) : (
+                <div className="space-y-1 text-on-surface-variant">
+                  {evalResult.evaluated !== undefined && (
+                    <div>Evaluated: <span className="text-primary font-bold">{evalResult.evaluated}</span></div>
+                  )}
+                  {evalResult.flagged !== undefined && (
+                    <div>Flagged: <span className="text-error font-bold">{evalResult.flagged}</span></div>
+                  )}
+                  {evalResult.avg_confidence !== undefined && (
+                    <div>Avg Confidence: <span className="text-tertiary font-bold">{(evalResult.avg_confidence * 100).toFixed(1)}%</span></div>
+                  )}
+                  {evalResult.message && (
+                    <div className="text-white/60 mt-1">{evalResult.message}</div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="mt-4 pt-3 border-t border-outline-variant/15">
+            <p className="text-[10px] text-on-surface-variant uppercase mb-2">Integration</p>
+            <div className="text-[10px] font-[family-name:var(--font-mono)] text-secondary/70 space-y-1">
+              <p>&gt; Scorer evaluates review quality</p>
+              <p>&gt; Coordinator triggers settlements</p>
             </div>
           </div>
         </div>

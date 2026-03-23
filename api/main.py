@@ -11,6 +11,7 @@ from api.routes import reviews, jobs, outcomes
 from api.routes.agent import router as agent_router
 from api.routes.leaderboard import router as leaderboard_router
 from api.routes.sessions import router as sessions_router
+from api.routes.openserv import router as openserv_router
 
 app = FastAPI(
     title="StakeHumanSignal",
@@ -79,6 +80,7 @@ app.include_router(outcomes.router, prefix="/outcomes", tags=["outcomes"])
 app.include_router(agent_router)
 app.include_router(leaderboard_router)
 app.include_router(sessions_router)
+app.include_router(openserv_router)
 
 
 @app.get("/")
@@ -93,6 +95,9 @@ async def root():
             "POST /jobs": "Create ERC-8183 job on-chain",
             "GET /jobs/{id}": "Job status",
             "POST /outcomes": "Signal a winner (agent-only)",
+            "GET /openserv/agents": "OpenServ agent metadata",
+            "GET /openserv/status": "OpenServ agent health check",
+            "POST /openserv/evaluate": "Trigger OpenServ evaluation pipeline",
         },
         "x402": "active" if X402_ACTIVE else "fallback",
         "standards": ["ERC-8183", "ERC-8004", "x402"],

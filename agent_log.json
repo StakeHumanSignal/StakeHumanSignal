@@ -1926,5 +1926,204 @@
     "iso": "2026-03-23T10:41:52Z",
     "message": "Fetch error: Connection refused",
     "action": "error"
+  },
+  {
+    "timestamp": 1774235881.03822,
+    "iso": "2026-03-23T11:18:01Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774235881.045624,
+    "iso": "2026-03-23T11:18:01Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774235910.15226,
+    "iso": "2026-03-23T11:18:30Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774235910.1590662,
+    "iso": "2026-03-23T11:18:30Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774235931.5766149,
+    "iso": "2026-03-23T11:18:51Z",
+    "message": "Fetched reviews direct (x402 gateway unavailable)",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "amount": "0 (direct)",
+    "mode": "fallback"
+  },
+  {
+    "timestamp": 1774235931.584571,
+    "iso": "2026-03-23T11:18:51Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774236580.056103,
+    "iso": "2026-03-23T11:29:40Z",
+    "message": "Fetched 1 reviews",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "status": 200
+  },
+  {
+    "timestamp": 1774236580.063448,
+    "iso": "2026-03-23T11:29:40Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774237178.222595,
+    "iso": "2026-03-23T11:39:38Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774237178.226688,
+    "iso": "2026-03-23T11:39:38Z",
+    "message": "Fetched 1 reviews",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "status": 200
+  },
+  {
+    "timestamp": 1774237178.236682,
+    "iso": "2026-03-23T11:39:38Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774237178.239861,
+    "iso": "2026-03-23T11:39:38Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774238307.0251572,
+    "iso": "2026-03-23T11:58:27Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774238307.029011,
+    "iso": "2026-03-23T11:58:27Z",
+    "message": "Fetched 1 reviews",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "status": 200
+  },
+  {
+    "timestamp": 1774238307.04321,
+    "iso": "2026-03-23T11:58:27Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774238307.047926,
+    "iso": "2026-03-23T11:58:27Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774238408.766742,
+    "iso": "2026-03-23T12:00:08Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774238408.770577,
+    "iso": "2026-03-23T12:00:08Z",
+    "message": "Fetched 1 reviews",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "status": 200
+  },
+  {
+    "timestamp": 1774238408.7804081,
+    "iso": "2026-03-23T12:00:08Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774238408.783573,
+    "iso": "2026-03-23T12:00:08Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774238935.69952,
+    "iso": "2026-03-23T12:08:55Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774238935.7035599,
+    "iso": "2026-03-23T12:08:55Z",
+    "message": "Fetched 1 reviews",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "status": 200
+  },
+  {
+    "timestamp": 1774238935.716344,
+    "iso": "2026-03-23T12:08:55Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774238935.721666,
+    "iso": "2026-03-23T12:08:55Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774239645.536706,
+    "iso": "2026-03-23T12:20:45Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774239645.540836,
+    "iso": "2026-03-23T12:20:45Z",
+    "message": "Fetched 1 reviews",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "status": 200
+  },
+  {
+    "timestamp": 1774239645.550393,
+    "iso": "2026-03-23T12:20:45Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774239645.553916,
+    "iso": "2026-03-23T12:20:45Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
   }
 ]

@@ -54,3 +54,7 @@ bun.lock
 # Claude Code plugin skills (local gstack, not project code)
 /skills/
 ethereum_private_key.txt
+
+# OpenServ state (contains API keys + auth tokens)
+openserv/.openserv.json
+openserv/node_modules/
