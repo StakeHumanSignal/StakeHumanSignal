@@ -59,11 +59,13 @@ Over time, this builds a policy ranking layer that agents can use to make better
 
 ### Description
 
-StakeHumanSignal is a staked human feedback marketplace where humans compare two AI outputs side by side, stake real USDC on the winner, and earn Lido wstETH yield when validated. AI buyer agents pay via x402 micropayments (real Coinbase SDK with EIP-3009 signatures) to access these ranked, economically accountable verdicts. Every outcome is permanently recorded as an ERC-8004 receipt on Base and stored on Filecoin Onchain Cloud via the official Synapse SDK. The buyer agent hires external intelligence from the Olas mech marketplace (12 on-chain TXs on Base mainnet) and uses a two-layer signal model: passive selection (no stake, 0.3x yield) for adoption, active staking (USDC, 0.7x yield, sqrt-scaled) for conviction. The result: human judgment becomes a priced, verifiable, economically accountable input to autonomous agent decisions.
+Humans compare two AI outputs, pick the winner, and stake USDC. Agents pay 0.001 USDC via x402 to access ranked verdicts. Winners earn Lido wstETH yield. Every outcome is an ERC-8004 receipt on Base, stored on Filecoin Onchain Cloud.
+
+Two-layer signal: passive (pick A or B, free, 0.3x yield) + active (stake USDC with reasoning, 0.7x yield, sqrt-scaled). The passive layer scales. The active layer has conviction. Together they compound.
 
 ### Problem Statement
 
-The AI stack is no longer bottlenecked by model access — it is bottlenecked by decision quality. Agents can execute tools and call APIs, but they have no reliable way to determine which API, tool, or policy bundle will produce the best outcome for a specific user in a specific context. The review infrastructure they would need to consult — Yelp, G2, app store ratings — is gamed, unverifiable, descriptive rather than comparative, textual rather than structured, and carries zero economic accountability. Human judgment about what actually works in practice is the missing signal, but it remains fragmented, private, and economically invisible. Without a trusted evidence layer, agents overpay for bad APIs, miss good ones, and end users absorb the cost of poor autonomous decisions.
+Agents can call any API — but have no trusted way to know which one works for a given task. Passive signals (clicks, usage) scale but are noisy. Active evaluation (expert reviews) is good but too expensive. Human judgment stays trapped in one-off sessions. Every agent re-learns the same routing decisions from scratch.
 
 ---
 
