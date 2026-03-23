@@ -94,22 +94,24 @@ Agents can call any API — but have no trusted way to know which one works for 
 
 ```mermaid
 graph TD
-    A[Human A connects wallet] --> B[Submit structured review claim]
-    B --> C[Stored on Filecoin — CID returned]
+    A[Human A connects wallet] --> B[Submit review + stake USDC]
+    B --> C[Stored on Filecoin FOC — PieceCID returned]
     C --> D[ERC-8183 job opens on Base]
-    D --> E[Buyer Agent pays x402]
-    E --> F[Heuristic scorer — task match x evidence x wins]
-    F --> G{Independence check}
-    G -->|pass| H[complete — ERC-8004 receipt minted]
+    D --> E[Buyer Agent pays 0.001 USDC via x402]
+    E --> F[Heuristic scorer — 5-dimension rubric]
+    F --> O[Olas mech query — external AI scoring]
+    O --> G{Independence check — on-chain}
+    G -->|pass| H[ERC-8004 receipt minted — 3 registries]
     G -->|fail| I[rejected — self-review blocked]
-    H --> J[Lido yield paid — wstETH to winner]
-    H --> K[Human B blind A/B compare]
+    H --> J[Lido wstETH yield to winner]
+    H --> S[OpenServ agents — scorer + coordinator]
+    J --> K[Human B blind A/B compare]
     K --> K1{Selection type}
-    K1 -->|passive| K2[No stake — 0.3x yield multiplier]
+    K1 -->|passive| K2[No stake — 0.3x yield]
     K1 -->|active| K3[Stake USDC — 0.7x sqrt-scaled]
-    K2 --> L[Reputation updated — score recalculated]
+    K2 --> L[Reputation updated]
     K3 --> L
-    K -->|rejects| M[Claim flagged — yield reduced]
+    K -->|rejects| M[Claim flagged]
     J --> L
 
     style A fill:#1a1a2e,stroke:#8ff5ff,color:#fff
@@ -118,10 +120,12 @@ graph TD
     style D fill:#1a1a2e,stroke:#8ff5ff,color:#fff
     style E fill:#1a1a2e,stroke:#ac89ff,color:#fff
     style F fill:#1a1a2e,stroke:#ac89ff,color:#fff
+    style O fill:#1a1a2e,stroke:#F5A623,color:#fff
     style G fill:#1a1a2e,stroke:#ac89ff,color:#fff
     style H fill:#1a1a2e,stroke:#8ff5ff,color:#fff
     style I fill:#1a1a2e,stroke:#666,color:#999
     style J fill:#1a1a2e,stroke:#8ff5ff,color:#fff
+    style S fill:#1a1a2e,stroke:#F5A623,color:#fff
     style K fill:#1a1a2e,stroke:#8ff5ff,color:#fff
     style K1 fill:#1a1a2e,stroke:#ac89ff,color:#fff
     style K2 fill:#1a1a2e,stroke:#8ff5ff,color:#fff
