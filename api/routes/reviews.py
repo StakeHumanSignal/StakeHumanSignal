@@ -200,31 +200,35 @@ async def list_reviews():
 async def get_top_reviews(request: Request, task_intent: str = "", dryRun: str = ""):
     """Ranked reviews — x402-gated (0.001 USDC on Base Sepolia).
 
-    Uses compute_retrieval_score: task_match is primary signal,
-    stake is only a minor tie-breaker. Accepts optional task_intent
-    query param for semantic filtering.
+    When X402_ENABLED=true: payment verified by x402 SDK middleware in main.py.
+    When X402_ENABLED=false: manual 402 gate below (accepts payment header or dryRun).
     """
     import os
 
-    # x402 payment gate — skip if dryRun=true or payment header present
-    has_payment = request.headers.get("x-402-payment") or request.headers.get("x-payment")
-    if dryRun != "true" and not has_payment:
-        from fastapi.responses import JSONResponse
-        return JSONResponse(status_code=402, content={
-            "x402Version": 1,
-            "accepts": [{
-                "scheme": "exact",
-                "network": "base-sepolia",
-                "maxAmountRequired": "1000",
-                "resource": "/reviews/top",
-                "description": "Access ranked staked reviews",
-                "mimeType": "application/json",
-                "payTo": os.getenv("RECEIVER_ADDRESS", "0x557E1E07652B75ABaA667223B11704165fC94d09"),
-                "maxTimeoutSeconds": 60,
-                "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-                "extra": {"name": "USDC", "version": "2"}
-            }]
-        })
+    x402_enabled = os.getenv("X402_ENABLED", "false").lower() == "true"
+    if not x402_enabled:
+        has_payment = (
+            request.headers.get("x-402-payment")
+            or request.headers.get("x-payment")
+            or request.headers.get("payment-signature")
+        )
+        if dryRun != "true" and not has_payment:
+            from fastapi.responses import JSONResponse
+            return JSONResponse(status_code=402, content={
+                "x402Version": 1,
+                "accepts": [{
+                    "scheme": "exact",
+                    "network": "eip155:84532",
+                    "maxAmountRequired": "1000",
+                    "resource": "/reviews/top",
+                    "description": "Access ranked staked reviews — 0.001 USDC on Base Sepolia",
+                    "mimeType": "application/json",
+                    "payTo": os.getenv("RECEIVER_ADDRESS", "0x557E1E07652B75ABaA667223B11704165fC94d09"),
+                    "maxTimeoutSeconds": 60,
+                    "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+                    "extra": {"name": "USDC", "version": "2"}
+                }]
+            })
 
     from api.services.scorer import compute_retrieval_score
 
