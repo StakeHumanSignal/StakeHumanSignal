@@ -92,6 +92,7 @@
 | File | Purpose |
 |------|---------|
 | agent/skills/x402.skill.md | x402 Base track skill doc |
+| frontend/src/components/AgentAvatars.ts | Pixel-art sprite defs for TownSquare (32x32 viewbox) |
 | filecoin-bridge/index.js | Filecoin FOC bridge (Synapse SDK, ESM, port 3001) |
 | filecoin-bridge/filecoin-bridge.test.js | 6 FOC integration tests |
 | lido-mcp/index.js | MCP server (11 Lido tools, dual-provider: Ethereum mainnet + Base Sepolia) |
