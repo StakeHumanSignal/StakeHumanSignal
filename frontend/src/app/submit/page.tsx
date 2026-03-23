@@ -286,25 +286,29 @@ export default function Submit() {
           </h3>
           <div className="space-y-6">
             <div className="flex justify-between items-center">
-              <span className="text-on-surface-variant text-xs font-[family-name:var(--font-mono)]">Current Base Yield</span>
-              <span className="text-white font-[family-name:var(--font-mono)] text-lg">12.4%</span>
+              <span className="text-on-surface-variant text-xs font-[family-name:var(--font-mono)]">Your Stake</span>
+              <span className="text-white font-[family-name:var(--font-mono)] text-lg">{parseFloat(form.stake_amount || "0").toFixed(2)} USDC</span>
             </div>
             <div className="bg-surface-container-lowest p-4 border-l-2 border-primary">
               <div className="text-[10px] text-primary/60 font-[family-name:var(--font-mono)] mb-1">
                 STAKE_MULTIPLIER (SQRT_FORMULA)
               </div>
-              <div className="text-2xl font-[family-name:var(--font-headline)] font-bold text-primary">1.42x</div>
+              <div className="text-2xl font-[family-name:var(--font-headline)] font-bold text-primary">
+                {(Math.sqrt(parseFloat(form.stake_amount || "0")) * (liveScore / 100)).toFixed(2)}x
+              </div>
               <div className="text-[9px] text-white/30 font-[family-name:var(--font-mono)] mt-2 italic">
-                boost = sqrt(stake_size) * reputation_score
+                boost = sqrt({form.stake_amount || "0"}) × {(liveScore / 100).toFixed(2)} = {(Math.sqrt(parseFloat(form.stake_amount || "0")) * (liveScore / 100)).toFixed(2)}
               </div>
             </div>
             <div className="pt-4 border-t border-white/5">
               <div className="flex justify-between items-center mb-1">
-                <span className="text-tertiary text-[10px] font-bold uppercase">Estimated Return</span>
-                <span className="text-tertiary font-[family-name:var(--font-mono)]">17.6% APY</span>
+                <span className="text-tertiary text-[10px] font-bold uppercase">Signal Weight</span>
+                <span className="text-tertiary font-[family-name:var(--font-mono)]">
+                  Passive: 0.3x | Active: 0.7x × {(Math.sqrt(parseFloat(form.stake_amount || "0"))).toFixed(1)}
+                </span>
               </div>
               <div className="w-full bg-surface-container-highest h-1">
-                <div className="bg-tertiary h-full" style={{ width: "17.6%" }} />
+                <div className="bg-tertiary h-full transition-all" style={{ width: `${Math.min(100, Math.sqrt(parseFloat(form.stake_amount || "0")) * 20)}%` }} />
               </div>
             </div>
           </div>
@@ -359,7 +363,15 @@ export default function Submit() {
               <p className="text-tertiary font-[family-name:var(--font-headline)] font-bold text-sm mb-2">Review Submitted</p>
               {result.filecoin_cid && (
                 <p className="text-on-surface-variant text-[10px] font-[family-name:var(--font-mono)]">
-                  Filecoin CID: {result.filecoin_cid}
+                  Filecoin CID:{" "}
+                  <a
+                    href={`https://gateway.lighthouse.storage/ipfs/${result.filecoin_cid}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    {result.filecoin_cid}
+                  </a>
                 </p>
               )}
               {result.id && (
