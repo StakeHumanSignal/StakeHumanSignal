@@ -64,7 +64,8 @@ Over time, this builds a policy ranking layer that agents can use to make better
 | On-chain receipts | `ReceiptRegistry.sol` — ERC-8004, 3 registries | Deployed |
 | Yield distribution | `LidoTreasury.sol` — wstETH principal locked, yield-only | Deployed + TX proven |
 | Filecoin storage | `filecoin-bridge/` — Filecoin Onchain Cloud (Synapse SDK) + Lighthouse | Real PieceCID + real Qm CIDs |
-| Autonomous agent | `buyer_agent.py` — fetch → score → independence check → complete → mint | 131+ log entries |
+| Olas mech scoring | `olas-mech/` — hires external AI mech for supplementary review scoring | 12 live requests on Base mainnet |
+| Autonomous agent | `buyer_agent.py` — fetch → score → mech query → independence check → complete → mint | 131+ log entries |
 | Lido MCP | `lido-mcp/` — 11 tools, real Ethereum mainnet reads | 11/11 live test passing |
 | StakeSignal MCP | `stakesignal-mcp/` — 5 tools, real API calls | 5/5 live test passing |
 | Frontend | 7-page Next.js dashboard | [Live](https://stakehumansignal.vercel.app) |
@@ -122,6 +123,7 @@ graph TD
 | Mechanism Design | Octant | [`api/`](api/) — conviction-weighted staking + scorer |
 | Data Collection | Octant | [`api/`](api/) — autonomous review collection + Filecoin |
 | Agentic Storage | Filecoin | [`filecoin-bridge/`](filecoin-bridge/) — FOC Synapse SDK |
+| Hire an Agent | Olas | [`olas-mech/`](olas-mech/) — mech-client on Base mainnet, 12 live requests |
 | Open Track | Synthesis | Full repo — [`frontend/`](frontend/) |
 
 Each folder has a `README.md` and a `*.skill.md` for agent consumption.
@@ -196,6 +198,9 @@ python -m api.agent.buyer_agent --once
 # Live integration tests
 cd lido-mcp && node live-test.js         # 11/11 tools
 cd stakesignal-mcp && node live-test.js  # 5/5 tools
+
+# Olas mech requests (Base mainnet)
+python scripts/olas_batch_requests.py    # 12 requests
 ```
 
 ## Project Structure
@@ -210,7 +215,7 @@ contracts/          4 Solidity contracts on Base Sepolia
 
 api/                Python FastAPI backend
 ├── routes/         reviews, jobs, outcomes, sessions, agent, leaderboard
-├── services/       scorer, filecoin, web3_client
+├── services/       scorer, filecoin, olas, web3_client
 ├── agent/          buyer_agent.py (autonomous loop)
 └── api.skill.md    Agent skill file
 
@@ -234,6 +239,11 @@ filecoin-bridge/    Filecoin Onchain Cloud storage
 ├── index.js        @filoz/synapse-sdk v0.40.0 (ESM)
 ├── filecoin.skill.md  FOC setup guide + USDFC instructions
 └── filecoin-bridge.test.js  6 integration tests
+
+olas-mech/          Olas mech-client integration (Base mainnet)
+├── README.md       Track info, proof, how to verify
+└── olas.skill.md   Integration guide + gotchas
+                    Code: api/services/olas.py | Proof: deployments/olas-mech-proof.json
 
 agent/              Project docs + skill files
 ├── CLAUDE.md       Security rules, sprint state, commands
