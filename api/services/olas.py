@@ -74,22 +74,25 @@ async def query_olas_mech(prompt: str, tool: str = "short_maker") -> dict:
             tools=[tool],
             priority_mech=OLAS_MECH_ADDRESS,
             use_offchain=True,
-            timeout=90,
+            timeout=120,
         )
 
-        # Extract delivery results
+        # Extract delivery results — handle both completed and timed-out requests
         deliveries = result.get("delivery_results", {})
         first_delivery = next(iter(deliveries.values()), {}) if deliveries else {}
+        request_ids = result.get("request_ids", [])
 
         return {
-            "response": first_delivery.get("task_result", str(result)),
+            "response": first_delivery.get("task_result", str(result)[:500]),
             "mode": "live",
             "tool": tool,
             "prompt": prompt[:200],
-            "request_id": first_delivery.get("request_id", ""),
+            "request_id": first_delivery.get("request_id") or (request_ids[0] if request_ids else ""),
+            "request_ids": request_ids,
             "mech_address": first_delivery.get("mech_address", OLAS_MECH_ADDRESS),
-            "sender": first_delivery.get("sender", ""),
+            "sender": first_delivery.get("sender", crypto.address if crypto else ""),
             "is_offchain": first_delivery.get("is_offchain", True),
+            "delivered": bool(first_delivery.get("task_result")),
             "timestamp": time.time(),
         }
     except Exception as e:

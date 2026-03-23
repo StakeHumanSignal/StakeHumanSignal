@@ -24,6 +24,7 @@ const ACTION_COLORS: Record<string, { text: string; label: string }> = {
   error: { text: "text-error/80", label: "ERROR" },
   warn: { text: "text-secondary", label: "ALERT" },
   heuristic_score: { text: "text-secondary", label: "ALERT" },
+  olas_query: { text: "text-primary", label: "OLAS" },
   pin: { text: "text-white/80", label: "SYSTEM" },
 };
 

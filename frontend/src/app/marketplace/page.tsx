@@ -159,8 +159,8 @@ export default function Marketplace() {
                 const isError = entry.action === "rejected" || entry.action === "reject" || entry.action === "error";
                 const isSettled = entry.action === "complete" || entry.action === "validated";
                 const color = isError ? "text-error/80" : isSettled ? "text-tertiary" : "text-white/80";
-                const label = isError ? "SLASHED" : isSettled ? "SETTLED" : entry.action === "x402_payment" ? "LIVE" : "INFO";
-                const labelColor = isError ? "text-error" : isSettled ? "text-tertiary" : entry.action === "x402_payment" ? "text-primary" : "text-secondary";
+                const label = isError ? "SLASHED" : isSettled ? "SETTLED" : entry.action === "x402_payment" ? "LIVE" : entry.action === "olas_query" ? "OLAS" : "INFO";
+                const labelColor = isError ? "text-error" : isSettled ? "text-tertiary" : entry.action === "x402_payment" || entry.action === "olas_query" ? "text-primary" : "text-secondary";
                 const ts = new Date(entry.timestamp * 1000);
                 const time = ts.toLocaleTimeString("en-US", { hour12: false, hour: "2-digit", minute: "2-digit", second: "2-digit" });
                 return (
