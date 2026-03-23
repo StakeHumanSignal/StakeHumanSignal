@@ -28,7 +28,8 @@ Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 - FOC: real PieceCID on Filecoin calibration with USDFC payment
 - distributeYield TX proven on-chain
 - Tests: 91 Solidity + 71 Python + 5 frontend + 12 Lido MCP + 6 MCP + 6 FOC
-- TODO: OpenServ rebuild, x402 CDP real verification, demo video, submit
+- x402 SDK active: PaymentMiddlewareASGI + EthAccountSigner in buyer_agent
+- TODO: demo video, submit via Synthesis API
 
 ### Tracks (10 + Open)
 1. Virtuals ERC-8183 — $2,000 — STRONG
@@ -40,7 +41,7 @@ Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 7. Filecoin Storage — $2,000 — REAL FOC (Synapse SDK, USDFC, PieceCID)
 8. Olas Hire Agent — $1,000 — 12 ON-CHAIN TXs on Base mainnet
 9. OpenServ Ship — $4,500 — TODO (1h rebuild)
-10. Base x402 — $5,000 — TODO (CDP keys obtained, need real verification)
+10. Base x402 — $5,000 — DONE (x402 SDK middleware + EthAccountSigner + facilitator)
 11. Open Track — $28,000+
 
 ### Package Management

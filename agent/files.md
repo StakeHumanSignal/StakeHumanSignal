@@ -4,7 +4,7 @@
 
 | File | Purpose |
 |------|---------|
-| package.json | JS deps (Hardhat, OpenZeppelin, x402, ethers) |
+| package.json | JS deps (Hardhat, OpenZeppelin, ethers) |
 | hardhat.config.js | Solidity 0.8.28, Cancun EVM, Base Sepolia + Mainnet |
 | requirements.txt | Python deps (fastapi, uvicorn, httpx, web3, lighthouseweb3) |
 | .env.example | All env vars template |
@@ -91,7 +91,7 @@
 
 | File | Purpose |
 |------|---------|
-| x402-server/index.js | Express x402 gateway (SDK + manual fallback, port 3000) |
+| agent/skills/x402.skill.md | x402 Base track skill doc |
 | filecoin-bridge/index.js | Filecoin FOC bridge (Synapse SDK, ESM, port 3001) |
 | filecoin-bridge/filecoin-bridge.test.js | 6 FOC integration tests |
 | lido-mcp/index.js | MCP server (11 Lido tools, dual-provider: Ethereum mainnet + Base Sepolia) |

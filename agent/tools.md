@@ -28,12 +28,15 @@
 
 ## Payment
 
-### x402 Protocol
-- Manual 402 gate on /reviews/top (0.001 USDC)
-- Server: x402-server/index.js (port 3000)
-- FastAPI inline gate: api/routes/reviews.py line 210
-- Verification: checks header presence (theatrical — no crypto verification)
-- CDP keys blocked (2FA issue from Malaysia)
+### x402 Protocol (real Coinbase SDK)
+- Package: `x402[fastapi]` v2.5.0 (official Coinbase Python SDK)
+- Server middleware: `PaymentMiddlewareASGI` in api/main.py
+- Gate: GET /reviews/top requires 0.001 USDC on Base Sepolia (eip155:84532)
+- Verification: real EIP-3009 signature verification via facilitator
+- Facilitator: https://x402.org/facilitator (public testnet)
+- Agent client: `EthAccountSigner` + `ExactEvmClientScheme` + `x402Client` in buyer_agent.py
+- CDP keys: obtained (CDP_API_KEY_ID + CDP_API_KEY_SECRET)
+- Skill doc: agent/skills/x402.skill.md
 
 ## Storage
 

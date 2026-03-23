@@ -30,8 +30,8 @@
 6. Octant Collection — $1k — GOOD
 7. Filecoin — $2k — REAL FOC (Synapse SDK + USDFC)
 8. Olas Hire Agent — $1k — 12 ON-CHAIN TXs on Base mainnet
-9. OpenServ Ship — $4.5k — TODO
-10. Base x402 — $5k — TODO (CDP keys obtained)
+9. OpenServ Ship — $4.5k — IN PROGRESS (other terminal)
+10. Base x402 — $5k — DONE (x402 SDK + EthAccountSigner + facilitator)
 11. Open Track — $28k+
 
 ---
