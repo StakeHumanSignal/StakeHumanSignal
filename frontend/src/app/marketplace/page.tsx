@@ -296,13 +296,18 @@ function VerdictRow({ review, expanded, onToggle }: { review: Review; expanded: 
               {review.stake_amount} USDC
             </span>
           </div>
-          <button className="bg-secondary-container text-on-secondary-container px-4 py-2 text-xs font-bold uppercase tracking-tight hover:shadow-[0_0_15px_rgba(112,0,255,0.4)] transition-all">
-            Pay 0.001 USDC via x402 to Unlock
-          </button>
+          <a
+            href="/agent-feed"
+            className="bg-secondary-container text-on-secondary-container px-4 py-2 text-xs font-bold uppercase tracking-tight hover:shadow-[0_0_15px_rgba(112,0,255,0.4)] transition-all inline-block text-center"
+          >
+            x402 Gated — 0.001 USDC
+          </a>
           <span className="text-[9px] text-white/30 font-[family-name:var(--font-mono)] italic">
-            402 Payment Required
+            Agents pay via EIP-3009 signed USDC transfer
           </span>
-          <span className="text-[9px] text-white/30 font-[family-name:var(--font-mono)]">Agents pay automatically via x402 protocol</span>
+          <span className="text-[9px] text-white/30 font-[family-name:var(--font-mono)]">
+            <a href="/agent-feed" className="hover:text-primary transition-colors underline decoration-dotted">View live x402 payments in Agent Feed →</a>
+          </span>
         </div>
       </td>
     </tr>
