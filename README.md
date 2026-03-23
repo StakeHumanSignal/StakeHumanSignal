@@ -6,6 +6,12 @@
 
 Built for [Synthesis Hackathon](https://synthesis.md) — March 2026.
 
+> **Judges:** See [`TRACKS.md`](TRACKS.md) for track-by-track navigation with proof links and skill files.
+>
+> **Agents:** See [`AGENTS.md`](AGENTS.md) for API endpoints, MCP server configs, and x402 payment details.
+>
+> **Each folder** has a `README.md` (how to run/test) and a `*.skill.md` (agent mental model).
+
 ---
 ## Problem
 
@@ -112,19 +118,9 @@ graph TD
     style M fill:#1a1a2e,stroke:#666,color:#999
 ```
 
-## For Judges — Track Navigation
+## Track Submissions
 
-| Track | Sponsor | Start Here |
-|-------|---------|------------|
-| ERC-8183 Open Build | Virtuals | [`contracts/`](contracts/) — `StakeHumanSignalJob.sol` |
-| Agents With Receipts (ERC-8004) | Protocol Labs | [`contracts/`](contracts/) — `ReceiptRegistry.sol` (3 registries) |
-| stETH Agent Treasury | Lido | [`contracts/`](contracts/) — `LidoTreasury.sol` + [`lido-mcp/`](lido-mcp/) |
-| Lido MCP Server | Lido | [`lido-mcp/`](lido-mcp/) — 11 tools, real Ethereum mainnet |
-| Mechanism Design | Octant | [`api/`](api/) — conviction-weighted staking + scorer |
-| Data Collection | Octant | [`api/`](api/) — autonomous review collection + Filecoin |
-| Agentic Storage | Filecoin | [`filecoin-bridge/`](filecoin-bridge/) — FOC Synapse SDK |
-| Hire an Agent | Olas | [`olas-mech/`](olas-mech/) — mech-client on Base mainnet, 12 live requests |
-| Open Track | Synthesis | Full repo — [`frontend/`](frontend/) |
+Submitting to **10 tracks + Open**. Full navigation with proof links and skill files: **[`TRACKS.md`](TRACKS.md)**
 
 Each folder has a `README.md` and a `*.skill.md` for agent consumption.
 
