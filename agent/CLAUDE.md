@@ -22,26 +22,26 @@
 Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 
 ### Current Sprint Goal
-**FINAL: Demo video → Submit via Synthesis API**
-- All critical bugs fixed — Lido MCP ratios use real RPC, FOC integrated, buyer agent runs clean
-- distributeYield TX on-chain: `0x30ad2db8...` (block 39211827)
-- FOC upload proven: PieceCID `bafkzcibcduch6lsgmz3rpfq6uhjibwca2lofa6r43ppgul6gqy7vlut7mxsj4ny`
-- 3 validate sessions seeded, live on Railway
-- Tests: 91 Solidity + 71 Python + 5 frontend + 13 MCP + 6 FOC = 186 total
-- TODO: Record 2-min demo video, submit via Synthesis API
+**FINAL: Demo video → OpenServ → x402 CDP → Submit via Synthesis API**
+- Olas: 12 on-chain TXs on Base mainnet (deposit + 12 mech requests, all on Basescan)
+- Lido MCP: 11 tools, real Ethereum mainnet reads, 11/11 live test
+- FOC: real PieceCID on Filecoin calibration with USDFC payment
+- distributeYield TX proven on-chain
+- Tests: 91 Solidity + 71 Python + 5 frontend + 12 Lido MCP + 6 MCP + 6 FOC
+- TODO: OpenServ rebuild, x402 CDP real verification, demo video, submit
 
-### Tracks (10 + Open + Student)
+### Tracks (10 + Open)
 1. Virtuals ERC-8183 — $2,000 — STRONG
-2. Protocol Labs ERC-8004 — $4,000 — GOOD (real receipt mint on-chain)
-3. Protocol Labs Agent Cook — $4,000 — GOOD (131+ log entries, real decisions)
-4. Lido stETH Treasury — $3,000 — FIXED (distributeYield TX proven)
-5. Lido MCP Server — $5,000 — FIXED (9 tools, real RPC calls, no hardcoded ratios)
-6. Base x402 — $5,000 — ACCEPTED (correct 402 format, verification theatrical)
-7. Octant Mechanism Design — $1,000 — STRONG (sqrt staking, two-layer model)
-8. Octant Data Collection — $1,000 — GOOD (5-dimension rubric, Lighthouse CIDs)
-9. Filecoin Storage — $2,000 — REAL FOC (Synapse SDK, USDFC payment, PieceCID proven)
-10. Open Track — $28,000+ — GOOD (full system)
-11. Student Founder — $500 + travel — ELIGIBLE (student ID ready)
+2. Protocol Labs ERC-8004 — $4,000 — GOOD (3 registries, real receipt mint)
+3. Lido stETH Treasury — $3,000 — PROVEN (distributeYield TX on Basescan)
+4. Lido MCP Server — $5,000 — 11 tools, real Ethereum mainnet reads
+5. Octant Mechanism Design — $1,000 — STRONG (sqrt staking, two-layer model)
+6. Octant Data Collection — $1,000 — GOOD (agent + FOC + Lighthouse)
+7. Filecoin Storage — $2,000 — REAL FOC (Synapse SDK, USDFC, PieceCID)
+8. Olas Hire Agent — $1,000 — 12 ON-CHAIN TXs on Base mainnet
+9. OpenServ Ship — $4,500 — TODO (1h rebuild)
+10. Base x402 — $5,000 — TODO (CDP keys obtained, need real verification)
+11. Open Track — $28,000+
 
 ### Package Management
 - Use `bun add` for JS packages, `pip install` for Python
@@ -66,14 +66,14 @@ Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 ### Architecture
 - `contracts/` — 4 Solidity contracts (ERC-8183 Job, Lido Treasury, ERC-8004 Registry, SessionEscrow)
 - `api/` — Python FastAPI backend (reviews, jobs, outcomes, sessions, agent, leaderboard)
-- `api/services/` — scorer, scorer_local, filecoin (Lighthouse + FOC bridge), web3_client
-- `api/agent/` — buyer_agent.py (autonomous loop with --once flag, loads dotenv)
+- `api/services/` — scorer, scorer_local, filecoin, olas, web3_client
+- `api/agent/` — buyer_agent.py (autonomous loop, loads dotenv, queries Olas mech)
 - `frontend/` — Next.js 16 + Tailwind 4 + RainbowKit (7 pages, shared nav-routes.ts)
-- `x402-server/` — Express x402 payment gateway (manual 402 gate)
 - `filecoin-bridge/` — Filecoin Onchain Cloud bridge (@filoz/synapse-sdk, ESM)
-- `lido-mcp/` — MCP server with 9 Lido tools + vault monitor (real RPC, no hardcoded ratios)
-- `stakesignal-mcp/` — MCP server with 5 StakeHumanSignal tools
-- `scripts/` — deploy, wire, e2e test, seed, check-treasury, distribute-yield
+- `lido-mcp/` — MCP server with 11 Lido tools, dual-provider (Ethereum mainnet + Base Sepolia)
+- `stakesignal-mcp/` — MCP server with 5 StakeHumanSignal tools (all hit live API)
+- `olas-mech/` — Olas track docs (code in api/services/olas.py, proof in deployments/)
+- `scripts/` — deploy, wire, e2e test, seed, check-treasury, distribute-yield, olas-batch
 - `agent/` — project docs (CLAUDE.md, memory.md, files.md, tools.md, skills/)
 - `docs/` — gitignored specs (honest-audit, aim-tracks, design, presubmission)
 - `.github/workflows/ci.yml` — 4 CI jobs (solidity, python, frontend, security)
@@ -91,11 +91,13 @@ Staked human feedback marketplace on Base Sepolia. ERC-8183 + ERC-8004 + x402.
 - SessionEscrow: 0xe817C338aD7612184CFB59AeA7962905b920e2e9
 
 ### On-Chain Proof TXs
-- createJob: 0x3dee4cc1... (block 39156980)
-- receiptMinted: 0x3740a500... (block 39156981)
-- depositPrincipal: 0x3a7bc31e... (block 39211824)
-- distributeYield: 0x30ad2db8... (block 39211827)
+- createJob: 0x3dee4cc1... (Base Sepolia block 39156980)
+- receiptMinted: 0x3740a500... (Base Sepolia block 39156981)
+- depositPrincipal: 0x3a7bc31e... (Base Sepolia block 39211824)
+- distributeYield: 0x30ad2db8... (Base Sepolia block 39211827)
 - FOC deposit: 0x244c2a1d... (Filecoin calibration block 3562333)
+- Olas deposit: 0x16da2190... (Base mainnet)
+- Olas mech requests: 12 TXs on Base mainnet (see deployments/olas-mech-proof.json)
 
 ### On-chain TX logging rule
 When any script or command produces a successful on-chain transaction:

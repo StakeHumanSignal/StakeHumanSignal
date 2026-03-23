@@ -60,6 +60,17 @@
 - Fallback: term matching + length heuristics
 - No external API, no API key needed
 
+### Olas Mech-Client (external intelligence)
+- Package: `pip install mech-client` (v0.20.0+, Python 3.10-3.11)
+- File: api/services/olas.py
+- Chain: Base mainnet (8453), mech #112 at 0xe535d7ac...
+- Integration: buyer_agent queries mech for supplementary scoring
+- Requires: ethereum_private_key.txt (gitignored) + ETH on Base for gas
+- Deposit: prepaid balance via DepositService (must override internal RPC)
+- Gotcha: default llamarpc returns 0 balance — override to mainnet.base.org
+- Proof: 12 on-chain TXs in deployments/olas-mech-proof.json
+- Track folder: olas-mech/ with README + skill.md
+
 ## MCP
 
 ### Lido MCP Server
