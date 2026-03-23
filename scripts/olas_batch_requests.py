@@ -42,7 +42,7 @@ async def main():
         print(f"  → {mode} | request_id={req_id}...")
         results.append(result)
         if i < len(PROMPTS) - 1:
-            await asyncio.sleep(2)  # Rate limit
+            await asyncio.sleep(5)  # Rate limit for on-chain TXs
 
     live = sum(1 for r in results if r["mode"] == "live")
     errors = sum(1 for r in results if r["mode"] == "error")

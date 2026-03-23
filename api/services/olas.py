@@ -33,16 +33,26 @@ def _get_service():
         return None, None
 
     crypto = EthereumCrypto(key_file)
-    config = get_mech_config("base")
-    config.ledger_config.address = "https://mainnet.base.org"
-    ledger_api = EthereumApi(**config.ledger_config.__dict__)
 
+    # Create service then override ALL internal ledger_api references
+    # Default llamarpc returns 0 balance — mainnet.base.org works
     service = MarketplaceService(
         chain_config="base",
         agent_mode=False,
         crypto=crypto,
-        ethereum_client=ledger_api,
     )
+    good_api = EthereumApi(
+        address="https://mainnet.base.org",
+        chain_id=8453,
+        poa_chain=False,
+        default_gas_price_strategy="eip1559",
+        is_gas_estimation_enabled=False,
+        agent_mode=False,
+        chain_config="base",
+    )
+    service.ledger_api = good_api
+    if hasattr(service, "executor"):
+        service.executor.ledger_api = good_api
     return service, crypto
 
 
@@ -73,26 +83,31 @@ async def query_olas_mech(prompt: str, tool: str = "short_maker") -> dict:
             prompts=[prompt],
             tools=[tool],
             priority_mech=OLAS_MECH_ADDRESS,
-            use_offchain=True,
-            timeout=120,
+            use_offchain=False,
+            timeout=180,
         )
 
-        # Extract delivery results — handle both completed and timed-out requests
+        # Extract results — TX hash, request IDs, delivery data
+        tx_hash = result.get("tx_hash")
+        request_ids = result.get("request_ids", [])
         deliveries = result.get("delivery_results", {})
         first_delivery = next(iter(deliveries.values()), {}) if deliveries else {}
-        request_ids = result.get("request_ids", [])
+        receipt = result.get("receipt")
 
         return {
             "response": first_delivery.get("task_result", str(result)[:500]),
             "mode": "live",
             "tool": tool,
             "prompt": prompt[:200],
+            "tx_hash": tx_hash,
             "request_id": first_delivery.get("request_id") or (request_ids[0] if request_ids else ""),
             "request_ids": request_ids,
             "mech_address": first_delivery.get("mech_address", OLAS_MECH_ADDRESS),
-            "sender": first_delivery.get("sender", crypto.address if crypto else ""),
-            "is_offchain": first_delivery.get("is_offchain", True),
+            "sender": crypto.address if crypto else "",
+            "is_offchain": False,
             "delivered": bool(first_delivery.get("task_result")),
+            "block_number": receipt.blockNumber if receipt and hasattr(receipt, "blockNumber") else None,
+            "basescan": f"https://basescan.org/tx/{tx_hash}" if tx_hash else None,
             "timestamp": time.time(),
         }
     except Exception as e:

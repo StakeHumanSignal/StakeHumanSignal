@@ -15,9 +15,26 @@ This is NOT bolted on. The mech provides external scoring data that blends with 
 | Chain | Base mainnet (8453) |
 | Mech | `0xe535d7acdeed905dddcb5443f41980436833ca2b` (AI Agent #112, 9,845+ deliveries) |
 | Wallet | `0x557E1E07652B75ABaA667223B11704165fC94d09` |
-| Requests sent | 12 (requirement: 10+) |
-| Delivery method | Offchain (instant, no gas) |
+| On-chain TXs | **12 confirmed** (requirement: 10+) |
+| Deposit TX | [`0x16da2190...`](https://basescan.org/tx/0x16da2190da47349fafdcf2111f8e8774b0b1ee469dcd4a4671241f414d9ff046) |
 | Proof | [`deployments/olas-mech-proof.json`](../deployments/olas-mech-proof.json) |
+
+### All 12 On-Chain TX Hashes (Base Mainnet — Basescan)
+
+| # | TX Hash |
+|---|---------|
+| 1 | [`0x6cd2887e...`](https://basescan.org/tx/0x6cd2887e250790eaf98b206947e480e6f9f331c3df12e6dda3c4e2211cee5770) |
+| 2 | [`0xc6199223...`](https://basescan.org/tx/0xc6199223f3e44a74da5b7129a77e464e582ebde5e1d18891f060ef6d740bf74c) |
+| 3 | [`0x936e6e5c...`](https://basescan.org/tx/0x936e6e5cc754f06a4aa73aeeafe29cc3ffe72ed2c1fda9b409f570082dd2f31a) |
+| 4 | [`0x111e18c0...`](https://basescan.org/tx/0x111e18c0fb0b668bf08a5a6ae7ed1461c980eaf72eefbf376bcb3cfcc2feb67b) |
+| 5 | [`0x64e22c8e...`](https://basescan.org/tx/0x64e22c8e8784605ac511aa950d66f808dea69f4f9e8741d63231c51828186f77) |
+| 6 | [`0x21ed244c...`](https://basescan.org/tx/0x21ed244c9b02194c3ce599ebe4499032bdc4bad498017bc6263ca504e7dcec2c) |
+| 7 | [`0x23efc637...`](https://basescan.org/tx/0x23efc637b6a575fe3558ea9aeccecadc413c434af3be94512d1a8258d97b0ea6) |
+| 8 | [`0x86035b6c...`](https://basescan.org/tx/0x86035b6cda23266e5d0771ca52959aed721e1f0ce6157e728cc34fb94fd67ce3) |
+| 9 | [`0x7f8d3e33...`](https://basescan.org/tx/0x7f8d3e337832c87cabb8bf0f5c5faecea48edcc6e7654383d1a704a9f7732404) |
+| 10 | [`0x2cb16fd6...`](https://basescan.org/tx/0x2cb16fd6b7ce57d2938b386669065adfd3b09619a4389d3cb925810e1faefbf8) |
+| 11 | [`0x906bb516...`](https://basescan.org/tx/0x906bb5163eae4018ab3818e2ac02d32353952c050339989d8286a0682e35dd73) |
+| 12 | [`0xc33e784f...`](https://basescan.org/tx/0xc33e784f10c89cca161fbe2ecaac65eccded9ac5704c70be7c7395960a6d5f72) |
 
 ### Sample Request (real, verified)
 
