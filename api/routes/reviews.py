@@ -200,19 +200,17 @@ async def list_reviews():
 async def get_top_reviews(request: Request, task_intent: str = "", dryRun: str = ""):
     """Ranked reviews — x402-gated (0.001 USDC on Base Sepolia).
 
-    When X402_ENABLED=true: payment verified by x402 SDK middleware in main.py.
-    When X402_ENABLED=false: manual 402 gate below (accepts payment header or dryRun).
+    Primary: x402 SDK middleware in main.py handles payment verification.
+    Fallback: if SDK not loaded, manual 402 gate below.
+    The PAYMENT-SIGNATURE header is the standard x402 header for EIP-3009 signed payments.
     """
     import os
 
-    x402_enabled = os.getenv("X402_ENABLED", "false").lower() == "true"
-    if not x402_enabled:
-        has_payment = (
-            request.headers.get("x-402-payment")
-            or request.headers.get("x-payment")
-            or request.headers.get("payment-signature")
-        )
-        if dryRun != "true" and not has_payment:
+    x402_active = os.getenv("X402_ACTIVE", "false") == "true"
+    if not x402_active:
+        # SDK not loaded — use manual gate
+        has_payment = request.headers.get("payment-signature")
+        if not has_payment:
             from fastapi.responses import JSONResponse
             return JSONResponse(status_code=402, content={
                 "x402Version": 1,
@@ -226,7 +224,6 @@ async def get_top_reviews(request: Request, task_intent: str = "", dryRun: str =
                     "payTo": os.getenv("RECEIVER_ADDRESS", "0x557E1E07652B75ABaA667223B11704165fC94d09"),
                     "maxTimeoutSeconds": 60,
                     "asset": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
-                    "extra": {"name": "USDC", "version": "2"}
                 }]
             })
 

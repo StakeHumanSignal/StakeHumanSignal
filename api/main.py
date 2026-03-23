@@ -1,6 +1,7 @@
 """StakeHumanSignal API — FastAPI backend for staked human feedback marketplace.
 
-x402 payment gate on /reviews/top using Coinbase CDP facilitator.
+x402 payment gate on /reviews/top using Coinbase x402 SDK.
+Defaults to SDK middleware (real verification). Falls back to manual gate only on import error.
 """
 
 import os
@@ -25,14 +26,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- x402 Payment Middleware (real Coinbase CDP verification) ---
-X402_ENABLED = os.getenv("X402_ENABLED", "false").lower() == "true"
-if not X402_ENABLED:
-    print("[x402] Disabled (set X402_ENABLED=true to activate SDK middleware)")
-    print("[x402] Manual gate in reviews.py will handle 402 responses")
+# --- x402 Payment Middleware (real verification via Coinbase facilitator) ---
+# Always attempt to load SDK. Only fall back to manual gate if import fails.
+X402_ACTIVE = False
 
-if X402_ENABLED:
-  try:
+try:
     from x402.http import FacilitatorConfig, HTTPFacilitatorClient, PaymentOption
     from x402.http.middleware.fastapi import PaymentMiddlewareASGI
     from x402.http.types import RouteConfig
@@ -40,16 +38,10 @@ if X402_ENABLED:
     from x402.server import x402ResourceServer
 
     PAY_TO = os.getenv("RECEIVER_ADDRESS", "0x557E1E07652B75ABaA667223B11704165fC94d09")
-    CDP_KEY_ID = os.getenv("CDP_API_KEY_ID", "")
-    CDP_KEY_SECRET = os.getenv("CDP_API_KEY_SECRET", "")
 
-    # Use CDP facilitator if keys available, otherwise public testnet facilitator
-    if CDP_KEY_ID and CDP_KEY_SECRET:
-        facilitator_url = "https://api.cdp.coinbase.com/platform/v2/x402"
-        print(f"[x402] Using CDP facilitator (production)")
-    else:
-        facilitator_url = "https://x402.org/facilitator"
-        print(f"[x402] Using public testnet facilitator (no CDP keys)")
+    # Always use the public testnet facilitator for Base Sepolia
+    # CDP production facilitator (api.cdp.coinbase.com) is for mainnet
+    facilitator_url = "https://x402.org/facilitator"
 
     facilitator = HTTPFacilitatorClient(FacilitatorConfig(url=facilitator_url))
     x402_server = x402ResourceServer(facilitator)
@@ -64,16 +56,22 @@ if X402_ENABLED:
                 network="eip155:84532",
             )],
             mime_type="application/json",
-            description="Access ranked staked reviews — agents pay 0.001 USDC",
+            description="Access ranked staked reviews — agents pay 0.001 USDC on Base Sepolia",
         ),
     }
 
     app.add_middleware(PaymentMiddlewareASGI, routes=x402_routes, server=x402_server)
-    print(f"[x402] Payment middleware active on /reviews/top (0.001 USDC, Base Sepolia)")
+    X402_ACTIVE = True
+    print(f"[x402] SDK middleware ACTIVE on /reviews/top (0.001 USDC, Base Sepolia)")
+    print(f"[x402] Facilitator: {facilitator_url}")
     print(f"[x402] Pay to: {PAY_TO}")
 
-  except Exception as e:
-    print(f"[x402] Middleware not loaded: {e}. Falling back to manual gate in reviews.py")
+except Exception as e:
+    print(f"[x402] SDK not available: {e}")
+    print(f"[x402] Manual 402 gate in reviews.py will be used as fallback")
+
+# Export for reviews.py to check
+os.environ["X402_ACTIVE"] = str(X402_ACTIVE).lower()
 
 app.include_router(reviews.router, prefix="/reviews", tags=["reviews"])
 app.include_router(jobs.router, prefix="/jobs", tags=["jobs"])
@@ -90,17 +88,18 @@ async def root():
         "description": "Staked human feedback marketplace",
         "endpoints": {
             "GET /reviews": "Public review list (free)",
-            "GET /reviews/top": "Ranked reviews (x402-gated: 0.001 USDC on Base)",
+            "GET /reviews/top": "Ranked reviews (x402-gated: 0.001 USDC on Base Sepolia)",
             "POST /reviews": "Submit a review + stake proof",
             "POST /jobs": "Create ERC-8183 job on-chain",
             "GET /jobs/{id}": "Job status",
             "POST /outcomes": "Signal a winner (agent-only)",
         },
-        "standards": ["ERC-8183", "ERC-8004"],
-        "network": "base-mainnet",
+        "x402": "active" if X402_ACTIVE else "fallback",
+        "standards": ["ERC-8183", "ERC-8004", "x402"],
+        "network": "eip155:84532",
     }
 
 
 @app.get("/health")
 async def health():
-    return {"status": "ok"}
+    return {"status": "ok", "x402": "sdk" if X402_ACTIVE else "manual"}
