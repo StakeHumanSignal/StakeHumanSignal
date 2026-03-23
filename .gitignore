@@ -42,8 +42,9 @@ deployments/localhost/
 .coverage
 htmlcov/
 
-# Screenshots
+# Screenshots + binaries
 *.png
+*.pptx
 
 # CDP API keys (Coinbase Developer Platform)
 cdp_api_key.json

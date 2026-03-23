@@ -2125,5 +2125,33 @@
     "iso": "2026-03-23T12:20:45Z",
     "message": "Fetch error: Connection refused",
     "action": "error"
+  },
+  {
+    "timestamp": 1774242838.487417,
+    "iso": "2026-03-23T13:13:58Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774242838.491217,
+    "iso": "2026-03-23T13:13:58Z",
+    "message": "Fetched 1 reviews",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "status": 200
+  },
+  {
+    "timestamp": 1774242838.501431,
+    "iso": "2026-03-23T13:13:58Z",
+    "message": "x402 SDK payment failed: SchemeRegistration.__init__() got an unexpected keyword argument 'scheme_id'",
+    "action": "x402_payment",
+    "mode": "sdk_error"
+  },
+  {
+    "timestamp": 1774242838.505336,
+    "iso": "2026-03-23T13:13:58Z",
+    "message": "Fetch error: Connection refused",
+    "action": "error"
   }
 ]
