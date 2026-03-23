@@ -95,6 +95,25 @@ A staked human feedback marketplace where humans compare AI outputs side by side
 - Tests: 91 Solidity + 71 Python + 5 frontend passing
 - CI: GitHub Actions 4 jobs (solidity, python, frontend, security)
 
+## Final build session — March 22-23, 2026
+
+### Integration fixes (not demo — real)
+- **Olas on-chain**: first 12 requests were offchain (no proof). Diagnosed: default RPC returned 0 balance. Fixed: deposited ETH to mech marketplace prepaid balance, overrode internal ledger_api, re-ran all 12 on-chain. 13 total TXs on Base mainnet Basescan.
+- **Filecoin FOC**: discovered all CIDs were `bafylocal` (fake local hashing). Lighthouse was working but not FOC. Installed @filoz/synapse-sdk, borrowed 204 USDFC via CDP on Secured Finance (160 tFIL collateral, 150% ratio in Recovery Mode), uploaded real data. PieceCID confirmed.
+- **Lido MCP dual-provider**: all 9 mainnet Lido contracts were using Base Sepolia RPC (silent failures on wrap/unwrap/vote). Created separate ethProvider for Ethereum mainnet. Verified: 1 stETH = 0.813 wstETH, 199 DAO votes, withdrawal #118573.
+- **x402 self-roast**: found 6 issues in my own x402 implementation. X402_ENABLED defaulted OFF (dead code). buyer_agent sent literal string as payment header. dryRun bypass let anyone skip payment. Fixed all 6 — SDK loads by default, EthAccountSigner for real signing, no bypass.
+- **8 dead buttons killed**: found 8 clickable elements with no handler across 5 frontend pages. Every button now does something real — links to Basescan, calls API, or navigates.
+- **Dockerfile .dockerignore**: `deployments/` was in .dockerignore — Docker couldn't COPY it. Caused 12 consecutive Railway deploy failures. One line removed, all deploys succeeded.
+- **OpenServ**: rebuilt worker with @openserv-labs/sdk v2, registered scorer + coordinator agents on platform, wired to existing API endpoints.
+- **TownSquare**: replaced static canvas with pixel-art arena — 15 real reviewer bots from API data, beam animations from 264+ agent log entries.
+
+### Competition analysis
+- 494 projects submitted total
+- Analyzed all 46 tracks by submission count
+- Dropped: Agent Cook (209 subs), Octant Analysis (not a fit), Student (focus on winning tracks)
+- Added: Olas Hire (6 subs — best odds), OpenServ Ship (36 subs), Base x402 (168 subs — boss insisted)
+- Final: 10 tracks + Open, max $28,500 prize pool
+
 ## Key pivots and decisions
 
 1. **Dropped Agent Cook** — too crowded (209 submissions). Pivoted to ERC-8004 from same sponsor (less competition, our 3-registry approach differentiates)
@@ -116,3 +135,5 @@ https://github.com/StakeHumanSignal/StakeHumanSignal
 - Health: https://stakesignal-api-production.up.railway.app/health
 - Agent feed: https://stakehumansignal.vercel.app/agent-feed
 - TownSquare: https://stakehumansignal.vercel.app/town-square
+- Video: https://www.loom.com/share/b26f3b19ce4642d385eae13860d816f5
+- Moltbook: https://www.moltbook.com/post/598c5e46-830b-4bab-a189-5528c709491a
