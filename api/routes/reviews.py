@@ -208,9 +208,8 @@ async def get_top_reviews(request: Request, task_intent: str = "", dryRun: str =
 
     x402_active = os.getenv("X402_ACTIVE", "false") == "true"
     if not x402_active:
-        # SDK not loaded — use manual gate
-        has_payment = request.headers.get("payment-signature")
-        if not has_payment:
+        # SDK not loaded — always return 402 with payment challenge
+        # Agents must use x402 SDK client to sign EIP-3009 payments
             from fastapi.responses import JSONResponse
             return JSONResponse(status_code=402, content={
                 "x402Version": 1,

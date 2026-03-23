@@ -31,52 +31,69 @@ def log(msg: str, **kwargs):
 
 
 async def fetch_top_reviews_x402() -> list[dict]:
-    """Fetch ranked reviews via x402 payment gateway.
+    """Fetch ranked reviews via x402 payment — real EIP-3009 signed payment.
 
-    In production: pays 0.001 USDC via x402 header.
-    In dev mode: uses dryRun=true or falls back to direct API.
+    Uses x402 Python SDK to auto-handle 402 challenges:
+    1. GET /reviews/top → receives 402 with payment challenge
+    2. SDK signs EIP-3009 transferWithAuthorization using agent's private key
+    3. Retries with PAYMENT-SIGNATURE header containing real signature
+    4. Facilitator verifies signature + USDC balance
+    5. Reviews returned
     """
-    # Try x402 gateway with dryRun (dev mode) — only if explicitly configured
-    if X402_GATEWAY:
-        try:
-            async with httpx.AsyncClient(timeout=15) as client:
-                resp = await client.get(f"{X402_GATEWAY}/reviews/top?dryRun=true")
-                if resp.status_code == 200:
-                    data = resp.json()
-                    log(
-                        f"Fetched reviews via x402 gateway (dryRun)",
-                        action="x402_payment",
-                        endpoint="/reviews/top",
-                        amount="0.001 USDC",
-                        network="base-sepolia",
-                        mode="dryRun",
-                    )
-                    return data.get("reviews", [])
-        except Exception:
-            pass  # Gateway not running, fall back
+    # Try real x402 client with EIP-3009 payment signing
+    try:
+        from x402 import x402Client, x402ClientConfig, SchemeRegistration
+        from x402.mechanisms.evm import EthAccountSigner
+        from x402.mechanisms.evm.exact import ExactEvmClientScheme
+        from eth_account import Account
 
-    # Fallback: direct API — try x402 flow, handle 402 gracefully
+        pk = os.getenv("PRIVATE_KEY") or os.getenv("BASE_SEPOLIA_PRIVATE_KEY")
+        if pk:
+            account = Account.from_key(pk if pk.startswith("0x") else f"0x{pk}")
+            signer = EthAccountSigner(account)
+            scheme = ExactEvmClientScheme(signer)
+
+            x402_client = x402Client(
+                payment_requirements_selector=None,
+            )
+            x402_client.register(SchemeRegistration(
+                scheme_id="exact",
+                network_id="eip155:84532",
+                client=scheme,
+            ))
+
+            # x402 client auto-handles 402 → sign → retry
+            response = await x402_client.get(f"{API_BASE}/reviews/top")
+            data = response.json() if hasattr(response, "json") else response
+            log(
+                f"Fetched reviews via x402 SDK (real EIP-3009 payment)",
+                action="x402_payment",
+                endpoint="/reviews/top",
+                amount="0.001 USDC",
+                mode="x402_sdk",
+                wallet=account.address,
+            )
+            reviews = data.get("reviews", data if isinstance(data, list) else [])
+            return reviews
+    except Exception as e:
+        log(f"x402 SDK payment failed: {str(e)[:100]}", action="x402_payment", mode="sdk_error")
+
+    # Fallback: direct API with manual 402 handling
     try:
         async with httpx.AsyncClient(timeout=15) as client:
-            # First attempt without payment header
             resp = await client.get(f"{API_BASE}/reviews/top")
 
             if resp.status_code == 402:
-                # x402 gate active — log the 402 challenge and retry with payment
-                # In production: agent would sign EIP-3009 payload here
-                # For now: send PAYMENT-SIGNATURE to prove we understand the protocol
                 log(
-                    "x402 gate returned 402 — agent acknowledges payment required",
+                    "x402 gate returned 402 — payment required",
                     action="x402_payment",
                     endpoint="/reviews/top",
                     amount="0.001 USDC",
                     mode="402_received",
+                    challenge=resp.text[:200],
                 )
-                # Retry with payment signature header (x402 SDK handles verification)
-                resp = await client.get(
-                    f"{API_BASE}/reviews/top",
-                    headers={"payment-signature": "agent-buyer-x402"},
-                )
+                # Cannot pay without x402 SDK — return empty
+                return []
 
             data = resp.json()
             log(
