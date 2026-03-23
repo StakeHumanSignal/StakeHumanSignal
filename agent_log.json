@@ -2153,5 +2153,512 @@
     "iso": "2026-03-23T13:13:58Z",
     "message": "Fetch error: Connection refused",
     "action": "error"
+  },
+  {
+    "timestamp": 1774246249.956586,
+    "iso": "2026-03-23T14:10:49Z",
+    "message": "Agent starting autonomous loop",
+    "action": "start"
+  },
+  {
+    "timestamp": 1774246249.9586308,
+    "iso": "2026-03-23T14:10:49Z",
+    "message": "Cycle 1 starting",
+    "action": "cycle_start"
+  },
+  {
+    "timestamp": 1774246250.921854,
+    "iso": "2026-03-23T14:10:50Z",
+    "message": "x402 signing unavailable: 'str' object has no attribute 'get'",
+    "action": "x402_payment",
+    "mode": "x402_fallback"
+  },
+  {
+    "timestamp": 1774246250.948498,
+    "iso": "2026-03-23T14:10:50Z",
+    "message": "Fetched 0 reviews",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "status": 402
+  },
+  {
+    "timestamp": 1774246250.950103,
+    "iso": "2026-03-23T14:10:50Z",
+    "message": "Fetched 0 reviews",
+    "action": "fetch",
+    "count": 0
+  },
+  {
+    "timestamp": 1774246250.951398,
+    "iso": "2026-03-23T14:10:50Z",
+    "message": "No reviews available",
+    "action": "wait"
+  },
+  {
+    "timestamp": 1774246250.952735,
+    "iso": "2026-03-23T14:10:50Z",
+    "message": "Single cycle complete (--once mode)",
+    "action": "stop"
+  },
+  {
+    "timestamp": 1774246298.471951,
+    "iso": "2026-03-23T14:11:38Z",
+    "message": "Agent starting autonomous loop",
+    "action": "start"
+  },
+  {
+    "timestamp": 1774246298.473608,
+    "iso": "2026-03-23T14:11:38Z",
+    "message": "Cycle 1 starting",
+    "action": "cycle_start"
+  },
+  {
+    "timestamp": 1774246299.100427,
+    "iso": "2026-03-23T14:11:39Z",
+    "message": "x402 signing unavailable: 'str' object has no attribute 'get'",
+    "action": "x402_payment",
+    "mode": "x402_fallback"
+  },
+  {
+    "timestamp": 1774246299.1255438,
+    "iso": "2026-03-23T14:11:39Z",
+    "message": "Fetched 10 reviews",
+    "action": "x402_payment",
+    "endpoint": "/reviews/top",
+    "status": 200
+  },
+  {
+    "timestamp": 1774246299.12713,
+    "iso": "2026-03-23T14:11:39Z",
+    "message": "Fetched 10 reviews",
+    "action": "fetch",
+    "count": 10
+  },
+  {
+    "timestamp": 1774246299.129081,
+    "iso": "2026-03-23T14:11:39Z",
+    "message": "Scored 10 reviews with heuristic scorer",
+    "action": "score"
+  },
+  {
+    "timestamp": 1774246300.119615,
+    "iso": "2026-03-23T14:11:40Z",
+    "message": "Bankr ensemble: e0d20c71 heuristic=88 bankr=50 blended=77",
+    "action": "bankr_score",
+    "claim_id": "e0d20c71",
+    "bankr_score": 50,
+    "blended_score": 77
+  },
+  {
+    "timestamp": 1774246300.9754329,
+    "iso": "2026-03-23T14:11:40Z",
+    "message": "Bankr ensemble: 2fb10aa1 heuristic=88 bankr=50 blended=77",
+    "action": "bankr_score",
+    "claim_id": "2fb10aa1",
+    "bankr_score": 50,
+    "blended_score": 77
+  },
+  {
+    "timestamp": 1774246301.916085,
+    "iso": "2026-03-23T14:11:41Z",
+    "message": "Bankr ensemble: 1e41c962 heuristic=87 bankr=50 blended=76",
+    "action": "bankr_score",
+    "claim_id": "1e41c962",
+    "bankr_score": 50,
+    "blended_score": 76
+  },
+  {
+    "timestamp": 1774246302.8677278,
+    "iso": "2026-03-23T14:11:42Z",
+    "message": "Bankr ensemble: 2a2c3de4 heuristic=87 bankr=50 blended=76",
+    "action": "bankr_score",
+    "claim_id": "2a2c3de4",
+    "bankr_score": 50,
+    "blended_score": 76
+  },
+  {
+    "timestamp": 1774246303.790999,
+    "iso": "2026-03-23T14:11:43Z",
+    "message": "Bankr ensemble: c132408c heuristic=85 bankr=50 blended=74",
+    "action": "bankr_score",
+    "claim_id": "c132408c",
+    "bankr_score": 50,
+    "blended_score": 74
+  },
+  {
+    "timestamp": 1774246304.838111,
+    "iso": "2026-03-23T14:11:44Z",
+    "message": "Bankr ensemble: 05ee3131 heuristic=85 bankr=50 blended=74",
+    "action": "bankr_score",
+    "claim_id": "05ee3131",
+    "bankr_score": 50,
+    "blended_score": 74
+  },
+  {
+    "timestamp": 1774246305.771182,
+    "iso": "2026-03-23T14:11:45Z",
+    "message": "Bankr ensemble: 6de8a8fe heuristic=82 bankr=50 blended=72",
+    "action": "bankr_score",
+    "claim_id": "6de8a8fe",
+    "bankr_score": 50,
+    "blended_score": 72
+  },
+  {
+    "timestamp": 1774246306.727735,
+    "iso": "2026-03-23T14:11:46Z",
+    "message": "Bankr ensemble: 59c39a58 heuristic=82 bankr=50 blended=72",
+    "action": "bankr_score",
+    "claim_id": "59c39a58",
+    "bankr_score": 50,
+    "blended_score": 72
+  },
+  {
+    "timestamp": 1774246307.54236,
+    "iso": "2026-03-23T14:11:47Z",
+    "message": "Bankr ensemble: 6b0f72a9 heuristic=81 bankr=50 blended=72",
+    "action": "bankr_score",
+    "claim_id": "6b0f72a9",
+    "bankr_score": 50,
+    "blended_score": 72
+  },
+  {
+    "timestamp": 1774246308.399225,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Bankr ensemble: 554c0e9a heuristic=81 bankr=50 blended=72",
+    "action": "bankr_score",
+    "claim_id": "554c0e9a",
+    "bankr_score": 50,
+    "blended_score": 72
+  },
+  {
+    "timestamp": 1774246308.4043279,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Heuristic: e0d20c71 verdict=validated confidence=0.77",
+    "action": "heuristic_score",
+    "claim_id": "e0d20c71",
+    "task_intent": "extract structured data from unstructured medical notes",
+    "verdict": "validated",
+    "confidence": 0.77
+  },
+  {
+    "timestamp": 1774246308.5778198,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Outcomes API error 500: Internal Server Error",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246308.5804968,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Complete error: Expecting value: line 1 column 1 (char 0)",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246308.581898,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774246308.5832589,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Heuristic: 2fb10aa1 verdict=validated confidence=0.77",
+    "action": "heuristic_score",
+    "claim_id": "2fb10aa1",
+    "task_intent": "extract structured data from unstructured medical notes",
+    "verdict": "validated",
+    "confidence": 0.77
+  },
+  {
+    "timestamp": 1774246308.662679,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Outcomes API error 500: Internal Server Error",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246308.664962,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Complete error: Expecting value: line 1 column 1 (char 0)",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246308.666556,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774246308.668082,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Heuristic: 1e41c962 verdict=validated confidence=0.76",
+    "action": "heuristic_score",
+    "claim_id": "1e41c962",
+    "task_intent": "evaluate Python async error handling across two LLM policies",
+    "verdict": "validated",
+    "confidence": 0.76
+  },
+  {
+    "timestamp": 1774246308.741152,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Outcomes API error 500: Internal Server Error",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246308.744829,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Complete error: Expecting value: line 1 column 1 (char 0)",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246308.746978,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774246308.749115,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Heuristic: 2a2c3de4 verdict=validated confidence=0.76",
+    "action": "heuristic_score",
+    "claim_id": "2a2c3de4",
+    "task_intent": "evaluate Python async error handling across two LLM policies",
+    "verdict": "validated",
+    "confidence": 0.76
+  },
+  {
+    "timestamp": 1774246308.82572,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Outcomes API error 500: Internal Server Error",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246308.828303,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Complete error: Expecting value: line 1 column 1 (char 0)",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246308.830366,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774246308.831855,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Heuristic: c132408c verdict=validated confidence=0.74",
+    "action": "heuristic_score",
+    "claim_id": "c132408c",
+    "task_intent": "compare trading strategy analysis for BTC/USD volatility",
+    "verdict": "validated",
+    "confidence": 0.74
+  },
+  {
+    "timestamp": 1774246308.907339,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Outcomes API error 500: Internal Server Error",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246308.909885,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Complete error: Expecting value: line 1 column 1 (char 0)",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246308.911757,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774246308.913434,
+    "iso": "2026-03-23T14:11:48Z",
+    "message": "Heuristic: 05ee3131 verdict=validated confidence=0.74",
+    "action": "heuristic_score",
+    "claim_id": "05ee3131",
+    "task_intent": "compare trading strategy analysis for BTC/USD volatility",
+    "verdict": "validated",
+    "confidence": 0.74
+  },
+  {
+    "timestamp": 1774246309.0778382,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Outcomes API error 500: Internal Server Error",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246309.080859,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Complete error: Expecting value: line 1 column 1 (char 0)",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246309.082491,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774246309.083956,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Heuristic: 6de8a8fe verdict=validated confidence=0.72",
+    "action": "heuristic_score",
+    "claim_id": "6de8a8fe",
+    "task_intent": "generate creative marketing copy for Web3 developer tools",
+    "verdict": "validated",
+    "confidence": 0.72
+  },
+  {
+    "timestamp": 1774246309.166792,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Outcomes API error 500: Internal Server Error",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246309.169817,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Complete error: Expecting value: line 1 column 1 (char 0)",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246309.1714659,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774246309.17296,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Heuristic: 59c39a58 verdict=validated confidence=0.72",
+    "action": "heuristic_score",
+    "claim_id": "59c39a58",
+    "task_intent": "generate creative marketing copy for Web3 developer tools",
+    "verdict": "validated",
+    "confidence": 0.72
+  },
+  {
+    "timestamp": 1774246309.2505221,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Outcomes API error 500: Internal Server Error",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246309.252527,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Complete error: Expecting value: line 1 column 1 (char 0)",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246309.254066,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774246309.2555158,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Heuristic: 6b0f72a9 verdict=validated confidence=0.72",
+    "action": "heuristic_score",
+    "claim_id": "6b0f72a9",
+    "task_intent": "assess customer support response tone for fintech users",
+    "verdict": "validated",
+    "confidence": 0.72
+  },
+  {
+    "timestamp": 1774246309.332801,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Outcomes API error 500: Internal Server Error",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246309.334671,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Complete error: Expecting value: line 1 column 1 (char 0)",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246309.336191,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774246309.3376498,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Heuristic: 554c0e9a verdict=validated confidence=0.72",
+    "action": "heuristic_score",
+    "claim_id": "554c0e9a",
+    "task_intent": "assess customer support response tone for fintech users",
+    "verdict": "validated",
+    "confidence": 0.72
+  },
+  {
+    "timestamp": 1774246309.412479,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Outcomes API error 500: Internal Server Error",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246309.414392,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Complete error: Expecting value: line 1 column 1 (char 0)",
+    "action": "error"
+  },
+  {
+    "timestamp": 1774246309.41605,
+    "iso": "2026-03-23T14:11:49Z",
+    "message": "Completed job, tx=None, receipt=None",
+    "action": "complete",
+    "tx": null,
+    "receipt_id": null,
+    "cid": null
+  },
+  {
+    "timestamp": 1774246310.178257,
+    "iso": "2026-03-23T14:11:50Z",
+    "message": "Locus balance: 0.00 USDC",
+    "action": "locus_balance",
+    "balance": "0.00",
+    "mode": "error"
+  },
+  {
+    "timestamp": 1774246310.9278479,
+    "iso": "2026-03-23T14:11:50Z",
+    "message": "Agent log pinned to Filecoin: QmX6pQ9bdvUzbdYVTXTAR82fizLVxN4UndyEV5YtMbB6Vj",
+    "action": "pin",
+    "logCID": "QmX6pQ9bdvUzbdYVTXTAR82fizLVxN4UndyEV5YtMbB6Vj"
+  },
+  {
+    "timestamp": 1774246310.930691,
+    "iso": "2026-03-23T14:11:50Z",
+    "message": "Single cycle complete (--once mode)",
+    "action": "stop"
   }
 ]
